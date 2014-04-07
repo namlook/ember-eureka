@@ -5,7 +5,7 @@
   "devDependencies": {
     "gulp-concat": "^2.2.0",
     "gulp": "^3.5.6",
-    "gulp-ember-handlebars": "namlook/gulp-ember-handlebars"
+    "gulp-ember-handlebars": "^0.6.0"
   },
   "browser": {
     "jquery": "./bower_components/jquery/jquery.js",
