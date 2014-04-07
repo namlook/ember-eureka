@@ -2,18 +2,78 @@ var Ember = require('ember');
 
 App = Ember.Application.create({
     ready: function() {
-        console.log('hello >>', this.get('config'));
+        Ember.$('title').text(this.get('config').name);
+        console.log(this.get('config').name, 'is ready !');
+    }
+});
+
+App.Router.map(function() {
+    this.resource('type', { path: '/' }, function() {
+        this.route('show', {path: '/:type/:id'});
+        this.route('edit', {path: '/:type/:id/edit'});
+        this.route('list', {path: '/:type'});
+        this.route('new', {path: '/:type/new'});
+    });
+});
+
+App.ApplicationRoute = Ember.Route.extend({
+    model: function() {
+        return App;
+    }
+});
+
+App.ApplicationController = Ember.Controller.extend({
+    modelNames: function() {
+        var _modelNames = [];
+        for (var modelName in App.config.schemas){
+            _modelNames.push({classified: modelName.camelize().capitalize(), underscored: modelName.underscore()});
+        }
+        return _modelNames;
+    }.property('App.config.schemas')
+});
+
+
+App.TypeListRoute = Ember.Route.extend({
+    model: function(params) {
+        return {type: params.type, results: ['TODO']};
+        // var type = _.str.classify(params.type);
+        // return new Ember.RSVP.Promise(function(resolve, reject) {
+        //     App.db[type].find({}, function(err, data) {
+        //         if(err) {
+        //             return reject(err);
+        //         }
+        //         else{
+        //             var objects = [];
+        //             data.forEach(function(item) {
+        //                 objects.push(item.toJSONObject());
+        //             });
+        //             var model = {type: params.type, objects: objects, data:data};
+        //             resolve(model);
+        //         }
+        //     });
+        // });
+    },
+    renderTemplate: function(controller, model) {
+        var template = 'type/list';
+        console.log(model);
+        if (Ember.TEMPLATES[model.type+'/list']) {
+            template = model.type+'/list';
+        }
+        return this.render(template);
     }
 });
 
 App.IndexRoute = Ember.Route.extend({
   model: function() {
-    console.log('i[oo]--->', this.get('config'));
     return ['red', 'yellow', 'blue'];
   }
 });
 
 Ember.TEMPLATES = require('./templates');
+for (var templateName in Ember.TEMPLATES){
+    Ember.TEMPLATES[templateName.replace('.', '/')] = Ember.TEMPLATES[templateName];
+    delete Ember.TEMPLATES[templateName];
+}
 
 module.exports = (function(config){
     App.initializer({
@@ -22,7 +82,7 @@ module.exports = (function(config){
         initialize: function(container, application) {
             application.register('oreka:config', config, {instantiate: false});
             application.inject('route', 'config', 'oreka:config');
-            application.inject('application', 'config', 'oreka:config');
+            application.set('config', config);
 
         }
     });
