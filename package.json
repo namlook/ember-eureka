@@ -7,27 +7,6 @@
     "gulp": "^3.5.6",
     "gulp-ember-handlebars": "^0.6.0"
   },
-  "browser": {
-    "jquery": "./bower_components/jquery/jquery.js",
-    "handlebars": "./bower_components/handlebars/handlebars.js",
-    "ember": "./bower_components/ember/ember.js"
-  },
-  "browserify-shim": {
-    "jquery": "$",
-    "handlebars": "Handlebars",
-    "ember": {
-      "exports": "Ember",
-      "depends": [
-        "jquery:jQuery",
-        "handlebars:Handlebars"
-      ]
-    }
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
   "scripts": {
     "postinstall": "bower install && gulp",
     "build": "gulp",
