@@ -11,8 +11,8 @@ App.Router.map(function() {
     this.resource('type', { path: '/' }, function() {
         this.route('show', {path: '/:type/:id'});
         this.route('edit', {path: '/:type/:id/edit'});
-        this.route('list', {path: '/:type'});
         this.route('new', {path: '/:type/new'});
+        this.route('list', {path: '/:type'});
     });
 });
 
@@ -70,10 +70,6 @@ App.IndexRoute = Ember.Route.extend({
 });
 
 Ember.TEMPLATES = require('./templates');
-for (var templateName in Ember.TEMPLATES){
-    Ember.TEMPLATES[templateName.replace('.', '/')] = Ember.TEMPLATES[templateName];
-    delete Ember.TEMPLATES[templateName];
-}
 
 module.exports = (function(config){
     App.initializer({
