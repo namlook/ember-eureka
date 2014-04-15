@@ -1,4 +1,4 @@
-var Ember = require('ember');
+// var Ember = require('ember');
 
 App = Ember.Application.create({
     ready: function() {
@@ -69,9 +69,10 @@ App.IndexRoute = Ember.Route.extend({
   }
 });
 
-Ember.TEMPLATES = require('./templates');
+// Ember.TEMPLATES = require('./templates');
 
-module.exports = (function(config){
+// module.exports = (function(config){
+Eurekapp = (function(config){
     App.initializer({
         name: "oreka",
 

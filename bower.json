@@ -21,6 +21,7 @@
     "templates"
   ],
   "dependencies": {
-    "ember": "~1.4.0"
+    "ember": "~1.5.0",
+    "foundation": "~5.2.2"
   }
 }
