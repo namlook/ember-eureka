@@ -1,0 +1,13 @@
+
+<fieldset>
+    <legend>{{model.type}}</legend>
+    <h1>{{model.title}}</h1>
+    <dl>
+        {{#each value in model._values}}
+            <dt>{{value.name}}</dt>
+            <dd>
+                {{display-field value=value.value}}
+            </dd>
+        {{/each}}
+    </dl>
+</fieldset>

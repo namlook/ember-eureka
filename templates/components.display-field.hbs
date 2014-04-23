@@ -1,0 +1,20 @@
+
+{{#if isArray}}
+    <ul>
+        {{#each val in value}}
+            <li>
+            {{#if val._id}}
+                {{#link-to 'type.display' val._type val._id}}{{titleize val}}{{/link-to}}
+            {{else}}
+                {{val}}
+            {{/if}}
+            </li>
+        {{/each}}
+    </ul>
+{{else}}
+    {{#if isRelation}}
+        {{#link-to 'type.display' value._type value._id}}{{value.title}}{{/link-to}}
+    {{else}}
+        {{value}}
+    {{/if}}
+{{/if}}

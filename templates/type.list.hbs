@@ -2,14 +2,17 @@
 {{#each item in model}}
     <fieldset>
         <legend>{{model.type}}</legend>
-        <p>{{item._id}}</p>
-        <p>{{item.title}}</p>
+        <h2>{{#link-to 'type.display' model.type item._id}}{{item.title}}{{/link-to}}</h2>
+        <p>{{item.description}}</p>
+        <img {{bind-attr src=item.image}} />
+        {{!--
         <dl>
             {{#each value in item._values}}
                 <dt>{{value.name}}</dt>
                 <dd>{{value.value}}</dd>
             {{/each}}
         </dl>
+        --}}
 
         {{!--
         {{document-display data=item}}
