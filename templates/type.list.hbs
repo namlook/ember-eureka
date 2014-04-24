@@ -2,21 +2,12 @@
 {{#each item in model}}
     <fieldset>
         <legend>{{model.type}}</legend>
-        <h2>{{#link-to 'type.display' model.type item._id}}{{item.title}}{{/link-to}}</h2>
-        <p>{{item.description}}</p>
-        <img {{bind-attr src=item.image}} />
-        {{!--
-        <dl>
-            {{#each value in item._values}}
-                <dt>{{value.name}}</dt>
-                <dd>{{value.value}}</dd>
-            {{/each}}
-        </dl>
-        --}}
-
-        {{!--
-        {{document-display data=item}}
-        {{#link-to 'type.show' model.type item.id}}see{{/link-to}}
-        --}}
+        <h2>{{#link-to 'type.display' item._type item._id}}{{item.title}}{{/link-to}}</h2>
+        {{#if item.description}}
+            <p>{{item.description}}</p>
+        {{/if}}
+        {{#if item.thumb}}
+            <img {{bind-attr src=item.thumb}} />
+        {{/if}}
     </fieldset>
 {{/each}}

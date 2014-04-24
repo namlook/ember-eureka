@@ -1,7 +1,15 @@
 
 <fieldset>
-    <legend>{{model.type}}</legend>
+    <legend>{{model._type}}</legend>
+
     <h1>{{model.title}}</h1>
+    {{#if model.description}}
+        <p>{{model.description}}</p>
+    {{/if}}
+    {{#if model.thumb}}
+        <img {{bind-attr src=model.thumb}} />
+    {{/if}}
+
     <dl>
         {{#each value in model._values}}
             <dt>{{value.name}}</dt>

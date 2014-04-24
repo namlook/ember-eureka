@@ -4,7 +4,7 @@
         {{#each val in value}}
             <li>
             {{#if val._id}}
-                {{#link-to 'type.display' val._type val._id}}{{titleize val}}{{/link-to}}
+                {{#link-to 'type.display' val._type val._id}}{{val.title}}{{/link-to}}
             {{else}}
                 {{val}}
             {{/if}}
@@ -13,6 +13,7 @@
     </ul>
 {{else}}
     {{#if isRelation}}
+        {{log value.title}}
         {{#link-to 'type.display' value._type value._id}}{{value.title}}{{/link-to}}
     {{else}}
         {{value}}

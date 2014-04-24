@@ -6,6 +6,10 @@ Eurekapp = (function(clientConfig){
         ready: function() {
             Ember.$('title').text(this.get('config').name);
             console.log(this.get('config').name, 'is ready !');
+        },
+
+        getModelConfig: function(modelType) {
+            return this.config.schemas[modelType];
         }
     });
 
@@ -73,65 +77,88 @@ Eurekapp = (function(clientConfig){
     /**** Models *****/
     App.Model = Ember.ObjectProxy.extend({
         _modelType: null,
-        // content: null,
-
-        title: function() {
-            var modelConfig = App.config.schemas[this._modelType];
-            if (modelConfig && modelConfig.display && modelConfig.display.generic && modelConfig.display.generic.title) {
-                var field = modelConfig.display.generic.title.replace('@', '.');
-                return this.get('content.'+field);
-            }
-            else if (this.get('content.title')) {
-                var _title = this.get('content.title');
-                if (typeof(_title) === 'string') {
-                    return _title;
-                }
-                else if (_title.en) {
-                    return _title.en;
-                }
-            }
-            return this.get('_id');
-        }.property('content.title', '_id'),
-
-        description: function() {
-            var modelConfig = App.config.schemas[this._modelType];
-            if (modelConfig && modelConfig.display && modelConfig.display.generic && modelConfig.display.generic.description) {
-                var descriptionSchema = modelConfig.display.generic.description;
-                if (typeof(descriptionSchema) === 'function') {
-                    return descriptionSchema(this);
-                }
-                var field = descriptionSchema.replace('@', '.');
-                return this.get('content.'+field);
-            }
-            return this.get('content.description');
-        }.property('content'),
-
-
-        image: function() {
-            var modelConfig = App.config.schemas[this._modelType];
-            if (modelConfig && modelConfig.display && modelConfig.display.generic && modelConfig.display.generic.image) {
-                var imgSchema = modelConfig.display.generic.image;
-                if (typeof(imgSchema) === 'function') {
-                    console.log(imgSchema(this));
-                    return imgSchema(this);
-                }
-                var field = imgSchema.replace('@', '.');
-                return this.get('content.'+field);
-            }
-            return this.get('content.image');
-        }.property('content'),
-
+        content: 'blaaaa',
 
         _values: function() {
             var _results = Ember.A();
+            var skipFieldNames = [
+                '_id', '_type', '_ref', '_uri', '_class',
+                'title', 'thumb', 'description'
+            ];
+
             for (var fieldName in this.get('content')) {
+
+                if (skipFieldNames.indexOf(fieldName) > -1) {
+                    continue;
+                }
+
                 var value = this.get(fieldName);
                 if(value) {
                     _results.push({name: fieldName, value: value});
                 }
             }
             return _results.sortBy('name');
+        }.property('content'),
+
+        /**** properties ****/
+        _displayField: function(fieldName, fallbackFieldName) {
+            var modelConfig = App.getModelConfig(this._modelType);
+            var content;
+            fallbackFieldName = fallbackFieldName || fieldName;
+
+            // if a field config is specified (in shemas), take the config, and apply it
+            if (modelConfig && modelConfig.display && modelConfig.display[fieldName]) {
+                var fieldSchema = modelConfig.display[fieldName];
+
+                // in schemas, values can be functions. If it is the case, call it.
+                if (typeof(fieldSchema) === 'function') {
+                    return fieldSchema(this);
+                }
+
+                // if this is an i18n value
+                if (modelConfig.schema[fieldName].i18n) {
+
+                    // if the lang is specified into the config, we just as to use it
+                    var fieldContent;
+                    if (fieldSchema.indexOf('@') > -1) {
+                        fieldSchema = fieldSchema.replace('@', '.');
+                        fieldContent = this.get('content.'+fieldSchema);
+                    } else {
+                        fieldContent = this.get('content.'+fieldSchema).en; // i18n TODO
+                    }
+                    if (fieldContent) {
+                        return fieldContent;
+                    }
+                } else {
+                    return this.get('content.'+fieldSchema);
+                }
+            }
+
+            // otherwise, get the value from the content of the model
+            else if (this.get('content.'+fieldName)) {
+                content = this.get('content.'+fieldName);
+                if (modelConfig.schema[fieldName].i18n) {
+                    return content.en; // i18n TODO
+                }
+                return content;
+            }
+            return this.get('content.'+fallbackFieldName);
+        },
+
+        title: function() {
+            return this._displayField('title', '_id');
+        }.property('content', '_id'),
+
+
+        description: function() {
+            return this._displayField('description');
+        }.property('content'),
+
+
+        thumb: function() {
+            return this._displayField('thumb');
         }.property('content')
+
     });
 
     App.ResultSet = Ember.ArrayProxy.extend({
@@ -209,10 +236,10 @@ Eurekapp = (function(clientConfig){
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint'), query, function(data){
                     var obj;
-
+                    var content = {};
                     // if there is a match, we wrap all relations with Model objects
                     if (data.results.length > 0) {
-                        var content = data.results[0];
+                        content = data.results[0];
 
                         // for each field, check if it is a relation to wrap
                         for (var key in content) {
@@ -227,31 +254,20 @@ Eurekapp = (function(clientConfig){
                                     var values = [];
 
                                     value.forEach(function(item) {
-                                        var rel = App.db[type].get('model').create(item);
+                                        var rel = App.db[type].get('model').create({content: item});
                                         values.push(rel);
                                     });
 
                                     content[key] = values;
                                 }
                                 else {
-                                    content[key] = App.db[type].get('model').create(value);
-                                    console.log(type, App.db[type].get('model'), value, content[key], content[key].title);
+                                    content[key] = App.db[type].get('model').create({content: value});
                                 }
                             }
                         }
-
-                        // build the model
-                        obj = that.get('model').create({
-                            content: content,
-                            _modelType: modelType
-                        });
                     }
-                    else {
-                        obj = that.get('model').create({
-                            content: {},
-                            _modelType: modelType
-                        });
-                    }
+                    // build the model
+                    obj = that.get('model').create({content: content});
                     return resolve(obj);
                 });
             });
@@ -269,23 +285,25 @@ Eurekapp = (function(clientConfig){
 
         isRelation: function() {
             var value = this.get('value');
-            if (value._type !== undefined && value._id !== undefined) {
-                return true;
+            if (typeof(value) === 'object' && value.content !== undefined){
+                if (value.get('_type') !== undefined && value.get('_id') !== undefined) {
+                    return true;
+                }
             }
             return false;
         }.property('value')
     });
 
-    /**** Handlebars helpers ****/
-    Ember.Handlebars.helper('titleize', function(value, options) {
-        if (value && value.get && value.get('title') !== undefined) {
-            return value.get('title');
-        }
-        else if (value._id !== undefined) {
-            return value._id;
-        }
-        return value;
-    });
+    // /**** Handlebars helpers ****/
+    // Ember.Handlebars.helper('titleize', function(value, options) {
+    //     if (value && value.get && value.get('title') !== undefined) {
+    //         return value.get('title');
+    //     }
+    //     else if (value._id !== undefined) {
+    //         return value._id;
+    //     }
+    //     return value;
+    // });
 
 
     /**** Initialization *****/
@@ -300,16 +318,17 @@ Eurekapp = (function(clientConfig){
             var database = (function() {
                 var db = Ember.Object.create();
                 for (var _type in clientConfig.schemas) {
-                    var typeObject = App.DatabaseModel.create({
+                    var dbTypeObject = App.DatabaseModel.create({
                         type: _type,
                         schema: clientConfig.schemas[_type].schema
                     });
                     if (App[_type+'Model']) {
-                        typeObject.set('model', App[_type+'Model']);
+                        dbTypeObject.set('model', App[_type+'Model']);
                     } else {
-                        typeObject.set('model', App.Model);
+                        var Model = App.Model.extend({_modelType: _type});
+                        dbTypeObject.set('model', Model);
                     }
-                    db.set(_type, typeObject);
+                    db.set(_type, dbTypeObject);
                 }
                 return db;
             })();
