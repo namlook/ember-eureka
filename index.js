@@ -328,12 +328,14 @@ Eurekapp = (function(clientConfig){
                         type: _type,
                         schema: clientConfig.schemas[_type].schema
                     });
+                    var Model;
                     if (App[_type+'Model']) {
-                        dbTypeObject.set('model', App[_type+'Model']);
+                        Model = App[_type+'Model'];
                     } else {
-                        var Model = App.Model.extend({_modelType: _type});
-                        dbTypeObject.set('model', Model);
+                        Model = App.Model;
                     }
+                    Model = Model.extend({_modelType: _type});
+                    dbTypeObject.set('model', Model);
                     db.set(_type, dbTypeObject);
                 }
                 return db;
