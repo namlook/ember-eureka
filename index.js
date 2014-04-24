@@ -10,6 +10,13 @@ Eurekapp = (function(clientConfig){
 
         getModelConfig: function(modelType) {
             return this.config.schemas[modelType];
+        },
+
+        getModelSchema: function(modelType) {
+            var modelConfig = this.getModelConfig(modelType);
+            if (modelConfig) {
+                return modelConfig.schema;
+            }
         }
     });
 
@@ -278,6 +285,8 @@ Eurekapp = (function(clientConfig){
     /*** Components ****/
     App.DisplayFieldComponent = Ember.Component.extend({
         value: null,
+        fieldName: null,
+        model: null,
 
         isArray: function() {
             return Ember.isArray(this.get('value'));
@@ -285,25 +294,22 @@ Eurekapp = (function(clientConfig){
 
         isRelation: function() {
             var value = this.get('value');
-            if (typeof(value) === 'object' && value.content !== undefined){
-                if (value.get('_type') !== undefined && value.get('_id') !== undefined) {
-                    return true;
-                }
+            var modelSchema = App.getModelSchema(this.get('model').get('_modelType'));
+            if (App.getModelSchema(modelSchema[this.get('fieldName')].type)) {
+                return true;
+            }
+            return false;
+        }.property('value'),
+
+        isI18n: function() {
+            var value = this.get('value');
+            var modelSchema = App.getModelSchema(this.get('model').get('_modelType'));
+            if (modelSchema[this.get('fieldName')].i18n) {
+                return true;
             }
             return false;
         }.property('value')
     });
-
-    // /**** Handlebars helpers ****/
-    // Ember.Handlebars.helper('titleize', function(value, options) {
-    //     if (value && value.get && value.get('title') !== undefined) {
-    //         return value.get('title');
-    //     }
-    //     else if (value._id !== undefined) {
-    //         return value._id;
-    //     }
-    //     return value;
-    // });
 
 
     /**** Initialization *****/

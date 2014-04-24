@@ -13,9 +13,12 @@
     </ul>
 {{else}}
     {{#if isRelation}}
-        {{log value.title}}
         {{#link-to 'type.display' value._type value._id}}{{value.title}}{{/link-to}}
     {{else}}
-        {{value}}
+        {{#if isI18n}}
+            {{value.title}}
+        {{else}}
+            {{value}}
+        {{/if}}
     {{/if}}
 {{/if}}
