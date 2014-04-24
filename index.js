@@ -55,8 +55,9 @@ Eurekapp = (function(clientConfig){
         },
         renderTemplate: function(controller, model) {
             var template = 'type/list';
-            if (Ember.TEMPLATES[model.type+'/list']) {
-                template = model.type+'/list';
+            var type = model.get('_modelType').underscore();
+            if (Ember.TEMPLATES[type+'/list']) {
+                template = type+'/list';
             }
             return this.render(template);
         }
@@ -71,8 +72,24 @@ Eurekapp = (function(clientConfig){
         },
         renderTemplate: function(controller, model) {
             var template = 'type/display';
-            if (Ember.TEMPLATES[model.type+'/display']) {
-                template = model.type+'/display';
+            var type = model.get('_modelType').underscore();
+            if (Ember.TEMPLATES[type+'/display']) {
+                template = type+'/display';
+            }
+            return this.render(template);
+        }
+    });
+
+    App.TypeNewRoute = Ember.Route.extend({
+        model: function(params) {
+            var _type = params.type.camelize().capitalize();
+            return this.get('db')[_type].get('model').create({content: {}});
+        },
+        renderTemplate: function(controller, model) {
+            var template = 'type/new';
+            var type = model.get('_modelType').underscore();
+            if (Ember.TEMPLATES[type+'/new']) {
+                template = type+'/new';
             }
             return this.render(template);
         }
@@ -84,7 +101,7 @@ Eurekapp = (function(clientConfig){
     /**** Models *****/
     App.Model = Ember.ObjectProxy.extend({
         _modelType: null,
-        content: 'blaaaa',
+        content: null,
 
         _values: function() {
             var _results = Ember.A();
@@ -107,9 +124,31 @@ Eurekapp = (function(clientConfig){
             return _results.sortBy('name');
         }.property('content'),
 
+        _fields: function() {
+            var schema = App.getModelSchema(this.get('_modelType'));
+            var fields = [];
+            for (var fieldName in schema) {
+                var fieldSchema = schema[fieldName];
+                var isRelation = false;
+                var relation = null;
+                if(App.getModelSchema(fieldSchema.type)) {
+                    isRelation = true;
+                    relation = App.db[fieldSchema.type].get('model').create({content: {}});
+                }
+                fields.push({
+                    name: fieldName,
+                    schema: fieldSchema,
+                    isRelation: isRelation,
+                    relation: relation
+                });
+            }
+            return fields;
+        }.property(),
+
         /**** properties ****/
+
         _displayField: function(fieldName, fallbackFieldName) {
-            var modelConfig = App.getModelConfig(this._modelType);
+            var modelConfig = App.getModelConfig(this.get('_modelType'));
             var content;
             fallbackFieldName = fallbackFieldName || fieldName;
 
@@ -151,6 +190,10 @@ Eurekapp = (function(clientConfig){
             }
             return this.get('content.'+fallbackFieldName);
         },
+
+        type: function() {
+            return this.get('content._type') || this.get('_modelType');
+        }.property('content._type', '_modelType'),
 
         title: function() {
             return this._displayField('title', '_id');
@@ -281,12 +324,28 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-
     /*** Components ****/
+
+    App.RenderTemplateComponent = Ember.Component.extend({
+        action: null,
+        model: null,
+        layoutName: function() {
+            var action = this.get('action');
+            var template = 'type/'+action;
+            if (this.get('model')) {
+                var type = this.get('model').get('type').underscore();
+                if (Ember.TEMPLATES[type+'/'+action]) {
+                    template = type+'/'+action;
+                }
+            }
+            return template;
+        }.property('template')
+    });
+
     App.DisplayFieldComponent = Ember.Component.extend({
         value: null,
         fieldName: null,
-        model: null,
+        modelType: null,
 
         isArray: function() {
             return Ember.isArray(this.get('value'));
@@ -294,7 +353,7 @@ Eurekapp = (function(clientConfig){
 
         isRelation: function() {
             var value = this.get('value');
-            var modelSchema = App.getModelSchema(this.get('model').get('_modelType'));
+            var modelSchema = App.getModelSchema(this.get('modelType'));
             if (App.getModelSchema(modelSchema[this.get('fieldName')].type)) {
                 return true;
             }
@@ -303,12 +362,38 @@ Eurekapp = (function(clientConfig){
 
         isI18n: function() {
             var value = this.get('value');
-            var modelSchema = App.getModelSchema(this.get('model').get('_modelType'));
+            var modelSchema = App.getModelSchema(this.get('modelType'));
             if (modelSchema[this.get('fieldName')].i18n) {
                 return true;
             }
             return false;
         }.property('value')
+    });
+
+
+    App.DynamicInputComponent = Ember.Component.extend({
+        type:null,
+
+        aa: function() {
+            return 'type/new';
+        }.property(),
+
+        isText: function() {
+            return this.get('type') === 'string';
+        }.property('type'),
+
+        isNumber: function() {
+            var type = this.get('type');
+            return ['integer', 'float'].indexOf(type) > -1;
+        }.property('type'),
+
+        isBoolean: function() {
+            return this.get('type') === 'boolean';
+        }.property('type'),
+
+        isDate: function() {
+            return this.get('type') === 'date';
+        }.property('type')
     });
 
 

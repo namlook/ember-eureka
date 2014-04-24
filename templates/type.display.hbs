@@ -14,7 +14,7 @@
         {{#each value in model._values}}
             <dt>{{value.name}}</dt>
             <dd>
-                {{display-field model=model fieldName=value.name value=value.value}}
+                {{display-field modelType=model._type fieldName=value.name value=value.value}}
             </dd>
         {{/each}}
     </dl>

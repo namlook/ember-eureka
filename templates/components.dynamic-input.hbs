@@ -1,0 +1,12 @@
+
+{{#if isText}}
+    {{input type='text' value=value}}
+{{else}} {{#if isBoolean}}
+    {{input type='checkbox' checked=value}}
+{{else}} {{#if isNumber}}
+    {{input type='number' value=value}}
+{{else}} {{#if isDate}}
+    {{input type='date' value=value}}
+{{else}}
+    {{input type=inputType value=value}}
+{{/if}} {{/if}} {{/if}} {{/if}}
