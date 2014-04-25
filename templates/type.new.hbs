@@ -1,11 +1,2 @@
 
-<h1>New {{model.type}}</h1>
-{{#each field in model._fields}}
-    <fieldset><legend>{{field.name}}</legend>
-        {{#if field.isRelation}}
-            {{render-template action='new' model=field.relation}}
-        {{else}}
-            {{dynamic-input schema=field.schema}}
-        {{/if}}
-    </fieldset>
-{{/each}}
+{{model-form model=model}}

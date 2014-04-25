@@ -1,0 +1,26 @@
+
+{{#if isRelation}}
+    reeeeeee
+{{else}}
+    <h1>New {{model.type}}</h1>
+{{/if}}
+
+{{#each field in model._fields}}
+    <fieldset><legend>{{field.name}}</legend>
+        {{#if field.relation}}
+            {{#if field.displayRelation}}
+                {{model-form model=field.relation isRelation=true}}
+                <button class="button alert" {{action 'cancelRelation' field}}>cancel</button>
+                <button class="button success" {{action 'saveRelation' field}}>done</button>
+            {{else}}
+                <button class="button" {{action 'addRelation' field}}>new</button>
+            {{/if}}
+        {{else}}
+            {{dynamic-input field=field}}
+        {{/if}}
+    </fieldset>
+{{/each}}
+
+{{#unless isRelation}}
+    <button class="button success" {{action 'save'}}>save</button>
+{{/unless}}

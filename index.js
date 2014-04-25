@@ -117,14 +117,8 @@ Eurekapp = (function(clientConfig){
     });
 
     /***** Controllers ******/
-    App.TypeNewController = Ember.Controller.extend({
-        isNotRelation: true,
-        actions: {
-            addRelation: function(field) {
-                field.get('relation').set('display', true);
-            }
-        }
-    });
+    // App.TypeNewController = Ember.Controller.extend({
+    // });
 
     // Ember.TEMPLATES = require('./templates');
 
@@ -134,26 +128,68 @@ Eurekapp = (function(clientConfig){
         _modelType: null,
         content: null,
 
+        // _values: function() {
+        //     var _results = Ember.A();
+        //     var skipFieldNames = [
+        //         '_id', '_type', '_ref', '_uri', '_class',
+        //         'title', 'thumb', 'description'
+        //     ];
+
+        //     for (var fieldName in this.get('content')) {
+
+        //         if (skipFieldNames.indexOf(fieldName) > -1) {
+        //             continue;
+        //         }
+
+        //         var value = this.get(fieldName);
+        //         if(value) {
+        //             _results.push({name: fieldName, value: value});
+        //         }
+        //     }
+        //     return _results.sortBy('name');
+        // }.property('content'),
+
+
         _values: function() {
             var _results = Ember.A();
             var skipFieldNames = [
-                '_id', '_type', '_ref', '_uri', '_class',
                 'title', 'thumb', 'description'
             ];
+            var _this = this;
+            this.get('_fields').forEach(function(field) {
+                var fieldName = field.get('name');
+                var value = _this.get('content.'+fieldName);
 
-            for (var fieldName in this.get('content')) {
-
-                if (skipFieldNames.indexOf(fieldName) > -1) {
-                    continue;
+                if (skipFieldNames.indexOf(field.get('name')) > -1) {
+                    return;
                 }
 
-                var value = this.get(fieldName);
                 if(value) {
                     _results.push({name: fieldName, value: value});
                 }
-            }
+            });
             return _results.sortBy('name');
-        }.property('content'),
+        }.property().readOnly().volatile(),
+
+
+        _toJSONObject: function() {
+            var pojo = {};
+            var content = this.get('content');
+            var modelSchema = App.getModelSchema(this.get('type'));
+            for (var fieldName in content) {
+                var isRelation = App.db[this.get('type')].isRelation(fieldName);
+                if (content[fieldName] && isRelation) {
+                    pojo[fieldName] = content[fieldName]._toJSONObject();
+                } else {
+                    pojo[fieldName] = content[fieldName];
+                }
+            }
+            return pojo;
+        },
+
+        _toJSON: function() {
+            return JSON.stringify(this._toJSONObject());
+        },
 
         _fields: function() {
             var schema = App.getModelSchema(this.get('_modelType'));
@@ -170,15 +206,33 @@ Eurekapp = (function(clientConfig){
                     name: fieldName,
                     schema: fieldSchema,
                     isRelation: isRelation,
+                    value: null,
                     relation: relation
                 }));
             }
             return fields;
-        }.property(),
+        }.property('_modelType').readOnly(),
+
+
+        _updateContent: function() {
+            var _this = this;
+            this.get('_fields').forEach(function(field){
+                _this.set('content.'+field.get('name'), field.get('value'));
+            });
+        },
+
+        _observeFields: function() {
+            Ember.run.debounce(this, this._updateContent, 300);
+        }.observes('_fields.@each.value'),
+
+        save: function() {
+            this._updateContent();
+            console.log(this._toJSON()); // TODO
+        },
 
         /**** properties ****/
 
-        _displayField: function(fieldName, fallbackFieldName) {
+        _computeField: function(fieldName, fallbackFieldName) {
             var modelConfig = App.getModelConfig(this.get('_modelType'));
             var content;
             fallbackFieldName = fallbackFieldName || fieldName;
@@ -224,21 +278,21 @@ Eurekapp = (function(clientConfig){
 
         type: function() {
             return this.get('content._type') || this.get('_modelType');
-        }.property('content._type', '_modelType'),
+        }.property('content._type', '_modelType').readOnly(),
 
         title: function() {
-            return this._displayField('title', '_id');
-        }.property('content', '_id'),
+            return this._computeField('title', '_id');
+        }.property('_modelType', '_id'),
 
 
         description: function() {
-            return this._displayField('description');
-        }.property('content'),
+            return this._computeField('description');
+        }.property('_modelType'),
 
 
         thumb: function() {
-            return this._displayField('thumb');
-        }.property('content')
+            return this._computeField('thumb');
+        }.property('_modelType')
 
     });
 
@@ -373,6 +427,43 @@ Eurekapp = (function(clientConfig){
         }.property('template')
     });
 
+    App.ModelFormComponent = Ember.Component.extend({
+        model: null,
+        isRelation: false,
+
+        layoutName: function() {
+            var action = this.get('action');
+            var template = 'type/'+action;
+            if (this.get('model')) {
+                var type = this.get('model').get('type').underscore();
+                if (Ember.TEMPLATES[type+'/'+action]) {
+                    template = type+'/'+action;
+                }
+            }
+            return template;
+        }.property('template'),
+
+        actions: {
+            addRelation: function(field) {
+                console.log('add relation');
+                field.set('displayRelation', true);
+            },
+            cancelRelation: function(field) {
+                console.log('cancel relation', field);
+                field.set('displayRelation', false);
+            },
+            saveRelation: function(field) {
+                field.set('value', field.get('relation'));
+                field.set('displayRelation', false);
+                console.log('relation done');
+            },
+            save: function() {
+                console.log('save', this.get('model'));
+                this.get('model').save();
+            }
+        }
+    });
+
     App.DisplayFieldComponent = Ember.Component.extend({
         value: null,
         fieldName: null,
@@ -403,11 +494,15 @@ Eurekapp = (function(clientConfig){
 
 
     App.DynamicInputComponent = Ember.Component.extend({
-        type:null,
+        field: null,
 
-        aa: function() {
-            return 'type/new';
-        }.property(),
+        schema: function() {
+            return this.get('field.schema');
+        }.property('field'),
+
+        type: function() {
+            return this.get('schema.type');
+        }.property('schema.type'),
 
         isText: function() {
             return this.get('type') === 'string';
