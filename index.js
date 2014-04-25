@@ -54,12 +54,19 @@ Eurekapp = (function(clientConfig){
             return this.get('db')[params.type.camelize().capitalize()].find();
         },
         renderTemplate: function(controller, model) {
+            // template
             var template = 'type/list';
-            var type = model.get('_modelType').underscore();
+            var type = model.get('type').underscore();
             if (Ember.TEMPLATES[type+'/list']) {
                 template = type+'/list';
             }
-            return this.render(template);
+
+            // controller
+            if (App[model.get('type')+'ListController']) {
+                controller = this.controllerFor(model.get('type')+'List');
+                controller.set('model', model);
+            }
+            this.render(template, {controller: controller});
         }
     });
 
@@ -71,12 +78,19 @@ Eurekapp = (function(clientConfig){
             return this.get('db')[_type].first({_id: _id, _type: _type});
         },
         renderTemplate: function(controller, model) {
+            // template
             var template = 'type/display';
-            var type = model.get('_modelType').underscore();
+            var type = model.get('type').underscore();
             if (Ember.TEMPLATES[type+'/display']) {
                 template = type+'/display';
             }
-            return this.render(template);
+
+            // controller
+            if (App[model.get('type')+'DisplayController']) {
+                controller = this.controllerFor(model.get('type')+'Display');
+                controller.set('model', model);
+            }
+            this.render(template, {controller: controller});
         }
     });
 
@@ -86,12 +100,29 @@ Eurekapp = (function(clientConfig){
             return this.get('db')[_type].get('model').create({content: {}});
         },
         renderTemplate: function(controller, model) {
+            // template
             var template = 'type/new';
-            var type = model.get('_modelType').underscore();
+            var type = model.get('type').underscore();
             if (Ember.TEMPLATES[type+'/new']) {
                 template = type+'/new';
             }
-            return this.render(template);
+
+            // controller
+            if (App[model.get('type')+'NewController']) {
+                controller = this.controllerFor(model.get('type')+'New');
+                controller.set('model', model);
+            }
+            this.render(template, {controller: controller});
+        }
+    });
+
+    /***** Controllers ******/
+    App.TypeNewController = Ember.Controller.extend({
+        isNotRelation: true,
+        actions: {
+            addRelation: function(field) {
+                field.get('relation').set('display', true);
+            }
         }
     });
 
@@ -126,7 +157,7 @@ Eurekapp = (function(clientConfig){
 
         _fields: function() {
             var schema = App.getModelSchema(this.get('_modelType'));
-            var fields = [];
+            var fields = Ember.A();
             for (var fieldName in schema) {
                 var fieldSchema = schema[fieldName];
                 var isRelation = false;
@@ -135,12 +166,12 @@ Eurekapp = (function(clientConfig){
                     isRelation = true;
                     relation = App.db[fieldSchema.type].get('model').create({content: {}});
                 }
-                fields.push({
+                fields.push(Ember.Object.create({
                     name: fieldName,
                     schema: fieldSchema,
                     isRelation: isRelation,
                     relation: relation
-                });
+                }));
             }
             return fields;
         }.property(),
