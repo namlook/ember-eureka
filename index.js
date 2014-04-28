@@ -193,7 +193,15 @@ Eurekapp = (function(clientConfig){
             for (var fieldName in content) {
                 var isRelation = App.db[this.get('type')].isRelation(fieldName);
                 if (content[fieldName] && isRelation) {
-                    pojo[fieldName] = content[fieldName]._toJSONObject();
+                    if (modelSchema[fieldName].multi) {
+                        var rels = [];
+                        content[fieldName].forEach(function(rel){
+                            rels.push(rel._toJSONObject());
+                        });
+                        pojo[fieldName] = rels;
+                    } else {
+                        pojo[fieldName] = content[fieldName]._toJSONObject();
+                    }
                 } else {
                     pojo[fieldName] = content[fieldName];
                 }
@@ -211,21 +219,33 @@ Eurekapp = (function(clientConfig){
             for (var fieldName in schema) {
                 var fieldSchema = schema[fieldName];
                 var isRelation = false;
-                var relation = null;
+                var relationModel = null;
                 if(App.getModelSchema(fieldSchema.type)) {
                     isRelation = true;
-                    relation = App.db[fieldSchema.type].get('model').create({content: {}});
+                    relationModel = App.db[fieldSchema.type].get('model');
                 }
-                fields.push(Ember.Object.create({
+                var obj = Ember.Object.create({
                     name: fieldName,
                     schema: fieldSchema,
-                    isRelation: isRelation,
                     value: null,
-                    relation: relation
-                }));
+                    isRelation: isRelation,
+                    relationModel: relationModel
+                });
+                if (fieldSchema.multi) {
+                    obj.value = [];
+                }
+                fields.push(obj);
             }
             return fields;
         }.property('_modelType').readOnly(),
+
+        _addRelation: function(fieldName) {
+            for (var field in this.get('_fields')) {
+                if (field.name === fieldName) {
+
+                }
+            }
+        },
 
 
         _updateContent: function() {
@@ -476,16 +496,30 @@ Eurekapp = (function(clientConfig){
         actions: {
             addRelation: function(field) {
                 console.log('add relation');
-                field.set('displayRelation', true);
+                var relation = field.get('relationModel').create({content: {}});
+                if (field.schema.multi) {
+                    field.get('value').pushObject(relation);
+                }
+                else {
+                    field.set('value', relation);
+                }
             },
-            cancelRelation: function(field) {
-                console.log('cancel relation', field);
-                field.set('displayRelation', false);
+            editRelation: function(relation) {
+                console.log('edit relation', relation);
+                relation.set('_hide', false);
             },
-            saveRelation: function(field) {
-                field.set('value', field.get('relation'));
-                field.set('displayRelation', false);
-                console.log('relation done');
+            removeRelation: function(field, relation) {
+                console.log('cancel relation', field, relation);
+                if (field.schema.multi) {
+                    field.get('value').removeObject(relation);
+                }
+                else {
+                    field.set('value', null);
+                }
+            },
+            saveRelation: function(relation) {
+                relation.set('_hide', true);
+                console.log('relation done', relation);
             }
         }
     });
@@ -546,6 +580,7 @@ Eurekapp = (function(clientConfig){
         isDate: function() {
             return this.get('type') === 'date';
         }.property('type')
+
     });
 
 
