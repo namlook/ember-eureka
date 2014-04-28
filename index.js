@@ -117,8 +117,22 @@ Eurekapp = (function(clientConfig){
     });
 
     /***** Controllers ******/
-    // App.TypeNewController = Ember.Controller.extend({
-    // });
+    App.TypeNewController = Ember.Controller.extend({
+        actions: {
+            save: function() {
+                var _this = this;
+                this.get('model').save(function(err, model) {
+                    if (err) {
+                        return console.log('err', err);
+                    }
+                    var type = model.get('_type').underscore();
+                    var _id = model.get('_id');
+                    _this.transitionToRoute('type.display', type, _id);
+
+                });
+            }
+        }
+    });
 
     // Ember.TEMPLATES = require('./templates');
 
@@ -217,6 +231,9 @@ Eurekapp = (function(clientConfig){
         _updateContent: function() {
             var _this = this;
             this.get('_fields').forEach(function(field){
+                if (field.get('value') === '') {
+                    field.set('value', null);
+                }
                 _this.set('content.'+field.get('name'), field.get('value'));
             });
         },
@@ -225,9 +242,22 @@ Eurekapp = (function(clientConfig){
             Ember.run.debounce(this, this._updateContent, 300);
         }.observes('_fields.@each.value'),
 
-        save: function() {
+        save: function(callback) {
             this._updateContent();
-            console.log(this._toJSON()); // TODO
+            var type = this.get('_modelType');
+            var endpoint = App.config.apiURI+'/'+type.underscore();
+            var postData = {payload: this._toJSON()};
+            Ember.$.post(endpoint, postData, function(data) {
+                return callback(null, App.db[type].get('model').create({content: data.object}));
+            }).fail(function(jqXHR) {
+                alert('An error occured: ', jqXHR.responseText);
+                error = jqXHR.responseText;
+                if (jqXHR.responseText.error !== undefined) {
+                    error = jqXHR.responseText.error;
+                }
+                return callback(error);
+            });
+
         },
 
         /**** properties ****/
@@ -456,10 +486,6 @@ Eurekapp = (function(clientConfig){
                 field.set('value', field.get('relation'));
                 field.set('displayRelation', false);
                 console.log('relation done');
-            },
-            save: function() {
-                console.log('save', this.get('model'));
-                this.get('model').save();
             }
         }
     });
