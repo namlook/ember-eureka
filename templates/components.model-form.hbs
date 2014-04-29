@@ -3,42 +3,6 @@
     <h1>New {{model.type}}</h1>
 {{/unless}}
 
-{{#each field in model._fields}}
-    <fieldset><legend>{{field.name}}</legend>
-        {{#if field.schema.multi}}
-            {{#if field.isRelation}}
-                {{#each relation in field.value}}
-                    {{#if relation._hide}}
-                        <button class="button" {{action 'editRelation' relation}}>
-                            {{relation.title}}
-                        </button>
-                    {{else}}
-                        {{model-form model=relation isRelation=true}}
-                        <button class="button alert" {{action 'removeRelation' field relation}}>remove</button>
-                        <button class="button success" {{action 'saveRelation' relation}}>done</button>
-                    {{/if}}
-
-                {{/each}}
-                <a {{action 'addRelation' field}}>add</a>
-            {{/if}}
-        {{else}}
-            {{#if field.isRelation}}
-                {{#if field.value}}
-                    {{#if field.value._hide}}
-                        <button class="button" {{action 'editRelation' field.value}}>
-                            {{field.value.title}}
-                        </button>
-                    {{else}}
-                        {{model-form model=field.value isRelation=true}}
-                        <button class="button alert" {{action 'removeRelation' field field.value}}>remove</button>
-                        <button class="button success" {{action 'saveRelation' field.value}}>done</button>
-                    {{/if}}
-                {{else}}
-                    <a {{action 'addRelation' field}}>new</a>
-                {{/if}}
-            {{else}}
-                {{dynamic-input field=field}}
-            {{/if}}
-        {{/if}}
-    </fieldset>
+{{#each field in fields}}
+    {{field-form field=field}}
 {{/each}}

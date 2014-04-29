@@ -1,0 +1,29 @@
+
+<fieldset><legend>{{field.name}}</legend>
+    {{#if field.isRelation}}
+        {{#each item in field.content}}
+            {{#if item._hide}}
+                <button class="button" {{action 'editRelation' item}}>
+                    {{item.value.title}}
+                </button>
+            {{else}}
+                {{model-form model=item.value isRelation=true}}
+                <button class="button alert" {{action 'removeRelation' item}}>remove</button>
+                <button class="button success" {{action 'doneRelation' item}}>done</button>
+                <br />
+            {{/if}}
+        {{/each}}
+    {{else}}
+        {{#each item in field.content}}
+            {{dynamic-input field=field value=item.value}}
+        {{/each}}
+    {{/if}}
+
+    {{#if displayAddButton}}
+        <a {{action 'add'}}>add</a>
+    {{/if}}
+    {{#if displayNewButton}}
+            <a {{action 'add'}}>new</a>
+    {{/if}}
+
+</fieldset>
