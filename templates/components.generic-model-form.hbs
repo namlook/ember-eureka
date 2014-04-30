@@ -1,8 +1,4 @@
 
-{{#unless isRelation}}
-    <h1>New {{model.type}}</h1>
-{{/unless}}
-
 {{#each field in fields}}
     {{field-form field=field}}
 {{/each}}
