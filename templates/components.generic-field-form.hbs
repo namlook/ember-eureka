@@ -1,29 +1,59 @@
 
 <fieldset><legend>{{field.name}}</legend>
+
+{{#if field.isMulti}}
+
     {{#if field.isRelation}}
         {{#each item in field.content}}
-            {{#if item._hide}}
-                <button class="button" {{action 'editRelation' item}}>
-                    {{item.value.title}}
-                </button>
-            {{else}}
+            {{#if item.isEditable}}
                 {{model-form model=item.value isRelation=true}}
                 <button class="button alert" {{action 'removeRelation' item}}>remove</button>
                 <button class="button success" {{action 'doneRelation' item}}>done</button>
                 <br />
+            {{else}}
+                <button class="button" {{action 'editRelation' item}}>
+                    {{item.value.title}}
+                </button>
             {{/if}}
         {{/each}}
+
     {{else}}
+
         {{#each item in field.content}}
             {{dynamic-input field=field value=item.value}}
         {{/each}}
+
     {{/if}}
 
     {{#if displayAddButton}}
         <a {{action 'add'}}>add</a>
     {{/if}}
-    {{#if displayNewButton}}
+
+{{else}}
+
+
+    {{#if field.isRelation}}
+        {{#if field.content}}
+            {{#if field.isEditable}}
+                {{model-form model=field.content isRelation=true}}
+                <button class="button alert" {{action 'removeRelation'}}>remove</button>
+                <button class="button success" {{action 'doneRelation' field}}>done</button>
+                <br />
+
+            {{else}}
+                  <button class="button" {{action 'editRelation' field}}>
+                    {{field.content.title}}
+                </button>
+
+            {{/if}}
+        {{else}}
             <a {{action 'add'}}>new</a>
+        {{/if}}
+    {{else}}
+
+        {{dynamic-input field=field value=field.content}}
+
     {{/if}}
 
+{{/if}}
 </fieldset>

@@ -1,21 +1,3 @@
 
-<fieldset>
-    <legend>{{model._type}}</legend>
 
-    <h1>{{model.title}}</h1>
-    {{#if model.description}}
-        <p>{{model.description}}</p>
-    {{/if}}
-    {{#if model.thumb}}
-        <img {{bind-attr src=model.thumb}} />
-    {{/if}}
-
-    <dl>
-        {{#each value in model._values}}
-            <dt>{{value.name}}</dt>
-            <dd>
-                {{display-field modelType=model._type fieldName=value.name value=value.value}}
-            </dd>
-        {{/each}}
-    </dl>
-</fieldset>
+{{model-display model=model}}

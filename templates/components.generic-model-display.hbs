@@ -1,0 +1,14 @@
+
+<h1>{{model.title}}</h1>
+<h5>{{model.type}}</h5>
+
+{{#if model.description}}
+    <p>{{model.description}}</p>
+{{/if}}
+{{#if model.thumb}}
+    <img {{bind-attr src=model.thumb}} />
+{{/if}}
+
+{{#each field in fields}}
+    {{field-display field=field}}
+{{/each}}
