@@ -3,6 +3,13 @@
 Eurekapp = (function(clientConfig){
 
     var App = Ember.Application.create({
+        LOG_STACKTRACE_ON_DEPRECATION : true,
+        LOG_BINDINGS                  : true,
+        LOG_TRANSITIONS               : true,
+        LOG_TRANSITIONS_INTERNAL      : true,
+        LOG_VIEW_LOOKUPS              : true,
+        LOG_ACTIVE_GENERATION         : true,
+
         ready: function() {
             Ember.$('title').text(this.get('config').name);
             console.log(this.get('config').name, 'is ready !');
@@ -49,71 +56,64 @@ Eurekapp = (function(clientConfig){
     });
 
 
-    App.TypeListRoute = Ember.Route.extend({
-        model: function(params) {
-            return this.get('db')[params.type.camelize().capitalize()].find();
-        },
+    App.RouteTemplateMixin = Ember.Mixin.create({
+        genericTemplateName: null,
+        genericControllerName: null,
+
         renderTemplate: function(controller, model) {
             // template
-            var template = 'type/list';
-            var type = model.get('type').underscore();
-            if (Ember.TEMPLATES[type+'/list']) {
-                template = type+'/list';
+            var template = this.get('genericTemplateName');
+            var type = model.get('type');
+            var customTemplateName = template.replace('<type>', type.underscore());
+            if (Ember.TEMPLATES[customTemplateName]) {
+                template = customTemplateName;
+            } else {
+                template = template.replace('<type>', 'type');
             }
 
             // controller
-            if (App[model.get('type')+'ListController']) {
-                controller = this.controllerFor(model.get('type')+'List');
-                controller.set('model', model);
+            var controllerName = this.get('genericControllerName');
+            if (controllerName) {
+                var customControllerName = controllerName.replace('<type>', type);
+                if (App[customControllerName]) {
+                    controller = this.controllerFor(customControllerName);
+                    controller.set('model', model);
+                }
             }
             this.render(template, {controller: controller});
         }
     });
 
+    App.TypeListRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+        genericTemplateName: '<type>/list',
+        genericControllerName: '<type>ListController',
 
-    App.TypeDisplayRoute = Ember.Route.extend({
+        model: function(params) {
+            return this.get('db')[params.type.camelize().capitalize()].find();
+        }
+    });
+
+
+    App.TypeDisplayRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+        genericTemplateName: '<type>/display',
+        genericControllerName: '<type>DisplayController',
+
         model: function(params) {
             var _type = params.type.camelize().capitalize();
             var _id = params.id;
             return this.get('db')[_type].first({_id: _id, _type: _type});
-        },
-        renderTemplate: function(controller, model) {
-            // template
-            var template = 'type/display';
-            var type = model.get('type').underscore();
-            if (Ember.TEMPLATES[type+'/display']) {
-                template = type+'/display';
-            }
-
-            // controller
-            if (App[model.get('type')+'DisplayController']) {
-                controller = this.controllerFor(model.get('type')+'Display');
-                controller.set('model', model);
-            }
-            this.render(template, {controller: controller});
         }
     });
 
-    App.TypeNewRoute = Ember.Route.extend({
+    App.TypeNewRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+        genericTemplateName: '<type>/new',
+        genericControllerName: '<type>NewController',
+
         model: function(params) {
             var _type = params.type.camelize().capitalize();
             return this.get('db')[_type].get('model').create({content: {}});
         },
-        renderTemplate: function(controller, model) {
-            // template
-            var template = 'type/new';
-            var type = model.get('type').underscore();
-            if (Ember.TEMPLATES[type+'/new']) {
-                template = type+'/new';
-            }
 
-            // controller
-            if (App[model.get('type')+'NewController']) {
-                controller = this.controllerFor(model.get('type')+'New');
-                controller.set('model', model);
-            }
-            this.render(template, {controller: controller});
-        }
     });
 
     /***** Controllers ******/
@@ -216,7 +216,6 @@ Eurekapp = (function(clientConfig){
         _toJSONObject: function() {
             var pojo = {};
             var content = this.get('content');
-            console.log(content);
             var modelSchema = App.getModelSchema(this.get('type'));
             for (var fieldName in content) {
                 var isRelation = App.db[this.get('type')].isRelation(fieldName);
@@ -487,38 +486,44 @@ Eurekapp = (function(clientConfig){
 
     /*** Components ****/
 
-    App.RenderTemplateComponent = Ember.Component.extend({
-        action: null,
-        model: null,
+    /* TemplateMixin
+     * If a components extend this mixin, its template can be overloaded
+     *
+     * For example, if `genericTemplateName` is `components/<generic>-model-form`
+     * and the `templateType` is 'blog_post', then the existance of the template
+     * `components/blog_post-model-form` will be check in Ember.TEMPLATES. If true,
+     * the corresponding template is displayed, else, the generic template will be used.
+     *
+     *
+     * TODO: allow fqfn in `templateType`: `model::field-...`. Example:
+     *  `blog_post::remark-field-form` will be displayed only on the `remark` field
+     *  of a BlogPost model
+     */
+    App.TemplateMixin = Ember.Mixin.create({
+        genericTemplateName: null,
+        templateType: null,
+
         layoutName: function() {
-            var action = this.get('action');
-            var template = 'type/'+action;
-            if (this.get('model')) {
-                var type = this.get('model').get('type').underscore();
-                if (Ember.TEMPLATES[type+'/'+action]) {
-                    template = type+'/'+action;
-                }
+            var templateName = this.get('genericTemplateName');
+            var templateType = this.get('templateType');
+            var customTemplateName = templateName.replace('<generic>', templateType);
+            if (Ember.TEMPLATES[customTemplateName]) {
+                return customTemplateName;
+            } else {
+                templateName = templateName.replace('<generic>', 'generic');
             }
-            return template;
-        }.property('template')
+            return templateName;
+        }.property('templateType').volatile(),
+
+        rerenderLayout: function() {
+            console.log(this.get('layoutName'));
+            this.set('layout', Ember.TEMPLATES[this.get('layoutName')]);
+            this.rerender();
+        }.observes('templateType')
     });
 
-    App.ModelFormComponent = Ember.Component.extend({
+    App.ModelMixin = Ember.Mixin.create({
         model: null,
-        isRelation: false,
-
-        layoutName: function() {
-            var action = this.get('action');
-            var template = 'type/'+action;
-            if (this.get('model')) {
-                var type = this.get('model').get('type').underscore();
-                if (Ember.TEMPLATES[type+'/'+action]) {
-                    template = type+'/'+action;
-                }
-            }
-            return template;
-        }.property('template'),
-
 
         fields: function() {
             var schema = App.getModelSchema(this.get('model').get('type'));
@@ -552,7 +557,8 @@ Eurekapp = (function(clientConfig){
 
         _updateContent: function() {
             var _this = this;
-            this.get('fields').forEach(function(field){
+            var fields = this.get('fields');
+            fields.forEach(function(field){
                 var value = null;
                 var content = field.get('content');
 
@@ -583,8 +589,33 @@ Eurekapp = (function(clientConfig){
 
     });
 
-    App.FieldFormComponent = Ember.Component.extend({
+
+    App.ModelFormComponent = Ember.Component.extend(App.ModelMixin, App.TemplateMixin, {
+        model: null,
+        isRelation: false,
+        genericTemplateName: 'components/<generic>-model-form',
+
+        // get the name of the template from the model type
+        templateType: function() {
+            var model = this.get('model');
+            if (model) {
+                return model.get('type').underscore();
+            }
+        }.property('model.type')
+    });
+
+    App.FieldFormComponent = Ember.Component.extend(App.TemplateMixin, {
+        genericTemplateName: 'components/<generic>-field-form',
         field: null,
+
+        // get the name of the template from the field name
+        templateType: function() {
+            var field = this.get('field');
+            if (field) {
+                return field.get('name');
+            }
+        }.property('field.name'),
+
 
         displayAddButton: function() {
             if (this.get('field').get('isMulti')) {
@@ -629,7 +660,6 @@ Eurekapp = (function(clientConfig){
                     item = null;
                 }
                 field.get('content').pushObject(Ember.Object.create({value: item}));
-                console.log(field.get('name'), 'nb content', field.get('content').length);
             }
         }
 
