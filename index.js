@@ -40,7 +40,10 @@ Eurekapp = (function(clientConfig){
         modelNames: function() {
             var _modelNames = [];
             for (var modelName in App.config.schemas){
-                _modelNames.push({classified: modelName.camelize().capitalize(), underscored: modelName.underscore()});
+                _modelNames.push({
+                    classified: modelName.camelize().capitalize(),
+                    underscored: modelName.underscore()
+                });
             }
             return _modelNames;
         }.property('schemas')
@@ -68,7 +71,7 @@ Eurekapp = (function(clientConfig){
             // template
             var template = this.get('genericTemplateName');
             var type = model.get('type');
-            console.log(template, type, controller, model);
+            // console.log(template, type, controller, model);
             var customTemplateName = template.replace('<type>', type.underscore());
             if (Ember.TEMPLATES[customTemplateName]) {
                 template = customTemplateName;
@@ -117,8 +120,18 @@ Eurekapp = (function(clientConfig){
         model: function(params) {
             var _type = params.type.camelize().capitalize();
             return this.get('db')[_type].get('model').create({content: {}});
-        },
+        }
+    });
 
+    App.TypeEditRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+        genericTemplateName: '<type>/edit',
+        genericControllerName: '<type>EditController',
+
+        model: function(params) {
+            var _type = params.type.camelize().capitalize();
+            var _id = params.id;
+            return this.get('db')[_type].first({_id: _id, _type: _type});
+        }
     });
 
     /***** Controllers ******/
@@ -126,14 +139,27 @@ Eurekapp = (function(clientConfig){
         actions: {
             save: function() {
                 var _this = this;
-                this.get('model').save(function(err, model) {
-                    if (err) {
-                        return console.log('err', err);
-                    }
+                this.get('model').save().then(function(model) {
                     var type = model.get('_type').underscore();
                     var _id = model.get('_id');
                     _this.transitionToRoute('type.display', type, _id);
+                }, function(err){
+                    return console.log('err', err);
+                });
+            }
+        }
+    });
 
+    App.TypeEditController = Ember.Controller.extend({
+        actions: {
+            save: function() {
+                var _this = this;
+                this.get('model').save().then(function(model) {
+                    var type = model.get('_type').underscore();
+                    var _id = model.get('_id');
+                    _this.transitionToRoute('type.display', type, _id);
+                }, function(err){
+                    return console.log('err', err);
                 });
             }
         }
@@ -144,6 +170,45 @@ Eurekapp = (function(clientConfig){
 
     /**** Models *****/
     App.Model = Ember.ObjectProxy.extend({
+
+        init: function() {
+            this._super();
+            var content = this.get('content');
+            // wrap relations into a model
+            for (var key in content) {
+
+                var value = content[key];
+                var fieldSchema = this.get('_schema')[key];
+                if (!fieldSchema) {
+                    continue;
+                }
+                var relationType = fieldSchema.type;
+
+                if (!!App.getModelSchema(relationType)) {
+
+                    if (fieldSchema.multi) {
+
+                        var values = [];
+
+                        value.forEach(function(item) {
+                            var rel = App.db[relationType].get('model').create({
+                                content: item
+                            });
+                            values.push(rel);
+                        });
+
+                        this.set('content.'+key, values);
+                    }
+                    else {
+                        var rel = App.db[relationType].get('model').create({
+                            content: value
+                        });
+                        this.set('content.'+key, rel);
+                    }
+                }
+            }
+        },
+
         _modelType: null,
         _contentChanged: 0,
         content: null,
@@ -159,15 +224,34 @@ Eurekapp = (function(clientConfig){
                 var isRelation = App.db[this.get('type')].isRelation(fieldName);
                 if (content[fieldName] && isRelation) {
                     var modelSchema = this.get('_schema');
-                    if (modelSchema[fieldName].multi) {
-                        var rels = [];
-                        content[fieldName].forEach(function(rel){
-                            rels.push(rel._toJSONObject());
-                        });
-                        pojo[fieldName] = rels;
-                    } else {
-                        pojo[fieldName] = content[fieldName]._toJSONObject();
+                    var relations = content[fieldName];
+                    if (!Ember.isArray(relations)) {
+                        relations = [relations];
                     }
+
+                    var rels = [];
+                    relations.forEach(function(relation) {
+                        if (relation.get('_ref')) {
+                            rels.push({
+                                _id: relation.get('_id'),
+                                _type: relation.get('type')
+                            });
+                        } else {
+                            rels.push(relation._toJSONObject());
+                        }
+                    });
+
+
+                    if (rels.length) {
+                        if (modelSchema[fieldName].multi) {
+                            pojo[fieldName] = rels;
+                        } else {
+                            pojo[fieldName] = rels[0];
+                        }
+                    } else {
+                        pojo[fieldName] = null;
+                    }
+
                 } else {
                     pojo[fieldName] = content[fieldName];
                 }
@@ -179,22 +263,66 @@ Eurekapp = (function(clientConfig){
             return JSON.stringify(this._toJSONObject());
         },
 
-        save: function(callback) {
-            console.log(this._toJSON());
+        _getPendingPromises: function() {
+            var pendingPromises = Ember.A();
+            var content = this.get('content');
+            for (var fieldName in content) {
+
+                var fieldSchema = this.get('_schema')[fieldName];
+                if (!fieldSchema) {
+                    continue;
+                }
+
+                // save relations if changed or add to pojo if the relation is new
+                var isRelation = App.db[this.get('type')].isRelation(fieldName);
+                if (isRelation) {
+                    var relations = content[fieldName];
+                    if (!relations) {
+                        continue;
+                    }
+
+                    if (!Ember.isArray(relations)) {
+                        relations = [relations];
+                    }
+
+                    relations.forEach(function(relation){
+                        pendingPromises.addObjects(relation._getPendingPromises());
+                    });
+                }
+            }
+            if (this.get('_contentChanged')) {
+                pendingPromises.addObject(this._saveModel());
+            }
+
+            return pendingPromises;
+        },
+
+        _saveModel: function() {
             var type = this.get('_modelType');
             var endpoint = App.config.apiURI+'/'+type.underscore();
             var postData = {payload: this._toJSON()};
-            Ember.$.post(endpoint, postData, function(data) {
-                return callback(null, App.db[type].get('model').create({content: data.object}));
-            }).fail(function(jqXHR) {
-                alert('An error occured: ', jqXHR.responseText);
-                error = jqXHR.responseText;
-                if (jqXHR.responseText.error !== undefined) {
-                    error = jqXHR.responseText.error;
-                }
-                return callback(error);
+            return new Ember.RSVP.Promise(function(resolve, reject) {
+                Ember.$.post(endpoint, postData, function(data) {
+                    resolve(App.db[type].get('model').create({
+                        content: data.object
+                    }));
+                }).fail(function(jqXHR) {
+                    alert('An error occured: ', jqXHR.responseText);
+                    error = jqXHR.responseText;
+                    if (jqXHR.responseText.error !== undefined) {
+                        error = jqXHR.responseText.error;
+                    }
+                    return reject(error);
+                });
             });
+        },
 
+        save: function() {
+            var _this = this;
+            var promises = this._getPendingPromises();
+            return Ember.RSVP.Promise.all(promises).then(function(relations){
+                return _this._saveModel();
+            });
         },
 
         _fields: function() {
@@ -237,6 +365,7 @@ Eurekapp = (function(clientConfig){
                         value.forEach(function(val){
                             values.pushObject(Ember.Object.create({value: val}));
                         });
+
                         if (values.length) {
                             value = values;
                         } else {
@@ -360,7 +489,10 @@ Eurekapp = (function(clientConfig){
         fields: function() {
             var _fields = Ember.A();
             for (var fieldName in this.get('schema')) {
-                _fields.push({name: fieldName, structure: this.get('schema')[fieldName]});
+                _fields.push({
+                    name: fieldName,
+                    structure: this.get('schema')[fieldName]
+                });
             }
             return _fields;
         }.property('schema'),
@@ -441,31 +573,6 @@ Eurekapp = (function(clientConfig){
                     // if there is a match, we wrap all relations with Model objects
                     if (data.results.length > 0) {
                         content = data.results[0];
-
-                        // for each field, check if it is a relation to wrap
-                        for (var key in content) {
-
-                            var value = content[key];
-                            var type = that.getFieldType(key);
-
-                            if (that.isRelation(key)) {
-
-                                if (that.isMulti(key)) {
-
-                                    var values = [];
-
-                                    value.forEach(function(item) {
-                                        var rel = App.db[type].get('model').create({content: item});
-                                        values.push(rel);
-                                    });
-
-                                    content[key] = values;
-                                }
-                                else {
-                                    content[key] = App.db[type].get('model').create({content: value});
-                                }
-                            }
-                        }
                     }
                     // build the model
                     obj = that.get('model').create({content: content});
@@ -564,7 +671,7 @@ Eurekapp = (function(clientConfig){
         }.property('templateType').volatile(),
 
         rerenderLayout: function() {
-            console.log(this.get('layoutName'));
+            // console.log(this.get('layoutName'));
             this.set('layout', Ember.TEMPLATES[this.get('layoutName')]);
             this.rerender();
         }.observes('templateType')
@@ -576,7 +683,19 @@ Eurekapp = (function(clientConfig){
         genericTemplateName: 'components/<generic>-model-display',
 
         fields: function() {
-            return this.get('model').get('_fields');
+            var fields = Ember.A();
+            this.get('model').get('_fields').forEach(function(field){
+                if (field.get('isMulti')) {
+                    if (field.get('content').length) {
+                        fields.pushObject(field);
+                    }
+                } else {
+                    if (field.get('content') !== null) {
+                        fields.pushObject(field);
+                    }
+                }
+            });
+            return fields;
         }.property('model._fields')
     });
 
@@ -638,12 +757,10 @@ Eurekapp = (function(clientConfig){
 
         actions: {
             editRelation: function(fieldContent) {
-                console.log('edit relation', fieldContent);
                 fieldContent.set('isEditable', true);
             },
             removeRelation: function(fieldContent) {
                 var field = this.get('field');
-                console.log('cancel relation', field.get('isMulti'), fieldContent);
                 if (field.get('isMulti')) {
                     field.get('content').removeObject(fieldContent);
                 } else {
@@ -653,10 +770,8 @@ Eurekapp = (function(clientConfig){
             },
             doneRelation: function(fieldContent) {
                 fieldContent.set('isEditable', false);
-                console.log('relation done', fieldContent);
             },
             add: function() {
-                console.log('add field');
                 var item, value;
                 var field = this.get('field');
                 if (field.get('isMulti')) {
@@ -670,7 +785,9 @@ Eurekapp = (function(clientConfig){
                 }
                 else {
                     if (field.get('isRelation')) {
-                        field.set('content', field.get('relationModel').create({content: {}}));
+                        field.set('content', field.get('relationModel').create({
+                            content: {}
+                        }));
                         field.set('isEditable', true);
                     }
                 }
