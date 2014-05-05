@@ -1,18 +1,29 @@
 
 <fieldset><legend>{{field.name}}</legend>
     {{#if field.schema.multi}}
-        <ul>
-        {{#each item in field.content}}
-            <li>
-                {{#if field.isRelation}}
-                    {{#link-to 'type.display' item.value.type item.value._id}}
-                        {{item.value.title}}
-                    {{/link-to}}
-                {{else}}
-                    {{item.value}}
-                {{/if}}
-            </li>
-        {{/each}}
+        {{#if field.isI18n}}
+            {{#each i18tem in field.i18nContent}}
+                <span class="label secondary">{{i18tem.lang}}</span>
+                <ul>
+                {{#each item in i18tem.value}}
+                    <li>{{item.value}}</li>
+                {{/each}}
+                </ul>
+            {{/each}}
+        {{else}}
+            <ul>
+            {{#each item in field.content}}
+                <li>
+                    {{#if field.isRelation}}
+                        {{#link-to 'type.display' item.value.type item.value._id}}
+                            {{item.value.title}}
+                        {{/link-to}}
+                    {{else}}
+                        {{item.value}}
+                    {{/if}}
+                </li>
+            {{/each}}
+        {{/if}}
         </ul>
     {{else}}
         {{#if field.isRelation}}
@@ -20,7 +31,14 @@
                 {{field.content.title}}
             {{/link-to}}
         {{else}}
-            {{field.content}}
+            {{#if field.isI18n}}
+                {{#each item in field.i18nContent}}
+                    {{item.value}}
+                    <span class="label secondary">{{item.lang}}</span>
+                {{/each}}
+            {{else}}
+                {{field.content}}
+            {{/if}}
         {{/if}}
     {{/if}}
 </fieldset>

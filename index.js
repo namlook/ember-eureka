@@ -597,6 +597,25 @@ Eurekapp = (function(clientConfig){
             return !!this.get('schema').multi;
         }.property('schema.multi'),
 
+        isI18n: function() {
+            return !!this.get('schema').i18n;
+        }.property('schema.i18n'),
+
+        i18nContent: function() {
+            var results = Ember.A();
+            if (this.get('isI18n')) {
+                var content = this.get('content');
+                for (var lang in content) {
+                    var value = content[lang];
+                    results.pushObject(Ember.Object.create({
+                        lang: lang,
+                        value: value
+                    }));
+                }
+            }
+            return results;
+        }.property('isI18n', 'content'),
+
         relationModel: function() {
             if (this.get('isRelation')) {
                 return App.db[this.get('schema').get('type')].get('model');
@@ -856,7 +875,6 @@ Eurekapp = (function(clientConfig){
     //         return false;
     //     }.property('value')
     // });
-
 
 
     /**** Initialization *****/
