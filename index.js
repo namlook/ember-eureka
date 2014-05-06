@@ -1,5 +1,27 @@
 // var Ember = require('ember');
 
+Ember.isString = function(obj) {
+    return Object.prototype.toString.call(obj) === '[object String]';
+};
+
+Ember.isEmpty = function(obj) {
+    if ([null, undefined].indexOf(obj) > -1) {
+        return true;
+    }
+
+    if (Ember.isArray(obj) || Ember.isString(obj)) {
+        return obj.length === 0;
+    }
+
+    for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
 Eurekapp = (function(clientConfig){
 
     var App = Ember.Application.create({
@@ -290,7 +312,7 @@ Eurekapp = (function(clientConfig){
                     });
                 }
             }
-            if (this.get('_contentChanged')) {
+            if (this.get('_ref') && this.get('_contentChanged')) {
                 pendingPromises.addObject(this._saveModel());
             }
 
@@ -321,7 +343,7 @@ Eurekapp = (function(clientConfig){
             var _this = this;
             var promises = this._getPendingPromises();
             return Ember.RSVP.Promise.all(promises).then(function(relations){
-                return _this._saveModel();
+                return _this;
             });
         },
 
@@ -350,7 +372,7 @@ Eurekapp = (function(clientConfig){
                 var value = this.get('content.'+fieldName);
 
                 if (value === undefined) {
-                    if (field.get('isMulti')) {
+                    if (field.get('isMulti') || field.get('isI18n')) {
                         value = Ember.A();
                     } else {
                         value = null;
@@ -371,11 +393,28 @@ Eurekapp = (function(clientConfig){
                         } else {
                             value = null;
                         }
+                    } else if (field.get('isI18n')) {
+                        values = Ember.A();
+                        for (var lang in value) {
+                            var _value = value[lang];
+                            values.pushObject(Ember.Object.create({
+                                value: _value,
+                                lang: lang
+                            }));
+                        }
+                        if (values.length) {
+                            value = values;
+                        } else {
+                            value = null;
+                        }
                     }
                 }
                 field.set('content', value);
                 var watchContentPath = 'content';
                 if (field.get('isMulti')) {
+                    watchContentPath = 'content.@each.value';
+                } else if (field.get('isI18n')) {
+                    Ember.addObserver(field, 'content.@each.lang', field, '_triggerModelChanged');
                     watchContentPath = 'content.@each.value';
                 }
                 Ember.addObserver(field, watchContentPath, field, '_triggerModelChanged');
@@ -383,6 +422,7 @@ Eurekapp = (function(clientConfig){
             }
             return fields;
         }.property('_schema').readOnly(),
+
 
         _updateContent: function() {
             var fields = this.get('_fields');
@@ -398,6 +438,16 @@ Eurekapp = (function(clientConfig){
                         }
                     });
                     if (value.length === 0) {
+                       value = null;
+                    }
+                } else if (field.get('isI18n')){
+                    value = {};
+                    content.forEach(function(item){
+                        if (item.get('value') !== null && item.get('lang') !== null) {
+                            value[item.get('lang')] = item.get('value');
+                        }
+                    });
+                    if (Ember.isEmpty(value)) {
                        value = null;
                     }
                 } else {
@@ -601,21 +651,6 @@ Eurekapp = (function(clientConfig){
             return !!this.get('schema').i18n;
         }.property('schema.i18n'),
 
-        i18nContent: function() {
-            var results = Ember.A();
-            if (this.get('isI18n')) {
-                var content = this.get('content');
-                for (var lang in content) {
-                    var value = content[lang];
-                    results.pushObject(Ember.Object.create({
-                        lang: lang,
-                        value: value
-                    }));
-                }
-            }
-            return results;
-        }.property('isI18n', 'content'),
-
         relationModel: function() {
             if (this.get('isRelation')) {
                 return App.db[this.get('schema').get('type')].get('model');
@@ -640,6 +675,8 @@ Eurekapp = (function(clientConfig){
         willDestroy: function () {
             var watchContentPath = 'content';
             if (this.get('isMulti')) {
+                watchContentPath = 'content.@each.value';
+            } else if (this.get('isI18n')) {
                 watchContentPath = 'content.@each.value';
             }
             Ember.removeObserver(this, watchContentPath, this, '_triggerModelChanged');
@@ -704,7 +741,7 @@ Eurekapp = (function(clientConfig){
         fields: function() {
             var fields = Ember.A();
             this.get('model').get('_fields').forEach(function(field){
-                if (field.get('isMulti')) {
+                if (field.get('isMulti') || field.get('isI18n')) {
                     if (field.get('content').length) {
                         fields.pushObject(field);
                     }
@@ -808,6 +845,9 @@ Eurekapp = (function(clientConfig){
                             content: {}
                         }));
                         field.set('isEditable', true);
+                    } else if (field.get('isI18n')) {
+                        item = Ember.Object.create({value: null, lang: null});
+                        field.get('content').pushObject(item);
                     }
                 }
             }
@@ -846,36 +886,6 @@ Eurekapp = (function(clientConfig){
         }.property('type')
 
     });
-
-
-    // App.OLDDisplayFieldComponent = Ember.Component.extend({
-    //     value: null,
-    //     fieldName: null,
-    //     modelType: null,
-
-    //     isArray: function() {
-    //         return Ember.isArray(this.get('value'));
-    //     }.property('value'),
-
-    //     isRelation: function() {
-    //         var value = this.get('value');
-    //         var modelSchema = App.getModelSchema(this.get('modelType'));
-    //         if (App.getModelSchema(modelSchema[this.get('fieldName')].type)) {
-    //             return true;
-    //         }
-    //         return false;
-    //     }.property('value'),
-
-    //     isI18n: function() {
-    //         var value = this.get('value');
-    //         var modelSchema = App.getModelSchema(this.get('modelType'));
-    //         if (modelSchema[this.get('fieldName')].i18n) {
-    //             return true;
-    //         }
-    //         return false;
-    //     }.property('value')
-    // });
-
 
     /**** Initialization *****/
     // attach the config, and the db to the application

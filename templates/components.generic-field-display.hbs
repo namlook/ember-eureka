@@ -2,7 +2,7 @@
 <fieldset><legend>{{field.name}}</legend>
     {{#if field.schema.multi}}
         {{#if field.isI18n}}
-            {{#each i18tem in field.i18nContent}}
+            {{#each i18tem in field.content}}
                 <span class="label secondary">{{i18tem.lang}}</span>
                 <ul>
                 {{#each item in i18tem.value}}
@@ -32,10 +32,14 @@
             {{/link-to}}
         {{else}}
             {{#if field.isI18n}}
-                {{#each item in field.i18nContent}}
-                    {{item.value}}
-                    <span class="label secondary">{{item.lang}}</span>
+                <ul class="no-bullet">
+                {{#each item in field.content}}
+                    <li>
+                        <span class="label secondary">{{item.lang}}</span>
+                        {{item.value}}
+                    </li>
                 {{/each}}
+                </ul>
             {{else}}
                 {{field.content}}
             {{/if}}

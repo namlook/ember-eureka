@@ -33,6 +33,7 @@
 
 
     {{#if field.isRelation}}
+
         {{#if field.content}}
             {{#if field.isEditable}}
                 {{model-form model=field.content isRelation=true}}
@@ -49,10 +50,25 @@
         {{else}}
             <a {{action 'add'}}>new</a>
         {{/if}}
+
     {{else}}
 
-        {{dynamic-input field=field value=field.content}}
+        {{#if field.isI18n}}
+            {{#each item in field.content}}
+              <div class="row collapse">
+                <div class="small-2 columns">
+                    {{input type='text' placeholder='lang' classNames="prefix" value=item.lang}}
+                </div>
+                <div class="small-10 columns">
+                    {{input type='text' placeholder='value' value=item.value}}
+                </div>
+              </div>
+            {{/each}}
+            <a {{action 'add'}}>add</a>
 
+        {{else}}
+            {{dynamic-input field=field value=field.content}}
+        {{/if}}
     {{/if}}
 
 {{/if}}
