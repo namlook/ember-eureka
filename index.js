@@ -23,6 +23,7 @@ Ember.isEmpty = function(obj) {
 };
 
 Eurekapp = (function(clientConfig){
+    'use strict';
 
     var App = Ember.Application.create({
         LOG_STACKTRACE_ON_DEPRECATION : true,
@@ -379,11 +380,11 @@ Eurekapp = (function(clientConfig){
                     }
                 }
                 else {
+                    var values = Ember.A();
                     if (field.get('isMulti')) {
                         if(!Ember.isArray(value)) {
                             value = [value];
                         }
-                        values = Ember.A();
                         value.forEach(function(val){
                             values.pushObject(Ember.Object.create({value: val}));
                         });
@@ -394,7 +395,6 @@ Eurekapp = (function(clientConfig){
                             value = null;
                         }
                     } else if (field.get('isI18n')) {
-                        values = Ember.A();
                         for (var lang in value) {
                             var _value = value[lang];
                             values.pushObject(Ember.Object.create({
@@ -814,6 +814,12 @@ Eurekapp = (function(clientConfig){
         actions: {
             editRelation: function(fieldContent) {
                 fieldContent.set('isEditable', true);
+
+                var field = this.get('field');
+                if (field.get('isMulti')) {
+                    field.get('content').removeObject(fieldContent);
+                    field.set('isEditable', false);
+                }
             },
             removeRelation: function(fieldContent) {
                 var field = this.get('field');
@@ -826,28 +832,39 @@ Eurekapp = (function(clientConfig){
             },
             doneRelation: function(fieldContent) {
                 fieldContent.set('isEditable', false);
+
+                var field = this.get('field');
+                if (field.get('isMulti')) {
+                    field.set('isEditable', false);
+                }
             },
             add: function() {
                 var item, value;
                 var field = this.get('field');
-                if (field.get('isMulti')) {
-                    if (field.get('isRelation')) {
-                        value = field.get('relationModel').create({content: {}});
-                    } else {
-                        value = null;
-                    }
-                    item = Ember.Object.create({value: value, isEditable: true});
-                    field.get('content').pushObject(item);
-                }
-                else {
-                    if (field.get('isRelation')) {
-                        field.set('content', field.get('relationModel').create({
-                            content: {}
-                        }));
-                        field.set('isEditable', true);
-                    } else if (field.get('isI18n')) {
-                        item = Ember.Object.create({value: null, lang: null});
+                if (Ember.isEmpty(field.get('content'))) {
+                    if (field.get('isMulti')) {
+                        if (field.get('isRelation')) {
+                            value = field.get('relationModel').create({content: {}});
+                        } else {
+                            value = null;
+                        }
+                        item = Ember.Object.create({value: value, isEditable: true});
                         field.get('content').pushObject(item);
+                    }
+                    else {
+                        if (field.get('isRelation')) {
+                            field.set('content', field.get('relationModel').create({
+                                content: {}
+                            }));
+                            field.set('isEditable', true);
+                        } else if (field.get('isI18n')) {
+                            item = Ember.Object.create({value: null, lang: null});
+                            field.get('content').pushObject(item);
+                        }
+                    }
+                } else {
+                    if (!field.get('isMulti')) {
+                        field.set('isEditable', false);
                     }
                 }
             }
@@ -885,6 +902,89 @@ Eurekapp = (function(clientConfig){
             return this.get('type') === 'date';
         }.property('type')
 
+    });
+
+    App.TypeAheadComponent = Ember.TextField.extend({
+        classNames: "typeahead",
+        value: null,
+        field: null,
+
+        didInsertElement: function() {
+            this._super();
+            var source = this.getSource();
+
+            this.typeahead = this.$().typeahead({
+                hint: false,
+                minLength: 3
+            }, {
+                source: source.ttAdapter()
+            });
+
+            var _this = this;
+            this.typeahead.on('typeahead:selected', function(event, item){
+                _this.valueSelected(item);
+            });
+        },
+
+        valueSelected: function(item) {
+            var field = this.get('field');
+            if (item.object) {
+                var obj = field.get('relationModel').create({
+                    content: item.object
+                });
+                if (field.get('isMulti')) {
+                    var wrappedObj = Ember.Object.create({value: obj, isEditable: false});
+                    field.get('content').pushObject(wrappedObj);
+                } else {
+                    field.set('content', obj);
+                }
+            } else { // No object is selected, we pass a null value so the form can be created
+                if (field.get('isMulti')) {
+                    var content = field.get('content');
+                    var emptyItem = field.get('relationModel').create({
+                        content: {}
+                    });
+                    content.pushObject(Ember.Object.create({value: emptyItem, isEditable: true}));
+                    field.set('isEditable', true);
+                    field.set('content', content);
+                } else {
+                    field.set('content', null);
+                }
+            }
+            console.log('send action', field.get('content'));
+            this.set('value', null);
+            this.typeahead.val('');
+            this.sendAction('onSelected');
+        },
+
+        willDestroyElement: function() {},
+
+        getSource: function() {
+            var relationType = this.get('field.schema.type');
+            var source = new Bloodhound({
+                limit: 10,
+                datumTokenizer: function (d) {
+                    return Bloodhound.tokenizers.whitespace(d.value);
+                },
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/1/'+relationType.underscore()+'?title[$iregex]=^%QUERY&_limit=9',
+                    filter: function (data) {
+                        var results = [];
+                        data.results.forEach(function(item) {
+                            results.push({
+                                object: item,
+                                value: item.title
+                            });
+                        });
+                        results.push({value: '--create new '+relationType+'--'});
+                        return results;
+                    }
+                }
+            });
+            source.initialize();
+            return source;
+        }
     });
 
     /**** Initialization *****/

@@ -4,6 +4,7 @@
 {{#if field.isMulti}}
 
     {{#if field.isRelation}}
+        <h3>editable {{field.isEditable}}</h3>
         {{#each item in field.content}}
             {{#if item.isEditable}}
                 {{model-form model=item.value isRelation=true}}
@@ -11,22 +12,31 @@
                 <button class="button success" {{action 'doneRelation' item}}>done</button>
                 <br />
             {{else}}
-                <button class="button" {{action 'editRelation' item}}>
-                    {{item.value.title}}
-                </button>
+                {{#if item.value._id}}
+                    <button class="button secondary" {{action 'editRelation' item}}>
+                        {{item.value.title}} [X]
+                    </button>
+                {{else}}
+                    <button class="button alert" {{action 'editRelation' item}}>
+                        {{item.value.title}}
+                    </button>
+                {{/if}}
             {{/if}}
+
         {{/each}}
+        {{#unless field.isEditable}}
+            {{type-ahead onSelected='add' placeholder="search..." field=field}}
+        {{/unless}}
 
     {{else}}
 
         {{#each item in field.content}}
             {{dynamic-input field=field value=item.value}}
         {{/each}}
+        {{#if displayAddButton}}
+            <a {{action 'add'}}>add</a>
+        {{/if}}
 
-    {{/if}}
-
-    {{#if displayAddButton}}
-        <a {{action 'add'}}>add</a>
     {{/if}}
 
 {{else}}
@@ -36,19 +46,28 @@
 
         {{#if field.content}}
             {{#if field.isEditable}}
-                {{model-form model=field.content isRelation=true}}
-                <button class="button alert" {{action 'removeRelation'}}>remove</button>
-                <button class="button success" {{action 'doneRelation' field}}>done</button>
-                <br />
+                {{#if field.content._id}}
+                    {{type-ahead onSelected='add' placeholder="search..." field=field value=field.content.title}}
+                {{else}}
+                    {{model-form model=field.content isRelation=true}}
+                    <button class="button alert" {{action 'removeRelation'}}>remove</button>
+                    <button class="button success" {{action 'doneRelation' field}}>done</button>
+                    <br />
+                {{/if}}
 
             {{else}}
-                  <button class="button" {{action 'editRelation' field}}>
-                    {{field.content.title}}
-                </button>
-
+                {{#if field.content._id}}
+                    <button class="button secondary" {{action 'editRelation' field}}>
+                        {{field.content.title}} [X]
+                    </button>
+                {{else}}
+                    <button class="button alert" {{action 'editRelation' field}}>
+                        {{field.content.title}}
+                    </button>
+                {{/if}}
             {{/if}}
         {{else}}
-            <a {{action 'add'}}>new</a>
+            {{type-ahead onSelected='add' placeholder="search..." field=field}}
         {{/if}}
 
     {{else}}
