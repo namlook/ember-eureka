@@ -904,7 +904,7 @@ Eurekapp = (function(clientConfig){
 
     });
 
-    App.TypeAheadComponent = Ember.TextField.extend({
+    App.RelationAutoSuggestComponent = Ember.TextField.extend({
         classNames: "typeahead",
         value: null,
         field: null,
@@ -953,7 +953,7 @@ Eurekapp = (function(clientConfig){
             }
             console.log('send action', field.get('content'));
             this.set('value', null);
-            this.typeahead.val('');
+            this.$().typeahead('val', '');
             this.sendAction('onSelected');
         },
 

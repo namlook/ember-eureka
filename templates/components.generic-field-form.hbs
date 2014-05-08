@@ -4,13 +4,12 @@
 {{#if field.isMulti}}
 
     {{#if field.isRelation}}
-        <h3>editable {{field.isEditable}}</h3>
+        <div class="relations-list">
         {{#each item in field.content}}
             {{#if item.isEditable}}
                 {{model-form model=item.value isRelation=true}}
                 <button class="button alert" {{action 'removeRelation' item}}>remove</button>
                 <button class="button success" {{action 'doneRelation' item}}>done</button>
-                <br />
             {{else}}
                 {{#if item.value._id}}
                     <button class="button secondary" {{action 'editRelation' item}}>
@@ -22,10 +21,10 @@
                     </button>
                 {{/if}}
             {{/if}}
-
         {{/each}}
+        </div>
         {{#unless field.isEditable}}
-            {{type-ahead onSelected='add' placeholder="search..." field=field}}
+            {{relation-auto-suggest onSelected='add' placeholder="search..." field=field}}
         {{/unless}}
 
     {{else}}
@@ -47,7 +46,7 @@
         {{#if field.content}}
             {{#if field.isEditable}}
                 {{#if field.content._id}}
-                    {{type-ahead onSelected='add' placeholder="search..." field=field value=field.content.title}}
+                    {{relation-auto-suggest onSelected='add' placeholder="search..." field=field}}
                 {{else}}
                     {{model-form model=field.content isRelation=true}}
                     <button class="button alert" {{action 'removeRelation'}}>remove</button>
@@ -67,7 +66,9 @@
                 {{/if}}
             {{/if}}
         {{else}}
-            {{type-ahead onSelected='add' placeholder="search..." field=field}}
+
+            {{relation-auto-suggest onSelected='add' placeholder="search..." field=field}}
+
         {{/if}}
 
     {{else}}
