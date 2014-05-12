@@ -22,6 +22,7 @@
   ],
   "dependencies": {
     "ember": "~1.5.0",
-    "foundation": "~5.2.2"
+    "foundation": "~5.2.2",
+    "typeahead.js": "~0.10.2"
   }
 }
