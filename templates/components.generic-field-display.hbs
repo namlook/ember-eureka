@@ -6,7 +6,13 @@
                 <span class="label secondary">{{i18tem.lang}}</span>
                 <ul>
                 {{#each item in i18tem.value}}
-                    <li>{{item.value}}</li>
+                    <li>
+                        {{#if field.isSafeString}}
+                            {{{item.value}}}
+                        {{else}}
+                            {{item.value}}
+                        {{/if}}
+                    </li>
                 {{/each}}
                 </ul>
             {{/each}}
@@ -19,7 +25,11 @@
                             {{item.value.title}}
                         {{/link-to}}
                     {{else}}
-                        {{item.value}}
+                        {{#if field.isSafeString}}
+                            {{{item.value}}}
+                        {{else}}
+                            {{item.value}}
+                        {{/if}}
                     {{/if}}
                 </li>
             {{/each}}
@@ -36,12 +46,20 @@
                 {{#each item in field.content}}
                     <li>
                         <span class="label secondary">{{item.lang}}</span>
-                        {{item.value}}
+                        {{#if field.isSafeString}}
+                            {{{item.value}}}
+                        {{else}}
+                            {{item.value}}
+                        {{/if}}
                     </li>
                 {{/each}}
                 </ul>
             {{else}}
-                {{field.content}}
+                {{#if field.isSafeString}}
+                    {{{field.content}}}
+                {{else}}
+                    {{field.content}}
+                {{/if}}
             {{/if}}
         {{/if}}
     {{/if}}

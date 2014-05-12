@@ -639,6 +639,10 @@ Eurekapp = (function(clientConfig){
         schema: null,
         content: null,
 
+        isSafeString: function() {
+            return !!this.get('schema').safeString;
+        }.property('schema.safeString'),
+
         isRelation: function() {
             return !!App.db[this.get('schema').get('type')];
         }.property('schema.type'),
