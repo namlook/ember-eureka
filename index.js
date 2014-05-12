@@ -863,8 +863,17 @@ Eurekapp = (function(clientConfig){
                         }
                     }
                 } else {
-                    if (!field.get('isMulti')) {
+
+                    if (!field.get('isMulti') && !field.get('isI18n')) {
                         field.set('isEditable', false);
+                    } else if (!field.get('isRelation')) {
+                        if (field.get('isI18n')) {
+                            item = Ember.Object.create({value: null, lang: null});
+                        }
+                        else {
+                            item = Ember.Object.create({value: null, isEditable: true});
+                        }
+                        field.get('content').pushObject(item);
                     }
                 }
             }
