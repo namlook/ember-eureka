@@ -906,6 +906,8 @@ Eurekapp = (function(clientConfig){
 
     App.RelationAutoSuggestComponent = Ember.TextField.extend({
         classNames: "typeahead",
+        lookupFieldName: null,
+        displayFieldName: null,
         value: null,
         field: null,
 
@@ -926,12 +928,15 @@ Eurekapp = (function(clientConfig){
             });
         },
 
+        /*
+         * valueSelected
+         * fill the field content with the selected value.
+         * This method is fired when an item is selected into typeahead
+         */
         valueSelected: function(item) {
             var field = this.get('field');
             if (item.object) {
-                var obj = field.get('relationModel').create({
-                    content: item.object
-                });
+                var obj = item.object;
                 if (field.get('isMulti')) {
                     var wrappedObj = Ember.Object.create({value: obj, isEditable: false});
                     field.get('content').pushObject(wrappedObj);
@@ -951,7 +956,6 @@ Eurekapp = (function(clientConfig){
                     field.set('content', null);
                 }
             }
-            console.log('send action', field.get('content'));
             this.set('value', null);
             this.$().typeahead('val', '');
             this.sendAction('onSelected');
@@ -960,7 +964,12 @@ Eurekapp = (function(clientConfig){
         willDestroyElement: function() {},
 
         getSource: function() {
+
             var relationType = this.get('field.schema.type');
+            var lookupFieldName = App.getModelConfig(relationType).searchField || 'title';
+            var displayFieldName = this.get('displayFieldName') || 'title';
+            var field = this.get('field');
+
             var source = new Bloodhound({
                 limit: 10,
                 datumTokenizer: function (d) {
@@ -968,13 +977,19 @@ Eurekapp = (function(clientConfig){
                 },
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '/api/1/'+relationType.underscore()+'?title[$iregex]=^%QUERY&_limit=9',
+                    url: '/api/1/'+relationType.underscore()+'?'+lookupFieldName+'[$iregex]=^%QUERY&_limit=9',
                     filter: function (data) {
                         var results = [];
+                        var object;
                         data.results.forEach(function(item) {
+                            object = field.get('relationModel').create({
+                                content: item
+                            });
+                            var value = object.get(displayFieldName);
+                            value = value.string || value; // handle Handlebars' SafeString if needed
                             results.push({
-                                object: item,
-                                value: item.title
+                                object: object,
+                                value: value
                             });
                         });
                         results.push({value: '--create new '+relationType+'--'});
