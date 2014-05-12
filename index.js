@@ -163,7 +163,7 @@ Eurekapp = (function(clientConfig){
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
-                    var type = model.get('_type').underscore();
+                    var type = model.get('type').underscore();
                     var _id = model.get('_id');
                     _this.transitionToRoute('type.display', type, _id);
                 }, function(err){
@@ -178,7 +178,7 @@ Eurekapp = (function(clientConfig){
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
-                    var type = model.get('_type').underscore();
+                    var type = model.get('type').underscore();
                     var _id = model.get('_id');
                     _this.transitionToRoute('type.display', type, _id);
                 }, function(err){
@@ -313,9 +313,9 @@ Eurekapp = (function(clientConfig){
                     });
                 }
             }
-            if (this.get('_ref') && this.get('_contentChanged')) {
-                pendingPromises.addObject(this._saveModel());
-            }
+            // if (this.get('_ref') && this.get('_contentChanged')) {
+            //     pendingPromises.addObject(this._saveModel());
+            // }
 
             return pendingPromises;
         },
@@ -326,7 +326,7 @@ Eurekapp = (function(clientConfig){
             var postData = {payload: this._toJSON()};
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.post(endpoint, postData, function(data) {
-                    resolve(App.db[type].get('model').create({
+                    return resolve(App.db[type].get('model').create({
                         content: data.object
                     }));
                 }).fail(function(jqXHR) {
@@ -344,7 +344,7 @@ Eurekapp = (function(clientConfig){
             var _this = this;
             var promises = this._getPendingPromises();
             return Ember.RSVP.Promise.all(promises).then(function(relations){
-                return _this;
+                return _this._saveModel();
             });
         },
 
