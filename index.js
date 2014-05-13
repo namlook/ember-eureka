@@ -79,6 +79,7 @@ Eurekapp = (function(clientConfig){
     });
 
     App.ApplicationController = Ember.ObjectController.extend({
+        applicationName: Ember.computed.alias('name')
     });
 
 
