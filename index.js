@@ -166,7 +166,7 @@ Eurekapp = (function(clientConfig){
                 this.get('model').save().then(function(model) {
                     var type = model.get('type').underscore();
                     var _id = model.get('_id');
-                    _this.transitionToRoute('type.display', type, _id);
+                    _this.transitionToRoute('type.list', type);
                 }, function(err){
                     return console.log('err', err);
                 });
@@ -208,6 +208,7 @@ Eurekapp = (function(clientConfig){
                 }
                 var relationType = fieldSchema.type;
 
+                // if the field is a relation
                 if (!!App.getModelSchema(relationType)) {
 
                     if (fieldSchema.multi) {
@@ -228,6 +229,11 @@ Eurekapp = (function(clientConfig){
                             content: value
                         });
                         this.set('content.'+key, rel);
+                    }
+                } else if (['date', 'datetime'].indexOf(fieldSchema.type) > -1) {
+                    // convert the date and datetime value into a Date object
+                    if (typeof(value) === 'string') {
+                        this.set('content.'+key, new Date(value));
                     }
                 }
             }
@@ -591,11 +597,16 @@ Eurekapp = (function(clientConfig){
         },
 
         find: function(query) {
+            if (!query) {
+                query = {};
+            }
             var that = this;
             var modelType = this.get('type');
+            // query._populate = false;
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint'), query, function(data){
                     var results = Ember.A();
+                    console.log(data);
                     data.results.forEach(function(item){
                         var obj = that.get('model').create({
                             content: item,
@@ -912,6 +923,14 @@ Eurekapp = (function(clientConfig){
             return this.get('type') === 'boolean';
         }.property('type'),
 
+        isDateTime: function() {
+            return this.get('type') === 'datetime';
+        }.property('type'),
+
+        isTime: function() {
+            return this.get('type') === 'time';
+        }.property('type'),
+
         isDate: function() {
             return this.get('type') === 'date';
         }.property('type')
@@ -1015,6 +1034,33 @@ Eurekapp = (function(clientConfig){
             return source;
         }
     });
+
+    /** Vendors components ***/
+    App.DatePickerComponent = Ember.Component.extend({
+        tagName: 'input',
+        classNames: ['datepicker'],
+        value: null,
+        attributeBindings: ['dataValue:data-value', 'placeholder'],
+
+        dataValue: function() {
+            var date = this.get('value');
+            if (date) {
+                return date.getTime();
+            }
+            return '';
+        }.property('value'),
+
+        didInsertElement: function() {
+            var _this = this;
+            this.$().pickadate({
+                onSet: function(context) {
+                   _this.set('value', new Date(context.select));
+                }
+            });
+        }
+    });
+
+
 
     /**** Initialization *****/
     // attach the config, and the db to the application

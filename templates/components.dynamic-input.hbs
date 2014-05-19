@@ -6,7 +6,7 @@
 {{else}} {{#if isNumber}}
     {{input type='number' value=value}}
 {{else}} {{#if isDate}}
-    {{input type='date' value=value}}
+    {{#date-picker value=value placeholder="select a date&hellip;"}}{{/date-picker}}
 {{else}}
     {{input type=inputType value=value}}
 {{/if}} {{/if}} {{/if}} {{/if}}
