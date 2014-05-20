@@ -11,7 +11,7 @@
   "scripts": {
     "postinstall": "npm run build",
     "build": "ember-precompile templates/* -f templates.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"See Eureka.tests for complete integrations tests\""
   },
   "author": "Namlook",
   "license": "MIT"
