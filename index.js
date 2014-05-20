@@ -902,6 +902,10 @@ Eurekapp = (function(clientConfig){
         field: null,
         value: null,
 
+        fieldName: function() {
+            return this.get('field.name');
+        }.property('field.name'),
+
         schema: function() {
             return this.get('field.schema');
         }.property('field'),
@@ -1040,7 +1044,7 @@ Eurekapp = (function(clientConfig){
         tagName: 'input',
         classNames: ['datepicker'],
         value: null,
-        attributeBindings: ['dataValue:data-value', 'placeholder'],
+        attributeBindings: ['dataValue:data-value', 'placeholder', 'name'],
 
         dataValue: function() {
             var date = this.get('value');

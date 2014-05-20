@@ -1,12 +1,12 @@
 
 {{#if isText}}
-    {{input type='text' value=value}}
+    {{input type='text' value=value name=fieldName}}
 {{else}} {{#if isBoolean}}
-    {{input type='checkbox' checked=value}}
+    {{input type='checkbox' checked=value name=fieldName}}
 {{else}} {{#if isNumber}}
-    {{input type='number' value=value}}
+    {{input type='number' value=value name=fieldName}}
 {{else}} {{#if isDate}}
-    {{#date-picker value=value placeholder="select a date&hellip;"}}{{/date-picker}}
+    {{#date-picker value=value name=fieldName placeholder="select a date&hellip;"}}{{/date-picker}}
 {{else}}
-    {{input type=inputType value=value}}
+    {{input type=inputType value=value name=fieldName}}
 {{/if}} {{/if}} {{/if}} {{/if}}

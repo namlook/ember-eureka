@@ -1,6 +1,6 @@
 
 {{#each item in model}}
-    <fieldset>
+    <fieldset class="result-item">
         <legend>{{model.type}}</legend>
         <h2>{{#link-to 'type.display' item._type item._id}}{{item.title}}{{/link-to}}</h2>
         {{#if item.description}}
