@@ -194,11 +194,12 @@ function program1(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'type': depth0,'value': depth0};
-  hashTypes = {'type': "STRING",'value': "ID"};
+  hashContexts = {'type': depth0,'value': depth0,'name': depth0};
+  hashTypes = {'type': "STRING",'value': "ID",'name': "ID"};
   options = {hash:{
     'type': ("text"),
-    'value': ("value")
+    'value': ("value"),
+    'name': ("fieldName")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
   data.buffer.push("\n");
@@ -220,11 +221,12 @@ function program4(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'type': depth0,'checked': depth0};
-  hashTypes = {'type': "STRING",'checked': "ID"};
+  hashContexts = {'type': depth0,'checked': depth0,'name': depth0};
+  hashTypes = {'type': "STRING",'checked': "ID",'name': "ID"};
   options = {hash:{
     'type': ("checkbox"),
-    'checked': ("value")
+    'checked': ("value"),
+    'name': ("fieldName")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
   data.buffer.push("\n");
@@ -246,11 +248,12 @@ function program7(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'type': depth0,'value': depth0};
-  hashTypes = {'type': "STRING",'value': "ID"};
+  hashContexts = {'type': depth0,'value': depth0,'name': depth0};
+  hashTypes = {'type': "STRING",'value': "ID",'name': "ID"};
   options = {hash:{
     'type': ("number"),
-    'value': ("value")
+    'value': ("value"),
+    'name': ("fieldName")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
   data.buffer.push("\n");
@@ -272,10 +275,11 @@ function program10(depth0,data) {
   
   var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'value': depth0,'placeholder': depth0};
-  hashTypes = {'value': "ID",'placeholder': "STRING"};
+  hashContexts = {'value': depth0,'name': depth0,'placeholder': depth0};
+  hashTypes = {'value': "ID",'name': "ID",'placeholder': "STRING"};
   options = {hash:{
     'value': ("value"),
+    'name': ("fieldName"),
     'placeholder': ("select a date&hellip;")
   },inverse:self.noop,fn:self.program(11, program11, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['date-picker'] || (depth0 && depth0['date-picker'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "date-picker", options));
@@ -293,11 +297,12 @@ function program13(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'type': depth0,'value': depth0};
-  hashTypes = {'type': "ID",'value': "ID"};
+  hashContexts = {'type': depth0,'value': depth0,'name': depth0};
+  hashTypes = {'type': "ID",'value': "ID",'name': "ID"};
   options = {hash:{
     'type': ("inputType"),
-    'value': ("value")
+    'value': ("value"),
+    'name': ("fieldName")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
   data.buffer.push("\n");
@@ -1131,11 +1136,11 @@ function program1(depth0,data) {
   hashContexts = {'classNames': depth0};
   hashTypes = {'classNames': "STRING"};
   options = {hash:{
-    'classNames': ("button")
+    'classNames': ("button cancel")
   },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "type.display", "model.type", "model._id", options) : helperMissing.call(depth0, "link-to", "type.display", "model.type", "model._id", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n<button class=\"button success\" ");
+  data.buffer.push("\n<button class=\"button success save\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -1151,7 +1156,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
-  data.buffer.push("\n    <fieldset>\n        <legend>");
+  data.buffer.push("\n    <fieldset class=\"result-item\">\n        <legend>");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.type", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -1241,11 +1246,11 @@ function program1(depth0,data) {
   hashContexts = {'classNames': depth0};
   hashTypes = {'classNames': "STRING"};
   options = {hash:{
-    'classNames': ("button")
+    'classNames': ("button cancel")
   },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "type.list", "model.type", options) : helperMissing.call(depth0, "link-to", "type.list", "model.type", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n<button class=\"button success\" ");
+  data.buffer.push("\n<button class=\"button success save\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
