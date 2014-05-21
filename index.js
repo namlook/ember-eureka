@@ -26,12 +26,12 @@ Eurekapp = (function(clientConfig){
     'use strict';
 
     var App = Ember.Application.create({
-        LOG_STACKTRACE_ON_DEPRECATION : true,
-        LOG_BINDINGS                  : true,
-        LOG_TRANSITIONS               : true,
-        LOG_TRANSITIONS_INTERNAL      : true,
-        LOG_VIEW_LOOKUPS              : true,
-        LOG_ACTIVE_GENERATION         : true,
+        // LOG_STACKTRACE_ON_DEPRECATION : true,
+        // LOG_BINDINGS                  : true,
+        // LOG_TRANSITIONS               : true,
+        // LOG_TRANSITIONS_INTERNAL      : true,
+        // LOG_VIEW_LOOKUPS              : true,
+        // LOG_ACTIVE_GENERATION         : true,
 
         ready: function() {
             Ember.$('title').text(this.get('config').name);
@@ -188,6 +188,7 @@ Eurekapp = (function(clientConfig){
                     var _id = model.get('_id');
                     _this.transitionToRoute('type.list', type);
                 }, function(err){
+                    alert('error', err);
                     return console.log('err', err);
                 });
             }
@@ -203,6 +204,7 @@ Eurekapp = (function(clientConfig){
                     var _id = model.get('_id');
                     _this.transitionToRoute('type.display', type, _id);
                 }, function(err){
+                    alert('error', err);
                     return console.log('err', err);
                 });
             }
@@ -769,6 +771,8 @@ Eurekapp = (function(clientConfig){
     });
 
 
+    /** display components **/
+
     App.ModelDisplayComponent = Ember.Component.extend(App.TemplateMixin, {
         model: null,
         genericTemplateName: 'components/<generic>-model-display',
@@ -794,6 +798,9 @@ Eurekapp = (function(clientConfig){
         field: null,
         genericTemplateName: 'components/<generic>-field-display'
     });
+
+
+    /*** form components ***/
 
     App.ModelFormComponent = Ember.Component.extend(App.TemplateMixin, {
         model: null,
@@ -1077,7 +1084,15 @@ Eurekapp = (function(clientConfig){
             var _this = this;
             this.$().pickadate({
                 onSet: function(context) {
-                   _this.set('value', new Date(context.select));
+                    var epoc = null;
+                    if (context.select.pick) {
+                        epoc = context.select.pick;
+                    } else if (context.select) {
+                        epoc = context.select;
+                    }
+                    if (epoc) {
+                       _this.set('value', new Date(epoc));
+                    }
                 }
             });
         }
