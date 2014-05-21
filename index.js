@@ -50,6 +50,26 @@ Eurekapp = (function(clientConfig){
         }
     });
 
+    App.utils = {
+        convertValue: function(fieldSchema, fieldName, value) {
+            // convert string values from input into the field's type
+            // this information is taken from the field's schema
+            var fieldType = fieldSchema.type;
+            if (fieldType === 'float') {
+                value = parseFloat(value);
+                var precision = fieldSchema.precision;
+                if (precision) {
+                    value = parseFloat(value.toPrecision(precision));
+                }
+            } else if (fieldType === 'integer') {
+                value = parseInt(value, 10);
+            } else if (['date', 'datetime'].indexOf(fieldType) > -1) {
+                value = new Date(value);
+            }
+            return value;
+        }
+    };
+
     App.Router.map(function() {
         this.resource('type', { path: '/' }, function() {
             this.route('display', {path: '/:type/:id'});
@@ -230,11 +250,9 @@ Eurekapp = (function(clientConfig){
                         });
                         this.set('content.'+key, rel);
                     }
-                } else if (['date', 'datetime'].indexOf(fieldSchema.type) > -1) {
-                    // convert the date and datetime value into a Date object
-                    if (typeof(value) === 'string') {
-                        this.set('content.'+key, new Date(value));
-                    }
+                } else {
+                    value = App.utils.convertValue(fieldSchema, key, value);
+                    this.set('content.'+key, value);
                 }
             }
         },
@@ -460,6 +478,7 @@ Eurekapp = (function(clientConfig){
                 } else {
                     if (['', null, undefined].indexOf(content) === -1) {
                         value = content;
+                        value = App.utils.convertValue(field.get('schema'), field.get('name'), value);
                     }
                 }
 
