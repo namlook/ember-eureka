@@ -2,7 +2,7 @@
 {{#each item in model}}
     <fieldset class="result-item">
         <legend>{{model.type}}</legend>
-        <h2>{{#link-to 'type.display' item._type item._id}}{{item.title}}{{/link-to}}</h2>
+        <h2 class="title">{{#link-to 'type.display' item._type item._id}}{{item.title}}{{/link-to}}</h2>
         {{#if item.description}}
             <p>{{item.description}}</p>
         {{/if}}
