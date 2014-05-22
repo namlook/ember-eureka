@@ -1,0 +1,21 @@
+
+<span class="label secondary">{{model.type}}</span>
+<h1>
+    {{{model.__title__}}}
+    {{#link-to 'type.edit' model.type model._id}}<small>edit</small>{{/link-to}}
+</h1>
+
+{{#if model.__description__}}
+    <p>{{{model.__description__}}}</p>
+{{/if}}
+
+{{#if model.__thumb__}}
+    <img {{bind-attr src=model.__thumb__}} />
+{{/if}}
+
+
+{{#each field in fields}}
+    <fieldset><legend>{{field.name}}</legend>
+        {{model-field-display field=field}}
+    </fieldset>
+{{/each}}

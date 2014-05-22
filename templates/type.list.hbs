@@ -2,12 +2,19 @@
 {{#each item in model}}
     <fieldset class="result-item">
         <legend>{{model.type}}</legend>
-        <h2 class="title">{{#link-to 'type.display' item._type item._id}}{{item.title}}{{/link-to}}</h2>
-        {{#if item.description}}
-            <p>{{item.description}}</p>
+        <h2 class="title">
+            {{#link-to 'type.display' item._type item._id}}
+                {{{item.__title__}}}
+            {{/link-to}}
+        </h2>
+
+
+        {{#if item.__description__}}
+            <p>{{{item.__description__}}}</p>
         {{/if}}
-        {{#if item.thumb}}
-            <img {{bind-attr src=item.thumb}} />
+
+        {{#if item.__thumb__}}
+            <img {{bind-attr src=item.__thumb__}} />
         {{/if}}
     </fieldset>
 {{/each}}

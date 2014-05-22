@@ -22,6 +22,14 @@ Ember.isEmpty = function(obj) {
     return true;
 };
 
+Ember.startsWith = function(str, starts) {
+    return str.slice(0, starts.length) === starts;
+};
+
+Ember.endsWith = function(str, ends) {
+    return str.slice(str.length - ends.length) === ends;
+};
+
 Eurekapp = (function(clientConfig){
     'use strict';
 
@@ -219,8 +227,12 @@ Eurekapp = (function(clientConfig){
 
         init: function() {
             this._super();
+
+            /*
+             * Process the model content in order to
+             * wrap relations with Models
+             */
             var content = this.get('content');
-            // wrap relations into a model
             for (var key in content) {
 
                 var value = content[key];
@@ -257,16 +269,77 @@ Eurekapp = (function(clientConfig){
                     this.set('content.'+key, value);
                 }
             }
+
+            /* process descriptors (__title__, __description__, __thumb__)
+            * Descriptors are used to represent a model in generic templates.
+            * It is also used as an helper.
+            * There are currently 3 descriptors:
+            *   * `__title__`
+            *   * `__description__`
+            *   * `__thumb__`
+            *
+            * To use them add into the model config the descriptors:
+            * {
+            *      __title__: {template: "The {{_id}} !!"},
+            *      __description__: {bindTo: 'remark'},
+            *      __thumb__: 'http://placehold.it/40x40'
+            * }
+            */
+            ['title', 'description', 'thumb'].forEach(function(item){
+                var config = this.get('__config__')['__'+item+'__'];
+
+                // precompile descriptor's templates if needed
+                if (config && config.template) {
+                    var compiledTemplate = Handlebars.compile(config.template);
+                    this.set('_'+item+'CompiledTemplate', compiledTemplate);
+                }
+
+                // define the computed properties
+                Ember.defineProperty(this, '__'+item+'__', Ember.computed(function(key) {
+                    if (config) {
+                        if (config.template) {
+                            return this.get('_'+item+'CompiledTemplate')(this.get('content'));
+                        }
+
+                        if (config.bindTo) {
+                            return this.get(config.bindTo);
+                        }
+                        return config;
+                    }
+                    if (this.get('content.'+item)) {
+                        return this.get('content.'+item);
+                    }
+                    if (item === 'title') {
+                        return this.get('_id');
+                    }
+                    return '';
+                }).property('_contentChanged'));
+
+            }.bind(this));
+
         },
 
         _modelType: null,
         _contentChanged: 0,
         content: null,
 
+
+        __config__: function() {
+            return App.getModelConfig(this.get('_modelType'));
+        }.property('_modelType'),
+
+
+        /* _schema
+         * Returns the model' schema
+         */
         _schema: function() {
             return App.getModelSchema(this.get('type'));
         }.property('type'),
 
+
+        /* _toJSONObject
+         * Convert the model into a pojo ready to be serialized as JSON
+         */
         _toJSONObject: function() {
             var pojo = {};
             var content = this.get('content');
@@ -340,9 +413,6 @@ Eurekapp = (function(clientConfig){
                     });
                 }
             }
-            // if (this.get('_ref') && this.get('_contentChanged')) {
-            //     pendingPromises.addObject(this._saveModel());
-            // }
 
             return pendingPromises;
         },
@@ -375,7 +445,7 @@ Eurekapp = (function(clientConfig){
             });
         },
 
-        _fields: function() {
+        fieldsList: function() {
             var fields = Ember.A();
             var modelSchema = this.get('_schema');
             for (var fieldName in modelSchema) {
@@ -451,8 +521,17 @@ Eurekapp = (function(clientConfig){
         }.property('_schema').readOnly(),
 
 
+        _fields: function() {
+            var fields = Ember.Object.create();
+            this.get('fieldsList').forEach(function(field){
+                fields.set(field.get('name'), field);
+            });
+            return fields;
+        }.property('fieldsList').readOnly(),
+
+
         _updateContent: function() {
-            var fields = this.get('_fields');
+            var fields = this.get('fieldsList');
             var _this = this;
             fields.forEach(function(field){
                 var value = null;
@@ -494,67 +573,25 @@ Eurekapp = (function(clientConfig){
 
         /**** properties ****/
 
-        _computeField: function(fieldName, fallbackFieldName) {
-            var modelConfig = App.getModelConfig(this.get('_modelType'));
-            var content;
-            fallbackFieldName = fallbackFieldName || fieldName;
-
-            // if a field config is specified (in shemas), take the config, and apply it
-            if (modelConfig && modelConfig.display && modelConfig.display[fieldName]) {
-                var fieldSchema = modelConfig.display[fieldName];
-
-                // in schemas, values can be functions. If it is the case, call it.
-                if (typeof(fieldSchema) === 'function') {
-                    return fieldSchema(this);
-                }
-
-                // if this is an i18n value
-                if (modelConfig.schema[fieldName].i18n) {
-
-                    // if the lang is specified into the config, we just as to use it
-                    var fieldContent;
-                    if (fieldSchema.indexOf('@') > -1) {
-                        fieldSchema = fieldSchema.replace('@', '.');
-                        fieldContent = this.get('content.'+fieldSchema);
-                    } else {
-                        fieldContent = this.get('content.'+fieldSchema).en; // i18n TODO
-                    }
-                    if (fieldContent) {
-                        return fieldContent;
-                    }
-                } else {
-                    return this.get('content.'+fieldSchema);
-                }
-            }
-
-            // otherwise, get the value from the content of the model
-            else if (this.get('content.'+fieldName)) {
-                content = this.get('content.'+fieldName);
-                if (modelConfig.schema[fieldName].i18n) {
-                    return content.en; // i18n TODO
-                }
-                return content;
-            }
-            return this.get('content.'+fallbackFieldName);
-        },
-
         type: function() {
             return this.get('content._type') || this.get('_modelType');
         }.property('content._type', '_modelType').readOnly(),
 
-        title: function() {
-            return this._computeField('title', '_id');
-        }.property('_modelType', 'content.title', '_id'),
 
-
-        description: function() {
-            return this._computeField('description');
-        }.property('_modelType'),
-
-
-        thumb: function() {
-            return this._computeField('thumb');
-        }.property('_modelType')
+        unknownProperty: function(key) {
+            /*
+             * If a property name ends with 'Field', then the ModelField
+             * object is return. This is useful if we're looking for the
+             * field schema and model relations...
+             */
+            if (Ember.endsWith(key, "Field")){
+                var fieldName = key.slice(0, key.length - "Field".length);
+                return this.get('_fields').get(fieldName);
+            }
+            else {
+                return this.get('content.'+key);
+            }
+        }
 
     });
 
@@ -749,19 +786,46 @@ Eurekapp = (function(clientConfig){
      */
     App.TemplateMixin = Ember.Mixin.create({
         genericTemplateName: null,
-        templateType: null,
+        modelType: null,
+        fieldName: null,
 
         layoutName: function() {
-            var templateName = this.get('genericTemplateName');
-            var templateType = this.get('templateType');
-            var customTemplateName = templateName.replace('<generic>', templateType);
-            if (Ember.TEMPLATES[customTemplateName]) {
-                return customTemplateName;
+            var genericTemplateName = this.get('genericTemplateName');
+
+            var genericModelType = 'generic_model';
+            var genericFieldName = 'generic_field';
+
+            var modelType = this.get('modelType');
+            if (modelType) {
+                modelType = modelType.underscore();
             } else {
-                templateName = templateName.replace('<generic>', 'generic');
+                modelType = genericModelType;
             }
-            return templateName;
-        }.property('templateType').volatile(),
+
+            var fieldName = this.get('fieldName') || genericFieldName;
+
+            // check with custom model and custom field
+            var customTemplateName = genericTemplateName
+              .replace('<generic_model>', modelType)
+              .replace('<generic_field>', fieldName);
+            var templateName = Ember.TEMPLATES[customTemplateName];
+
+            if (!Ember.TEMPLATES[customTemplateName]) {
+                // check with generic model and custom field
+                customTemplateName = genericTemplateName
+                  .replace('<generic_model>', genericModelType)
+                  .replace('<generic_field>', fieldName);
+            }
+
+            if (!Ember.TEMPLATES[customTemplateName]) {
+                // else, go with full generic
+                customTemplateName = genericTemplateName
+                  .replace('<generic_model>', genericModelType)
+                  .replace('<generic_field>', genericFieldName);
+            }
+
+            return customTemplateName;
+        }.property('modelType', 'fieldName').volatile(),
 
         rerenderLayout: function() {
             // console.log(this.get('layoutName'));
@@ -771,15 +835,49 @@ Eurekapp = (function(clientConfig){
     });
 
 
+    // Render a model's field
+    // type: is the template type (ex: display, form...)
+    // name: the field name
+    // model: the corresponding model
+    // App.RenderFieldComponent = Ember.Component.extend(App.TemplateMixin, {
+    //     tagName: 'span',
+    //     name: null,
+    //     type: null,
+    //     model: null,
+
+    //     // used in TemplateMixin
+    //     modelType: Ember.computed.alias('model.type'),
+    //     fieldName: Ember.computed.alias('name'),
+
+    //     genericTemplateName: function() {
+    //         var name = 'components/';
+
+    //         var modelType = this.get('modelType');
+    //         if (modelType) {
+    //             name += '<generic_model>-';
+    //         }
+
+    //         var fieldName = this.get('name');
+    //         if (fieldName) {
+    //             name += '<generic_field>-';
+    //         }
+
+    //         name += this.get('type');
+
+    //         return name;
+    //     }.property('type', 'modelType', 'name')
+    // });
+
     /** display components **/
 
     App.ModelDisplayComponent = Ember.Component.extend(App.TemplateMixin, {
         model: null,
-        genericTemplateName: 'components/<generic>-model-display',
+        modelType: Ember.computed.alias('model.type'),
+        genericTemplateName: 'components/<generic_model>-display',
 
         fields: function() {
             var fields = Ember.A();
-            this.get('model').get('_fields').forEach(function(field){
+            this.get('model').get('fieldsList').forEach(function(field){
                 if (field.get('isMulti') || field.get('isI18n')) {
                     if (field.get('content').length) {
                         fields.pushObject(field);
@@ -791,12 +889,16 @@ Eurekapp = (function(clientConfig){
                 }
             });
             return fields;
-        }.property('model._fields')
+        }.property('model.fieldsList')
     });
 
-    App.FieldDisplayComponent = Ember.Component.extend(App.TemplateMixin, {
+
+    App.ModelFieldDisplayComponent = Ember.Component.extend(App.TemplateMixin, {
         field: null,
-        genericTemplateName: 'components/<generic>-field-display'
+        model: null,
+        fieldName: Ember.computed.alias('field.name'),
+        modelType: Ember.computed.alias('field.model.type'),
+        genericTemplateName: 'components/<generic_model>-<generic_field>-display'
     });
 
 
@@ -804,30 +906,25 @@ Eurekapp = (function(clientConfig){
 
     App.ModelFormComponent = Ember.Component.extend(App.TemplateMixin, {
         model: null,
+        modelType: Ember.computed.alias('model.type'),
+        genericTemplateName: 'components/<generic_model>-form',
         isRelation: false,
-        genericTemplateName: 'components/<generic>-model-form',
 
         fields: function() {
             var model = this.get('model');
             if (!model) {
                 return Ember.A();
             }
-            return model.get('_fields');
-        }.property('model._fields'),
-
-        // get the name of the template from the model type
-        templateType: function() {
-            var model = this.get('model');
-            if (model) {
-                return model.get('type').underscore();
-            }
-        }.property('model.type')
+            return model.get('fieldsList');
+        }.property('model.fieldsList'),
     });
 
 
-    App.FieldFormComponent = Ember.Component.extend(App.TemplateMixin, {
-        genericTemplateName: 'components/<generic>-field-form',
+    App.ModelFieldFormComponent = Ember.Component.extend(App.TemplateMixin, {
+        genericTemplateName: 'components/<generic_model>-<generic_field>-form',
         field: null,
+        fieldName: Ember.computed.alias('field.name'),
+        modelType: Ember.computed.alias('field.model.type'),
 
         // get the name of the template from the field name
         templateType: function() {
@@ -1030,7 +1127,7 @@ Eurekapp = (function(clientConfig){
 
             var relationType = this.get('field.schema.type');
             var lookupFieldName = App.getModelConfig(relationType).searchField || 'title';
-            var displayFieldName = this.get('displayFieldName') || 'title';
+            var displayFieldName = this.get('displayFieldName') || '__title__';
             var field = this.get('field');
 
             var source = new Bloodhound({

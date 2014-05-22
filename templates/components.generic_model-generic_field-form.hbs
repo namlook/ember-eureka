@@ -1,5 +1,4 @@
 
-<fieldset><legend>{{field.name}}</legend>
 {{#if field.isMulti}}
 
     {{#if field.isRelation}}
@@ -12,11 +11,11 @@
             {{else}}
                 {{#if item.value._id}}
                     <button class="button secondary" {{action 'editRelation' item}}>
-                        {{item.value.title}} [X]
+                        {{item.value.__title__}} [X]
                     </button>
                 {{else}}
                     <button class="button alert" {{action 'editRelation' item}}>
-                        {{item.value.title}}
+                        {{item.value.__title__}}
                     </button>
                 {{/if}}
             {{/if}}
@@ -56,11 +55,11 @@
             {{else}}
                 {{#if field.content._id}}
                     <button class="button secondary" {{action 'editRelation' field}}>
-                        {{field.content.title}} [X]
+                        {{{field.content.__title__}}} [X]
                     </button>
                 {{else}}
                     <button class="button alert" {{action 'editRelation' field}}>
-                        {{field.content.title}}
+                        {{{field.content.__title__}}}
                     </button>
                 {{/if}}
             {{/if}}
@@ -91,4 +90,3 @@
     {{/if}}
 
 {{/if}}
-</fieldset>
