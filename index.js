@@ -87,19 +87,6 @@ Eurekapp = (function(clientConfig){
         });
     });
 
-    App.ApplicationConfig = Ember.Object.extend({
-        modelNames: function() {
-            var _modelNames = [];
-            for (var modelName in App.config.schemas){
-                _modelNames.push({
-                    classified: modelName.camelize().capitalize(),
-                    underscored: modelName.underscore()
-                });
-            }
-            return _modelNames;
-        }.property('schemas')
-    });
-
     App.ApplicationRoute = Ember.Route.extend({
         model: function() {
             return App.config;
@@ -108,6 +95,21 @@ Eurekapp = (function(clientConfig){
 
     App.ApplicationController = Ember.ObjectController.extend({
         applicationName: Ember.computed.alias('name')
+    });
+
+
+    App.ApplicationMenuComponent = Ember.Component.extend({
+        model: null,
+
+        modelNames: function() {
+            return Ember.keys(this.get('model').schemas).map(function(modelName){
+                return {
+                    classified: modelName.camelize().capitalize(),
+                    underscored: modelName.underscore(),
+                    dasherized: modelName.dasherize()
+                };
+            });
+        }.property('model.schemas')
     });
 
 
@@ -580,6 +582,13 @@ Eurekapp = (function(clientConfig){
             return this.get('content._type') || this.get('_modelType');
         }.property('content._type', '_modelType').readOnly(),
 
+        dasherized_type: function() {
+            return this.get('type').dasherize();
+        }.property('type').readOnly(),
+
+        underscored_type: function() {
+            return this.get('type').underscore();
+        }.property('type').readOnly(),
 
         unknownProperty: function(key) {
             /*
@@ -1202,6 +1211,12 @@ Eurekapp = (function(clientConfig){
         }
     });
 
+
+
+    App.ApplicationConfig = Ember.Object.extend({
+        // application config used in App.config
+        // add here some custom methods
+    });
 
 
     /**** Initialization *****/
