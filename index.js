@@ -418,6 +418,7 @@ Eurekapp = (function(clientConfig){
         },
 
         _saveModel: function() {
+            this._updateContent();
             var type = this.get('_modelType');
             var endpoint = App.config.apiURI+'/'+type.underscore();
             var postData = {payload: this._toJSON()};
@@ -507,14 +508,16 @@ Eurekapp = (function(clientConfig){
                     }
                 }
                 field.set('content', value);
-                var watchContentPath = 'content';
-                if (field.get('isMulti')) {
-                    watchContentPath = 'content.@each.value';
-                } else if (field.get('isI18n')) {
-                    Ember.addObserver(field, 'content.@each.lang', field, '_triggerModelChanged');
-                    watchContentPath = 'content.@each.value';
-                }
-                Ember.addObserver(field, watchContentPath, field, '_triggerModelChanged');
+
+                // var watchContentPath = 'content';
+                // if (field.get('isMulti')) {
+                //     watchContentPath = 'content.@each.value';
+                // } else if (field.get('isI18n')) {
+                //     Ember.addObserver(field, 'content.@each.lang', field, '_triggerModelChanged');
+                //     watchContentPath = 'content.@each.value';
+                // }
+                // Ember.addObserver(field, watchContentPath, field, '_triggerModelChanged');
+
                 fields.push(field);
             }
             return fields;
@@ -565,11 +568,11 @@ Eurekapp = (function(clientConfig){
 
                 _this.set('content.'+field.get('name'), value);
             });
-        },
-
-        _observeFields: function() {
-            Ember.run.debounce(this, this._updateContent, 300);
         }.observes('_contentChanged'),
+
+        // _observeFields: function() {
+        //     Ember.run.debounce(this, this._updateContent, 300, true);
+        // }.observes('_contentChanged'),
 
         /**** properties ****/
 
@@ -746,15 +749,15 @@ Eurekapp = (function(clientConfig){
         },
 
         // // Manually removing the observers added in  `Model._fields`.
-        willDestroy: function () {
-            var watchContentPath = 'content';
-            if (this.get('isMulti')) {
-                watchContentPath = 'content.@each.value';
-            } else if (this.get('isI18n')) {
-                watchContentPath = 'content.@each.value';
-            }
-            Ember.removeObserver(this, watchContentPath, this, '_triggerModelChanged');
-        }
+        // willDestroy: function () {
+            // var watchContentPath = 'content';
+            // if (this.get('isMulti')) {
+            //     watchContentPath = 'content.@each.value';
+            // } else if (this.get('isI18n')) {
+            //     watchContentPath = 'content.@each.value';
+            // }
+            // Ember.removeObserver(this, watchContentPath, this, '_triggerModelChanged');
+        // }
     });
 
     App.ModelMultiField = App.ModelField.extend({
@@ -949,7 +952,6 @@ Eurekapp = (function(clientConfig){
             return false;
         }.property('field.isMulti', 'field.isRelation', 'field.contentLength'),
 
-
         actions: {
             editRelation: function(fieldContent) {
                 fieldContent.set('isEditable', true);
@@ -1060,7 +1062,12 @@ Eurekapp = (function(clientConfig){
 
         isDate: function() {
             return this.get('type') === 'date';
-        }.property('type')
+        }.property('type'),
+
+        focusOut: function() {
+            // update the model content when the user leave the input
+            this.get('field')._triggerModelChanged();
+        }
 
     });
 
