@@ -1,0 +1,11 @@
+
+<ul class="application-menu">
+  {{#each modelName in modelNames}}
+    <li {{bind-attr class=":menu-item modelName.dasherized"}}>
+        {{#link-to 'type.list' modelName.underscored class="action action-list"}}
+           {{modelName.classified}}
+        {{/link-to}}
+        {{#link-to 'type.new' modelName.underscored class="action action-new"}}+{{/link-to}}
+    </li>
+  {{/each}}
+</ul>

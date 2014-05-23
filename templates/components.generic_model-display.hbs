@@ -1,21 +1,24 @@
 
-<span class="label secondary">{{model.type}}</span>
-<h1>
-    {{{model.__title__}}}
-    {{#link-to 'type.edit' model.type model._id}}<small>edit</small>{{/link-to}}
-</h1>
+<div {{bind-attr class=":document model.dasherized_type"}}>
+    <span class="label secondary">{{model.type}}</span>
+    <h1 {{bind-attr class=":document-title model.dasherized_type"}}>
+        {{{model.__title__}}}
+        {{#link-to 'type.edit' model.type model._id}}<small>edit</small>{{/link-to}}
+    </h1>
 
-{{#if model.__description__}}
-    <p>{{{model.__description__}}}</p>
-{{/if}}
+    {{#if model.__description__}}
+        <p class="document-description">{{{model.__description__}}}</p>
+    {{/if}}
 
-{{#if model.__thumb__}}
-    <img {{bind-attr src=model.__thumb__}} />
-{{/if}}
+    {{#if model.__thumb__}}
+        <img class="document-thumb" {{bind-attr src=model.__thumb__}} />
+    {{/if}}
 
 
-{{#each field in fields}}
-    <fieldset><legend>{{field.name}}</legend>
-        {{model-field-display field=field}}
-    </fieldset>
-{{/each}}
+    {{#each field in fields}}
+        <fieldset class="field">
+            <legend class="field-name">{{field.name}}</legend>
+            <span class="field-value">{{model-field-display field=field}}</span>
+        </fieldset>
+    {{/each}}
+</div>

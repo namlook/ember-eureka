@@ -1,13 +1,5 @@
 <h2>Welcome to {{applicationName}}</h2>
 
-
-<ul>
-  {{#each modelName in modelNames}}
-    <li>
-        {{#link-to 'type.list' modelName.underscored}} {{modelName.classified}} {{/link-to}}
-        {{#link-to 'type.new' modelName.underscored}} + {{/link-to}}
-    </li>
-  {{/each}}
-</ul>
+{{application-menu model=model}}
 
 {{outlet}}
