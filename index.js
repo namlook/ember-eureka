@@ -79,11 +79,11 @@ Eurekapp = (function(clientConfig){
     };
 
     App.Router.map(function() {
-        this.resource('type', { path: '/' }, function() {
-            this.route('display', {path: '/:type/:id'});
-            this.route('edit', {path: '/:type/:id/edit'});
-            this.route('new', {path: '/:type/new'});
-            this.route('list', {path: '/:type'});
+        this.resource('generic_model', { path: '/' }, function() {
+            this.route('display', {path: '/:modelType/:id'});
+            this.route('edit', {path: '/:modelType/:id/edit'});
+            this.route('new', {path: '/:modelType/new'});
+            this.route('list', {path: '/:modelType'});
         });
     });
 
@@ -126,11 +126,11 @@ Eurekapp = (function(clientConfig){
             var template = this.get('genericTemplateName');
             var type = model.get('type');
             // console.log(template, type, controller, model);
-            var customTemplateName = template.replace('<type>', type.underscore());
+            var customTemplateName = template.replace('<generic_model>', type.underscore());
             if (Ember.TEMPLATES[customTemplateName]) {
                 template = customTemplateName;
             } else {
-                template = template.replace('<type>', 'type');
+                template = template.replace('<generic_model>', 'generic_model');
             }
 
             // // controller
@@ -146,57 +146,57 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    App.TypeListRoute = Ember.Route.extend(App.RouteTemplateMixin, {
-        genericTemplateName: '<type>/list',
-        genericControllerName: '<type>ListController',
+    App.GenericModelListRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+        genericTemplateName: '<generic_model>/list',
+        genericControllerName: '<generic_model>ListController',
 
         model: function(params) {
-            return this.get('db')[params.type.camelize().capitalize()].find();
+            return this.get('db')[params.modelType.camelize().capitalize()].find();
         }
     });
 
 
-    App.TypeDisplayRoute = Ember.Route.extend(App.RouteTemplateMixin, {
-        genericTemplateName: '<type>/display',
-        genericControllerName: '<type>DisplayController',
+    App.GenericModelDisplayRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+        genericTemplateName: '<generic_model>/display',
+        genericControllerName: '<generic_model>DisplayController',
 
         model: function(params) {
-            var _type = params.type.camelize().capitalize();
+            var _type = params.modelType.camelize().capitalize();
             var _id = params.id;
             return this.get('db')[_type].first({_id: _id, _type: _type});
         }
     });
 
-    App.TypeNewRoute = Ember.Route.extend(App.RouteTemplateMixin, {
-        genericTemplateName: '<type>/new',
-        genericControllerName: '<type>NewController',
+    App.GenericModelNewRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+        genericTemplateName: '<generic_model>/new',
+        genericControllerName: '<generic_model>NewController',
 
         model: function(params) {
-            var _type = params.type.camelize().capitalize();
+            var _type = params.modelType.camelize().capitalize();
             return this.get('db')[_type].get('model').create({content: {}});
         }
     });
 
-    App.TypeEditRoute = Ember.Route.extend(App.RouteTemplateMixin, {
-        genericTemplateName: '<type>/edit',
-        genericControllerName: '<type>EditController',
+    App.GenericModelEditRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+        genericTemplateName: '<generic_model>/edit',
+        genericControllerName: '<generic_model>EditController',
 
         model: function(params) {
-            var _type = params.type.camelize().capitalize();
+            var _type = params.modelType.camelize().capitalize();
             var _id = params.id;
             return this.get('db')[_type].first({_id: _id, _type: _type});
         }
     });
 
     /***** Controllers ******/
-    App.TypeNewController = Ember.Controller.extend({
+    App.GenericModelNewController = Ember.Controller.extend({
         actions: {
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
                     var type = model.get('type').underscore();
                     var _id = model.get('_id');
-                    _this.transitionToRoute('type.list', type);
+                    _this.transitionToRoute('generic_model.list', type);
                 }, function(err){
                     alert('error', err);
                     return console.log('err', err);
@@ -205,14 +205,14 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    App.TypeEditController = Ember.Controller.extend({
+    App.GenericModelEditController = Ember.Controller.extend({
         actions: {
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
                     var type = model.get('type').underscore();
                     var _id = model.get('_id');
-                    _this.transitionToRoute('type.display', type, _id);
+                    _this.transitionToRoute('generic_model.display', type, _id);
                 }, function(err){
                     alert('error', err);
                     return console.log('err', err);

@@ -19,7 +19,7 @@
         {{#each item in field.content}}
             <li>
                 {{#if field.isRelation}}
-                    {{#link-to 'type.display' item.value.type item.value._id}}
+                    {{#link-to 'generic_model.display' item.value.type item.value._id}}
                         {{{item.value.__title__}}}
                     {{/link-to}}
                 {{else}}
@@ -35,7 +35,7 @@
     </ul>
 {{else}}
     {{#if field.isRelation}}
-        {{#link-to 'type.display' field.content.type field.content._id}}
+        {{#link-to 'generic_model.display' field.content.type field.content._id}}
             {{{field.content.__title__}}}
         {{/link-to}}
     {{else}}
