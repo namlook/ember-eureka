@@ -125,7 +125,6 @@ Eurekapp = (function(clientConfig){
             // template
             var template = this.get('genericTemplateName');
             var type = model.get('type');
-            // console.log(template, type, controller, model);
             var customTemplateName = template.replace('<generic_model>', type.underscore());
             if (Ember.TEMPLATES[customTemplateName]) {
                 template = customTemplateName;
@@ -134,21 +133,21 @@ Eurekapp = (function(clientConfig){
             }
 
             // // controller
-            // var controllerName = this.get('genericControllerName');
-            // if (controllerName) {
-            //     var customControllerName = controllerName.replace('<type>', type);
-            //     if (App[customControllerName]) {
-            //         controller = this.controllerFor(customControllerName);
-            //         controller.set('model', model);
-            //     }
-            // }
+            var controllerName = this.get('genericControllerName');
+            if (controllerName) {
+                var customControllerName = controllerName.replace('<generic_model>', type);
+                if (App[customControllerName+'Controller']) {
+                    controller = this.controllerFor(customControllerName.underscore());
+                    controller.set('model', model);
+                }
+            }
             this.render(template, {controller: controller});
         }
     });
 
     App.GenericModelListRoute = Ember.Route.extend(App.RouteTemplateMixin, {
         genericTemplateName: '<generic_model>/list',
-        genericControllerName: '<generic_model>ListController',
+        genericControllerName: '<generic_model>List',
 
         model: function(params) {
             return this.get('db')[params.modelType.camelize().capitalize()].find();
@@ -158,7 +157,7 @@ Eurekapp = (function(clientConfig){
 
     App.GenericModelDisplayRoute = Ember.Route.extend(App.RouteTemplateMixin, {
         genericTemplateName: '<generic_model>/display',
-        genericControllerName: '<generic_model>DisplayController',
+        genericControllerName: '<generic_model>Display',
 
         model: function(params) {
             var _type = params.modelType.camelize().capitalize();
@@ -169,7 +168,7 @@ Eurekapp = (function(clientConfig){
 
     App.GenericModelNewRoute = Ember.Route.extend(App.RouteTemplateMixin, {
         genericTemplateName: '<generic_model>/new',
-        genericControllerName: '<generic_model>NewController',
+        genericControllerName: '<generic_model>New',
 
         model: function(params) {
             var _type = params.modelType.camelize().capitalize();
@@ -179,7 +178,7 @@ Eurekapp = (function(clientConfig){
 
     App.GenericModelEditRoute = Ember.Route.extend(App.RouteTemplateMixin, {
         genericTemplateName: '<generic_model>/edit',
-        genericControllerName: '<generic_model>EditController',
+        genericControllerName: '<generic_model>Edit',
 
         model: function(params) {
             var _type = params.modelType.camelize().capitalize();
@@ -223,6 +222,8 @@ Eurekapp = (function(clientConfig){
 
     // Ember.TEMPLATES = require('./templates');
 
+    App.Controller = Ember.Controller.extend();
+    App.Route = Ember.Route.extend();
 
     /**** Models *****/
     App.Model = Ember.ObjectProxy.extend({
