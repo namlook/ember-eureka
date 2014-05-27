@@ -31,7 +31,7 @@
             {{dynamic-input field=field value=item.value}}
         {{/each}}
         {{#if displayAddButton}}
-            <a {{action 'add'}}>add</a>
+            <a class="multi-field-add-value" {{action 'add'}}>add</a>
         {{/if}}
 
     {{/if}}
@@ -82,7 +82,7 @@
                 </div>
               </div>
             {{/each}}
-            <a {{action 'add'}}>add</a>
+            <a class="i18n-field-add-value" {{action 'add'}}>add</a>
 
         {{else}}
             {{dynamic-input field=field value=field.content}}

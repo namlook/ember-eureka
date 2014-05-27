@@ -63,6 +63,14 @@ Eurekapp = (function(clientConfig){
             // convert string values from input into the field's type
             // this information is taken from the field's schema
             var fieldType = fieldSchema.type;
+            var _this = this;
+            if (fieldSchema.multi && Ember.isArray(value)) {
+                var values = [];
+                value.forEach(function(item) {
+                    values.push(_this.convertValue(fieldSchema,fieldName, item));
+                });
+                return values;
+            }
             if (fieldType === 'float') {
                 value = parseFloat(value);
                 var precision = fieldSchema.precision;
