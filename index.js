@@ -1174,10 +1174,12 @@ Eurekapp = (function(clientConfig){
             this.$().pickadate({
                 onSet: function(context) {
                     var epoc = null;
-                    if (context.select.pick) {
-                        epoc = context.select.pick;
-                    } else if (context.select) {
-                        epoc = context.select;
+                    if (context.select) {
+                        if (context.select.pick) {
+                            epoc = context.select.pick;
+                        } else if (context.select) {
+                            epoc = context.select;
+                        }
                     }
                     if (epoc) {
                        _this.set('value', new Date(epoc));
