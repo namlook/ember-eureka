@@ -19,9 +19,7 @@
         {{#each item in field.content}}
             <li>
                 {{#if field.isRelation}}
-                    {{#link-to 'generic_model.display' item.value.type item.value._id}}
-                        {{{item.value.__title__}}}
-                    {{/link-to}}
+                    {{model-to 'display' item.value}}
                 {{else}}
                     {{#if field.isSafeString}}
                         {{{item.value}}}
@@ -35,9 +33,7 @@
     </ul>
 {{else}}
     {{#if field.isRelation}}
-        {{#link-to 'generic_model.display' field.content.type field.content._id}}
-            {{{field.content.__title__}}}
-        {{/link-to}}
+        {{model-to 'display' field.content}}
     {{else}}
         {{#if field.isI18n}}
             <ul class="no-bullet">

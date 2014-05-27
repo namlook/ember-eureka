@@ -2,10 +2,10 @@
 <ul class="application-menu">
   {{#each modelName in modelNames}}
     <li {{bind-attr class=":menu-item modelName.dasherized"}}>
-        {{#link-to 'generic_model.list' modelName.underscored class="go-to go-to-model-list"}}
+        {{#model-to 'list' modelName.underscored}}
            {{modelName.classified}}
-        {{/link-to}}
-        {{#link-to 'generic_model.new' modelName.underscored class="go-to go-to-model-new"}}+{{/link-to}}
+        {{/model-to}}
+        {{#model-to 'new' modelName.underscored}}+{{/model-to}}
     </li>
   {{/each}}
 </ul>

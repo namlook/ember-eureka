@@ -4,5 +4,5 @@
 
 {{model-form model=model}}
 
-{{#link-to 'generic_model.display' model.type model._id classNames="button cancel"}}cancel{{/link-to}}
+{{#model-to 'display' model classNames="button cancel"}}cancel{{/model-to}}
 <button class="button success save" {{action 'save'}}>save</button>

@@ -599,11 +599,12 @@ Eurekapp = (function(clientConfig){
              */
             if (Ember.endsWith(key, "Field")){
                 var fieldName = key.slice(0, key.length - "Field".length);
-                return this.get('_fields').get(fieldName);
+                var field = this.get('_fields').get(fieldName);
+                if (field) {
+                    return field;
+                }
             }
-            else {
-                return this.get('content.'+key);
-            }
+            return this.get('content.'+key);
         }
 
     });
@@ -846,40 +847,6 @@ Eurekapp = (function(clientConfig){
             this.rerender();
         }.observes('templateType')
     });
-
-
-    // Render a model's field
-    // type: is the template type (ex: display, form...)
-    // name: the field name
-    // model: the corresponding model
-    // App.RenderFieldComponent = Ember.Component.extend(App.TemplateMixin, {
-    //     tagName: 'span',
-    //     name: null,
-    //     type: null,
-    //     model: null,
-
-    //     // used in TemplateMixin
-    //     modelType: Ember.computed.alias('model.type'),
-    //     fieldName: Ember.computed.alias('name'),
-
-    //     genericTemplateName: function() {
-    //         var name = 'components/';
-
-    //         var modelType = this.get('modelType');
-    //         if (modelType) {
-    //             name += '<generic_model>-';
-    //         }
-
-    //         var fieldName = this.get('name');
-    //         if (fieldName) {
-    //             name += '<generic_field>-';
-    //         }
-
-    //         name += this.get('type');
-
-    //         return name;
-    //     }.property('type', 'modelType', 'name')
-    // });
 
     /** display components **/
 
@@ -1212,7 +1179,88 @@ Eurekapp = (function(clientConfig){
         }
     });
 
+    /* model-to helper
+     * This helper is used as a replacement to the link-to helper.
+     * The model-to helper will check if the model has a specific route.
+     * If so, the correponding url is used. This helper also add some css classes
+     * useful to idenitify the link that are related to a model.
+     * At last, the model-to helper can be used as a block component. The value
+     * in the block will be used as the link title
+     */
+    Ember.Handlebars.registerHelper('model-to', function(action, name, options) {
 
+        var args = [];
+        var model = Ember.Handlebars.get(this, name, options);
+
+        options.contexts = [];
+        options.types = [];
+
+        // classNames
+        // bootstraping hash and hashContext
+        if (!options.hash) {
+            options.hash = {};
+        }
+        if (!options.hashContexts){
+            options.hashContexts = {};
+        }
+
+        if (!options.hash.classNames) {
+            options.hash.classNames = '';
+            options.hashContexts.classNames = this;
+        }
+        options.hash.classNames += " model-to-" + action;
+
+        // if the helper is not a block helper, we generate the link title via model.__title__
+        if (!options.fn) {
+            args.push(model.get('__title__'));
+            // options.contexts.unshift(this);
+            // options.types.unshift('STRING');
+            options.types.push('STRING');
+            options.contexts.push(this);
+        }
+
+        var modelType = null;
+        var modelId = null;
+
+        // check the route to use (default to generic_model.<action>)
+        var routeName = 'generic_model.' + action;
+        if (model) {
+
+            if (typeof(model) === 'string') {
+                modelType = model;
+                // options.types.pop();
+                // options.types.push('STRING');
+            } else {
+                modelType = model.get('type');
+                modelId = model.get('_id');
+                // options.types.pop();
+                // options.types.push('STRING');
+            }
+            var capitalized_action = action.capitalize();
+            if(App[modelType + capitalized_action + 'Route']) {
+                routeName = modelType.underscore() + '.' + action;
+            }
+        }
+
+        args.push(routeName);
+        options.types.push('STRING');
+        options.contexts.push(this);
+
+        args.push(modelType);
+        options.types.push('STRING');
+        options.contexts.push(this);
+
+        if (modelId) {
+            args.push(modelId);
+            options.types.push('STRING');
+            options.contexts.push(this);
+        }
+
+
+        args.push(options);
+
+        return Ember.Handlebars.helpers['link-to'].apply(this, args);
+    });
 
     App.ApplicationConfig = Ember.Object.extend({
         // application config used in App.config
