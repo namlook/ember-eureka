@@ -296,17 +296,18 @@ Eurekapp = (function(clientConfig){
             *      __thumb__: 'http://placehold.it/40x40'
             * }
             */
+            var _this = this;
             ['title', 'description', 'thumb'].forEach(function(item){
-                var config = this.get('__config__')['__'+item+'__'];
+                var config = _this.get('__config__')['__'+item+'__'];
 
                 // precompile descriptor's templates if needed
                 if (config && config.template) {
                     var compiledTemplate = Handlebars.compile(config.template);
-                    this.set('_'+item+'CompiledTemplate', compiledTemplate);
+                    _this.set('_'+item+'CompiledTemplate', compiledTemplate);
                 }
 
                 // define the computed properties
-                Ember.defineProperty(this, '__'+item+'__', Ember.computed(function(key) {
+                Ember.defineProperty(_this, '__'+item+'__', Ember.computed(function(key) {
                     if (config) {
                         if (config.template) {
                             return this.get('_'+item+'CompiledTemplate')(this.get('content'));
@@ -326,7 +327,7 @@ Eurekapp = (function(clientConfig){
                     return '';
                 }).property('_contentChanged'));
 
-            }.bind(this));
+            });
 
         },
 
@@ -440,7 +441,7 @@ Eurekapp = (function(clientConfig){
                     }));
                 }).fail(function(jqXHR) {
                     alert('An error occured: ', jqXHR.responseText);
-                    error = jqXHR.responseText;
+                    var error = jqXHR.responseText;
                     if (jqXHR.responseText.error !== undefined) {
                         error = jqXHR.responseText.error;
                     }
@@ -1080,6 +1081,11 @@ Eurekapp = (function(clientConfig){
             });
         },
 
+        focusOut: function() {
+            this.$().typeahead('val', '');
+            this.set('value', null);
+        },
+
         /*
          * valueSelected
          * fill the field content with the selected value.
@@ -1118,7 +1124,18 @@ Eurekapp = (function(clientConfig){
         getSource: function() {
 
             var relationType = this.get('field.schema.type');
-            var lookupFieldName = App.getModelConfig(relationType).searchField || 'title';
+            var modelConfig = App.getModelConfig(relationType);
+            var lookupFieldName = modelConfig.searchField;
+            if (!lookupFieldName) {
+                if (modelConfig.__title__ && modelConfig.__title__.bindTo) {
+                    lookupFieldName = modelConfig.__title__.bindTo;
+                }
+                else if (modelConfig.schema.title) {
+                    lookupFieldName = 'title';
+                } else {
+                    console.log('WARNING ! no search field found for '+relationType+'. Please add one in config ');
+                }
+            }
             var displayFieldName = this.get('displayFieldName') || '__title__';
             var field = this.get('field');
 
@@ -1129,7 +1146,7 @@ Eurekapp = (function(clientConfig){
                 },
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '/api/1/'+relationType.underscore()+'?'+lookupFieldName+'[$iregex]=^%QUERY&_limit=9',
+                    url: App.config.apiURI+'/'+relationType.underscore()+'?'+lookupFieldName+'[$iregex]=^%QUERY&_limit=9',
                     filter: function (data) {
                         var results = [];
                         var object;
@@ -1144,6 +1161,7 @@ Eurekapp = (function(clientConfig){
                                 value: value
                             });
                         });
+                        results = results.sortBy('value');
                         results.push({value: '--create new '+relationType+'--'});
                         return results;
                     }
@@ -1198,7 +1216,6 @@ Eurekapp = (function(clientConfig){
      * in the block will be used as the link title
      */
     Ember.Handlebars.registerHelper('model-to', function(action, name, options) {
-
         var args = [];
         var model = Ember.Handlebars.get(this, name, options);
 
@@ -1223,28 +1240,21 @@ Eurekapp = (function(clientConfig){
         // if the helper is not a block helper, we generate the link title via model.__title__
         if (!options.fn) {
             args.push(model.get('__title__'));
-            // options.contexts.unshift(this);
-            // options.types.unshift('STRING');
             options.types.push('STRING');
             options.contexts.push(this);
         }
 
         var modelType = null;
-        var modelId = null;
+        var dynamicModel = false;
 
         // check the route to use (default to generic_model.<action>)
         var routeName = 'generic_model.' + action;
         if (model) {
-
             if (typeof(model) === 'string') {
                 modelType = model;
-                // options.types.pop();
-                // options.types.push('STRING');
             } else {
                 modelType = model.get('type');
-                modelId = model.get('_id');
-                // options.types.pop();
-                // options.types.push('STRING');
+                dynamicModel = true;
             }
             var capitalized_action = action.capitalize();
             if(App[modelType + capitalized_action + 'Route']) {
@@ -1256,16 +1266,19 @@ Eurekapp = (function(clientConfig){
         options.types.push('STRING');
         options.contexts.push(this);
 
-        args.push(modelType);
-        options.types.push('STRING');
-        options.contexts.push(this);
+        if (dynamicModel) {
+            args.push(name+'._type');
+            options.types.push('ID');
+            options.contexts.push(this);
 
-        if (modelId) {
-            args.push(modelId);
+            args.push(name+'._id');
+            options.types.push('ID');
+            options.contexts.push(this);
+        } else {
+            args.push(model);
             options.types.push('STRING');
             options.contexts.push(this);
         }
-
 
         args.push(options);
 
