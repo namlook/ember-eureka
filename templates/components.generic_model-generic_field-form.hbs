@@ -10,11 +10,11 @@
                 <button class="button success" {{action 'doneRelation' item}}>done</button>
             {{else}}
                 {{#if item.value._id}}
-                    <button class="button secondary" {{action 'editRelation' item}}>
+                    <button {{bind-attr class=":button :secondary :selected-relation field.name"}} {{action 'editRelation' item}}>
                         {{item.value.__title__}} [X]
                     </button>
                 {{else}}
-                    <button class="button alert" {{action 'editRelation' item}}>
+                    <button {{bind-attr class=":button :secondary :selected-relation :new-relation field.name"}} {{action 'editRelation' item}}>
                         {{item.value.__title__}}
                     </button>
                 {{/if}}
@@ -22,7 +22,12 @@
         {{/each}}
         </div>
         {{#unless field.isEditable}}
-            {{relation-auto-suggest onSelected='add' placeholder="search..." field=field}}
+            {{relation-auto-suggest
+                onSelected='add'
+                placeholder="search..."
+                field=field
+                 nameBinding='field.name'
+                 class="field-input"}}
         {{/unless}}
 
     {{else}}
@@ -44,7 +49,12 @@
         {{#if field.content}}
             {{#if field.isEditable}}
                 {{#if field.content._id}}
-                    {{relation-auto-suggest onSelected='add' placeholder="search..." field=field}}
+                    {{relation-auto-suggest
+                         onSelected='add'
+                         placeholder="search..."
+                         field=field
+                         nameBinding='field.name'
+                         class="field-input"}}
                 {{else}}
                     {{model-form model=field.content isRelation=true}}
                     <button class="button alert" {{action 'removeRelation'}}>remove</button>
@@ -54,18 +64,23 @@
 
             {{else}}
                 {{#if field.content._id}}
-                    <button class="button secondary" {{action 'editRelation' field}}>
+                    <button {{bind-attr class=":button :secondary :selected-relation field.name"}} {{action 'editRelation' field}}>
                         {{{field.content.__title__}}} [X]
                     </button>
                 {{else}}
-                    <button class="button alert" {{action 'editRelation' field}}>
+                    <button {{bind-attr class=":button :alert selected-relation new-relation field.name"}} {{action 'editRelation' field}}>
                         {{{field.content.__title__}}}
                     </button>
                 {{/if}}
             {{/if}}
         {{else}}
 
-            {{relation-auto-suggest onSelected='add' placeholder="search..." field=field}}
+            {{relation-auto-suggest
+                onSelected='add'
+                placeholder="search..."
+                field=field
+                nameBinding='field.name'
+                class="field-input"}}
 
         {{/if}}
 

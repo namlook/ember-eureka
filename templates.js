@@ -659,8 +659,15 @@ function program6(depth0,data) {
   }
 function program7(depth0,data) {
   
-  var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("\n                    <button class=\"button secondary\" ");
+  var buffer = '', stack1, hashContexts, hashTypes, options;
+  data.buffer.push("\n                    <button ");
+  hashContexts = {'class': depth0};
+  hashTypes = {'class': "STRING"};
+  options = {hash:{
+    'class': (":button :secondary :selected-relation field.name")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
+  data.buffer.push(" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "editRelation", "item", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -674,8 +681,15 @@ function program7(depth0,data) {
 
 function program9(depth0,data) {
   
-  var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("\n                    <button class=\"button alert\" ");
+  var buffer = '', stack1, hashContexts, hashTypes, options;
+  data.buffer.push("\n                    <button ");
+  hashContexts = {'class': depth0};
+  hashTypes = {'class': "STRING"};
+  options = {hash:{
+    'class': (":button :secondary :selected-relation :new-relation field.name")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
+  data.buffer.push(" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "editRelation", "item", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -691,12 +705,14 @@ function program11(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n            ");
-  hashContexts = {'onSelected': depth0,'placeholder': depth0,'field': depth0};
-  hashTypes = {'onSelected': "STRING",'placeholder': "STRING",'field': "ID"};
+  hashContexts = {'onSelected': depth0,'placeholder': depth0,'field': depth0,'nameBinding': depth0,'class': depth0};
+  hashTypes = {'onSelected': "STRING",'placeholder': "STRING",'field': "ID",'nameBinding': "STRING",'class': "STRING"};
   options = {hash:{
     'onSelected': ("add"),
     'placeholder': ("search..."),
-    'field': ("field")
+    'field': ("field"),
+    'nameBinding': ("field.name"),
+    'class': ("field-input")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['relation-auto-suggest'] || (depth0 && depth0['relation-auto-suggest'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "relation-auto-suggest", options))));
   data.buffer.push("\n        ");
@@ -793,12 +809,14 @@ function program22(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n                    ");
-  hashContexts = {'onSelected': depth0,'placeholder': depth0,'field': depth0};
-  hashTypes = {'onSelected': "STRING",'placeholder': "STRING",'field': "ID"};
+  hashContexts = {'onSelected': depth0,'placeholder': depth0,'field': depth0,'nameBinding': depth0,'class': depth0};
+  hashTypes = {'onSelected': "STRING",'placeholder': "STRING",'field': "ID",'nameBinding': "STRING",'class': "STRING"};
   options = {hash:{
     'onSelected': ("add"),
     'placeholder': ("search..."),
-    'field': ("field")
+    'field': ("field"),
+    'nameBinding': ("field.name"),
+    'class': ("field-input")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['relation-auto-suggest'] || (depth0 && depth0['relation-auto-suggest'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "relation-auto-suggest", options))));
   data.buffer.push("\n                ");
@@ -841,8 +859,15 @@ function program26(depth0,data) {
   }
 function program27(depth0,data) {
   
-  var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("\n                    <button class=\"button secondary\" ");
+  var buffer = '', stack1, hashContexts, hashTypes, options;
+  data.buffer.push("\n                    <button ");
+  hashContexts = {'class': depth0};
+  hashTypes = {'class': "STRING"};
+  options = {hash:{
+    'class': (":button :secondary :selected-relation field.name")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
+  data.buffer.push(" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "editRelation", "field", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -858,8 +883,15 @@ function program27(depth0,data) {
 
 function program29(depth0,data) {
   
-  var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("\n                    <button class=\"button alert\" ");
+  var buffer = '', stack1, hashContexts, hashTypes, options;
+  data.buffer.push("\n                    <button ");
+  hashContexts = {'class': depth0};
+  hashTypes = {'class': "STRING"};
+  options = {hash:{
+    'class': (":button :alert selected-relation new-relation field.name")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
+  data.buffer.push(" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "editRelation", "field", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -877,12 +909,14 @@ function program31(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n\n            ");
-  hashContexts = {'onSelected': depth0,'placeholder': depth0,'field': depth0};
-  hashTypes = {'onSelected': "STRING",'placeholder': "STRING",'field': "ID"};
+  hashContexts = {'onSelected': depth0,'placeholder': depth0,'field': depth0,'nameBinding': depth0,'class': depth0};
+  hashTypes = {'onSelected': "STRING",'placeholder': "STRING",'field': "ID",'nameBinding': "STRING",'class': "STRING"};
   options = {hash:{
     'onSelected': ("add"),
     'placeholder': ("search..."),
-    'field': ("field")
+    'field': ("field"),
+    'nameBinding': ("field.name"),
+    'class': ("field-input")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['relation-auto-suggest'] || (depth0 && depth0['relation-auto-suggest'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "relation-auto-suggest", options))));
   data.buffer.push("\n\n        ");
