@@ -1,4 +1,10 @@
 
+<fieldset><legend>Search {{model.type}}</legend>
+{{#simple-query action="updateModel" model=model}}{{/simple-query}}
+{{#advanced-query placeholder="string = test && integer > 24" action="updateModel" model=model}}{{/advanced-query}}
+{{model.length}} results
+</fieldset>
+
 {{#each item in model}}
     <fieldset class="result-item">
         <legend>{{model.type}}</legend>

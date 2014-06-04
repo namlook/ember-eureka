@@ -61,7 +61,7 @@ Eurekapp = (function(clientConfig){
     });
 
     App.ApplicationConfigModel = Ember.Object.extend({
-        lookupFieldName: function() {
+        searchFieldName: function() {
             var lookupFieldName = this.get('searchField');
             if (!lookupFieldName) {
                 if (this.get('__title__') && this.get('__title__').bindTo) {
@@ -70,11 +70,16 @@ Eurekapp = (function(clientConfig){
                 else if (this.get('schema.title')) {
                     lookupFieldName = 'title';
                 } else {
-                    console.log('WARNING ! no search field found for '+this.get('type')+'. Please add one in config ');
+                    // TODO check this when starting server
+                    alertify.log('WARNING ! no search field found for '+this.get('type')+'. Please add one in config ');
                 }
             }
             return lookupFieldName;
-        }.property('searchField', '__title__', 'schema.title')
+        }.property('searchField', '__title__', 'schema.title'),
+
+        // searchPlaceholder: function() {
+        //     var placeholder = this.get('search')
+        // },
 
     });
 
@@ -217,15 +222,15 @@ Eurekapp = (function(clientConfig){
 
     /***** Controllers ******/
     App.GenericModelListController = Ember.Controller.extend({
-
         actions: {
             updateModel: function(query) {
                 var modelType = this.get('model').get('type');
                 var _this = this;
                 App.db[modelType].find(query).then(function(model) {
                     _this.set('model', model);
+                }, function(e) {
+                    alertify.error(e.error);
                 });
-                return false;
             }
         }
     });
@@ -240,7 +245,7 @@ Eurekapp = (function(clientConfig){
                     var _id = model.get('_id');
                     _this.transitionToRoute('generic_model.list', type);
                 }, function(err){
-                    alert('error', err);
+                    alertify.error(err);
                     return console.log('err', err);
                 });
             }
@@ -256,7 +261,7 @@ Eurekapp = (function(clientConfig){
                     var _id = model.get('_id');
                     _this.transitionToRoute('generic_model.display', type, _id);
                 }, function(err){
-                    alert('error', err);
+                    alertify.error(err);
                     return console.log('err', err);
                 });
             }
@@ -720,7 +725,7 @@ Eurekapp = (function(clientConfig){
             var modelType = this.get('type');
             // query._populate = false;
             return new Ember.RSVP.Promise(function(resolve, reject) {
-                Ember.$.getJSON(that.get('endpoint'), query, function(data){
+                Ember.$.getJSON(that.get('endpoint'), query).done(function(data){
                     var results = Ember.A();
                     console.log(data);
                     data.results.forEach(function(item){
@@ -736,6 +741,8 @@ Eurekapp = (function(clientConfig){
                         content: results
                     });
                     return resolve(resultSet);
+                }).fail(function(e) {
+                    return reject(JSON.parse(e.responseText));
                 });
             });
         },
@@ -1094,7 +1101,7 @@ Eurekapp = (function(clientConfig){
 
     App.RelationAutoSuggestComponent = Ember.TextField.extend({
         classNames: "typeahead",
-        lookupFieldName: null,
+        searchFieldName: null,
         displayFieldName: null,
         value: null,
         field: null,
@@ -1159,7 +1166,10 @@ Eurekapp = (function(clientConfig){
         getSource: function() {
 
             var relationType = this.get('field.schema.type');
-            var lookupFieldName = App.getModelConfig(relationType).get('lookupFieldName');
+            var searchFieldName = this.get('searchFieldName');
+            if (!searchFieldName) {
+                searchFieldName = App.getModelConfig(relationType).get('searchFieldName');
+            }
             var displayFieldName = this.get('displayFieldName') || '__title__';
             var field = this.get('field');
 
@@ -1170,7 +1180,7 @@ Eurekapp = (function(clientConfig){
                 },
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: App.config.apiURI+'/'+relationType.underscore()+'?'+lookupFieldName+'[$iregex]=^%QUERY&_limit=9',
+                    url: App.config.apiURI+'/'+relationType.underscore()+'?'+searchFieldName+'[$iregex]=^%QUERY&_limit=9',
                     filter: function (data) {
                         var results = [];
                         var object;
@@ -1200,7 +1210,8 @@ Eurekapp = (function(clientConfig){
 
     App.SimpleQueryComponent = Ember.TextField.extend({
         model: null,
-        onEvent: 'keyPress',
+        autocomplete: 'off',
+
         placeholder: function() {
             return 'search a '+this.get('model').get('type');
         }.property('model.type'),
@@ -1208,17 +1219,20 @@ Eurekapp = (function(clientConfig){
         buildQuery: function(value) {
             var jsonQuery = {};
             var modelType = this.get('model').get('type');
-            var lookupFieldName = App.getModelConfig(modelType).get('lookupFieldName');
-            jsonQuery[lookupFieldName] = {'$iregex': '^'+value};
+            var searchFieldName = App.getModelConfig(modelType).get('searchFieldName');
+            jsonQuery[searchFieldName] = {'$iregex': '^'+value};
             return jsonQuery;
         },
 
-        keyPress: function(e) {
-            if (e.keyCode === 13) {
-                this.sendAction('action', this.buildQuery(this.get('value')));
-                e.preventDefault();
-                e.stopPropagation();
+        valueObserver: function() {
+            if (this.get('value')) {
+                Ember.run.debounce(this, this.sendQuery, 200);
             }
+        }.observes('value'),
+
+        sendQuery: function() {
+            var query = this.buildQuery(this.get('value'));
+            this.sendAction('action', query);
         }
 
     });
