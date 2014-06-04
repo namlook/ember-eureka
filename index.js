@@ -62,7 +62,7 @@ Eurekapp = (function(clientConfig){
 
     App.ApplicationConfigModel = Ember.Object.extend({
         searchFieldName: function() {
-            var lookupFieldName = this.get('searchField');
+            var lookupFieldName = this.get('search.field');
             if (!lookupFieldName) {
                 if (this.get('__title__') && this.get('__title__').bindTo) {
                     lookupFieldName = this.get('__title__').bindTo;
@@ -75,11 +75,20 @@ Eurekapp = (function(clientConfig){
                 }
             }
             return lookupFieldName;
-        }.property('searchField', '__title__', 'schema.title'),
+        }.property('search.field', '__title__', 'schema.title'),
 
-        // searchPlaceholder: function() {
-        //     var placeholder = this.get('search')
-        // },
+        searchPlaceholder: function() {
+            var placeholder = this.get('search.placeholder');
+            if (!placeholder) {
+                placeholder = "search a "+this.get('title')+"...";
+            }
+            return placeholder;
+        }.property('search.placeholder', 'title'),
+
+        title: function() {
+            return this.get('content.title') || this.get('type').underscore().replace('_', ' ');
+        }.property('content.title')
+
 
     });
 
@@ -1213,7 +1222,8 @@ Eurekapp = (function(clientConfig){
         autocomplete: 'off',
 
         placeholder: function() {
-            return 'search a '+this.get('model').get('type');
+            var modelType = this.get('model').get('type');
+            return App.getModelConfig(modelType).get('searchPlaceholder');
         }.property('model.type'),
 
         buildQuery: function(value) {
