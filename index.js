@@ -47,7 +47,9 @@ Eurekapp = (function(clientConfig){
         },
 
         getModelConfig: function(modelType) {
-            return this.config.schemas[modelType];
+            var modelConfig = App.ApplicationConfigModel.create(this.config.schemas[modelType]);
+            modelConfig.set('type', modelType);
+            return modelConfig;
         },
 
         getModelSchema: function(modelType) {
@@ -56,6 +58,24 @@ Eurekapp = (function(clientConfig){
                 return modelConfig.schema;
             }
         }
+    });
+
+    App.ApplicationConfigModel = Ember.Object.extend({
+        lookupFieldName: function() {
+            var lookupFieldName = this.get('searchField');
+            if (!lookupFieldName) {
+                if (this.get('__title__') && this.get('__title__').bindTo) {
+                    lookupFieldName = this.get('__title__').bindTo;
+                }
+                else if (this.get('schema.title')) {
+                    lookupFieldName = 'title';
+                } else {
+                    console.log('WARNING ! no search field found for '+this.get('type')+'. Please add one in config ');
+                }
+            }
+            return lookupFieldName;
+        }.property('searchField', '__title__', 'schema.title')
+
     });
 
     App.utils = {
@@ -196,7 +216,22 @@ Eurekapp = (function(clientConfig){
     });
 
     /***** Controllers ******/
+    App.GenericModelListController = Ember.Controller.extend({
+
+        actions: {
+            updateModel: function(query) {
+                var modelType = this.get('model').get('type');
+                var _this = this;
+                App.db[modelType].find(query).then(function(model) {
+                    _this.set('model', model);
+                });
+                return false;
+            }
+        }
+    });
+
     App.GenericModelNewController = Ember.Controller.extend({
+
         actions: {
             save: function() {
                 var _this = this;
@@ -1070,7 +1105,7 @@ Eurekapp = (function(clientConfig){
 
             this.typeahead = this.$().typeahead({
                 hint: false,
-                minLength: 3
+                minLength: 1
             }, {
                 source: source.ttAdapter()
             });
@@ -1124,18 +1159,7 @@ Eurekapp = (function(clientConfig){
         getSource: function() {
 
             var relationType = this.get('field.schema.type');
-            var modelConfig = App.getModelConfig(relationType);
-            var lookupFieldName = modelConfig.searchField;
-            if (!lookupFieldName) {
-                if (modelConfig.__title__ && modelConfig.__title__.bindTo) {
-                    lookupFieldName = modelConfig.__title__.bindTo;
-                }
-                else if (modelConfig.schema.title) {
-                    lookupFieldName = 'title';
-                } else {
-                    console.log('WARNING ! no search field found for '+relationType+'. Please add one in config ');
-                }
-            }
+            var lookupFieldName = App.getModelConfig(relationType).get('lookupFieldName');
             var displayFieldName = this.get('displayFieldName') || '__title__';
             var field = this.get('field');
 
@@ -1171,6 +1195,71 @@ Eurekapp = (function(clientConfig){
             return source;
         }
     });
+
+    /*** query components **/
+
+    App.SimpleQueryComponent = Ember.TextField.extend({
+        model: null,
+        onEvent: 'keyPress',
+        placeholder: function() {
+            return 'search a '+this.get('model').get('type');
+        }.property('model.type'),
+
+        buildQuery: function(value) {
+            var jsonQuery = {};
+            var modelType = this.get('model').get('type');
+            var lookupFieldName = App.getModelConfig(modelType).get('lookupFieldName');
+            jsonQuery[lookupFieldName] = {'$iregex': '^'+value};
+            return jsonQuery;
+        },
+
+        keyPress: function(e) {
+            if (e.keyCode === 13) {
+                this.sendAction('action', this.buildQuery(this.get('value')));
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+
+    });
+
+
+    App.AdvancedQueryComponent = Ember.TextArea.extend({
+        model: null,
+        onEvent: 'keyPress',
+
+        keyPress: function(e) {
+            if (e.keyCode === 13) {
+                this.sendAction('action', this.parseQuery(this.get('value')));
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        },
+
+        parseQuery: function(query) {
+            var jsonQuery = {};
+            query = query.trim();
+            query.split('&&').forEach(function(statement) {
+                var splited;
+                if (statement.indexOf('>') > -1) {
+                    splited = statement.split('>');
+                    jsonQuery[splited[0].trim()] = {'$gt': splited[1].trim()};
+                } else if (statement.indexOf('<') > -1) {
+                    splited = statement.split('<');
+                    jsonQuery[splited[0].trim()] = {'$lt': splited[1].trim()};
+                } else if (statement.indexOf('!=') > -1) {
+                    splited = statement.split('!=');
+                    jsonQuery[splited[0].trim()] = {'$ne': splited[1].trim()};
+                } else if (statement.indexOf('=') > -1) {
+                    splited = statement.split('=');
+                    jsonQuery[splited[0].trim()] = splited[1].trim();
+                }
+            });
+            return jsonQuery;
+        }
+    });
+
+
 
     /** Vendors components ***/
     App.DatePickerComponent = Ember.Component.extend({
