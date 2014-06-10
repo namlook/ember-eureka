@@ -1,9 +1,10 @@
 
 <div {{bind-attr class=":document model.dasherized_type"}}>
     <span class="label secondary">{{model.type}}</span>
+    {{#model-to 'edit' model classNames="right"}}edit{{/model-to}}
+
     <h1 {{bind-attr class=":document-title model.dasherized_type"}}>
         {{{model.__title__}}}
-        {{#model-to 'edit' model}} <small>edit</small> {{/model-to}}
     </h1>
 
     {{#if model.__description__}}

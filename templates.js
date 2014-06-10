@@ -224,7 +224,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
-  data.buffer.push(" <small>edit</small> ");
+  data.buffer.push("edit");
   }
 
 function program3(depth0,data) {
@@ -283,7 +283,15 @@ function program7(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.type", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</span>\n    <h1 ");
+  data.buffer.push("</span>\n    ");
+  hashContexts = {'classNames': depth0};
+  hashTypes = {'classNames': "STRING"};
+  options = {hash:{
+    'classNames': ("right")
+  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "edit", "model", options) : helperMissing.call(depth0, "model-to", "edit", "model", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n\n    <h1 ");
   hashContexts = {'class': depth0};
   hashTypes = {'class': "STRING"};
   options = {hash:{
@@ -296,12 +304,6 @@ function program7(depth0,data) {
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__title__", {hash:{
     'unescaped': ("true")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n        ");
-  hashTypes = {};
-  hashContexts = {};
-  options = {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "edit", "model", options) : helperMissing.call(depth0, "model-to", "edit", "model", options));
-  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n    </h1>\n\n    ");
   hashTypes = {};
   hashContexts = {};
@@ -1059,9 +1061,15 @@ function program1(depth0,data) {
 Ember.TEMPLATES["generic_model/list"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, hashTypes, hashContexts, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this;
+  var buffer = '', stack1, stack2, hashTypes, hashContexts, options, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this;
 
 function program1(depth0,data) {
+  
+  var buffer = '';
+  return buffer;
+  }
+
+function program3(depth0,data) {
   
   var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
   data.buffer.push("\n    <fieldset class=\"result-item\">\n        <legend>");
@@ -1076,17 +1084,17 @@ function program1(depth0,data) {
   data.buffer.push("\n        </h2>\n\n\n        ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "item.__description__", {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers['if'].call(depth0, "item.__description__", {hash:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n\n        ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "item.__thumb__", {hash:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers['if'].call(depth0, "item.__thumb__", {hash:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n    </fieldset>\n");
   return buffer;
   }
-function program2(depth0,data) {
+function program4(depth0,data) {
   
   var buffer = '', hashContexts, hashTypes;
   data.buffer.push("\n            <p class=\"item-description\">");
@@ -1099,7 +1107,7 @@ function program2(depth0,data) {
   return buffer;
   }
 
-function program4(depth0,data) {
+function program6(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n            <img class=\"item-thumb\" ");
@@ -1113,11 +1121,39 @@ function program4(depth0,data) {
   return buffer;
   }
 
+  data.buffer.push("\n<fieldset><legend>Search ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.type", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("</legend>\n");
+  hashContexts = {'action': depth0,'model': depth0,'class': depth0};
+  hashTypes = {'action': "STRING",'model': "ID",'class': "STRING"};
+  options = {hash:{
+    'action': ("updateModel"),
+    'model': ("model"),
+    'class': ("simple-query")
+  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['simple-query'] || (depth0 && depth0['simple-query'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "simple-query", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n");
+  hashContexts = {'action': depth0,'model': depth0,'class': depth0};
+  hashTypes = {'action': "STRING",'model': "ID",'class': "STRING"};
+  options = {hash:{
+    'action': ("updateModel"),
+    'model': ("model"),
+    'class': ("advanced-query")
+  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['advanced-query'] || (depth0 && depth0['advanced-query'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "advanced-query", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n");
   hashTypes = {};
   hashContexts = {};
-  stack1 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.length", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(" results\n</fieldset>\n\n");
+  hashTypes = {};
+  hashContexts = {};
+  stack2 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   return buffer;
   
 });
