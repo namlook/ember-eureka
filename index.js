@@ -46,50 +46,18 @@ Eurekapp = (function(clientConfig){
             console.log(this.get('config').name, 'is ready !');
         },
 
-        getModelConfig: function(modelType) {
-            var modelConfig = App.ApplicationConfigModel.create(this.config.schemas[modelType]);
+        getMetaModel: function(modelType) {
+            var modelConfig = App.MetaModel.create(this.config.schemas[modelType]);
             modelConfig.set('type', modelType);
             return modelConfig;
         },
 
         getModelSchema: function(modelType) {
-            var modelConfig = this.getModelConfig(modelType);
+            var modelConfig = this.getMetaModel(modelType);
             if (modelConfig) {
                 return modelConfig.schema;
             }
         }
-    });
-
-    App.ApplicationConfigModel = Ember.Object.extend({
-        searchFieldName: function() {
-            var lookupFieldName = this.get('search.field');
-            if (!lookupFieldName) {
-                if (this.get('__title__') && this.get('__title__').bindTo) {
-                    lookupFieldName = this.get('__title__').bindTo;
-                }
-                else if (this.get('schema.title')) {
-                    lookupFieldName = 'title';
-                } else {
-                    // TODO check this when starting server
-                    alertify.log('WARNING ! no search field found for '+this.get('type')+'. Please add one in config ');
-                }
-            }
-            return lookupFieldName;
-        }.property('search.field', '__title__', 'schema.title'),
-
-        searchPlaceholder: function() {
-            var placeholder = this.get('search.placeholder');
-            if (!placeholder) {
-                placeholder = "search a "+this.get('title')+"...";
-            }
-            return placeholder;
-        }.property('search.placeholder', 'title'),
-
-        title: function() {
-            return this.get('content.title') || this.get('type').underscore().replace('_', ' ');
-        }.property('content.title')
-
-
     });
 
     App.utils = {
@@ -283,6 +251,56 @@ Eurekapp = (function(clientConfig){
     App.Route = Ember.Route.extend();
 
     /**** Models *****/
+
+
+    /* MetaModel
+     * this object contains all the information about the model written in schemas.js
+     */
+    App.MetaModel = Ember.Object.extend({
+        searchFieldName: function() {
+            var lookupFieldName = this.get('search.field');
+            if (!lookupFieldName) {
+                if (this.get('__title__') && this.get('__title__').bindTo) {
+                    lookupFieldName = this.get('__title__').bindTo;
+                }
+                else if (this.get('properties.title')) {
+                    lookupFieldName = 'title';
+                } else {
+                    // TODO check this when starting server
+                    alertify.log('WARNING ! no search field found for '+this.get('type')+'. Please add one in config ');
+                }
+            }
+            return lookupFieldName;
+        }.property('search.field', '__title__', 'properties.title'),
+
+        searchPlaceholder: function() {
+            var placeholder = this.get('search.placeholder');
+            if (!placeholder) {
+                placeholder = "search a "+this.get('title')+"...";
+            }
+            return placeholder;
+        }.property('search.placeholder', 'title'),
+
+        searchAdvancedPlaceholder: function() {
+            var placeholder = this.get('search.advancedPlaceholder');
+            if (!placeholder) {
+                placeholder = "prop1 = value && prop2 > 30";
+            }
+            return placeholder;
+        }.property('search.placeholder', 'title'),
+
+        title: function() {
+            return this.get('content.title') || this.get('type').underscore().replace('_', ' ');
+        }.property('content.title'),
+
+        properties: function() {
+            return this.get('schema');
+        }.property('schema')
+    });
+
+    /* Model
+     * the model instance
+     */
     App.Model = Ember.ObjectProxy.extend({
 
         init: function() {
@@ -296,7 +314,7 @@ Eurekapp = (function(clientConfig){
             for (var key in content) {
 
                 var value = content[key];
-                var fieldSchema = this.get('_schema')[key];
+                var fieldSchema = this.get('__meta__.properties')[key];
                 if (!fieldSchema) {
                     continue;
                 }
@@ -330,24 +348,42 @@ Eurekapp = (function(clientConfig){
                 }
             }
 
-            /* process descriptors (__title__, __description__, __thumb__)
-            * Descriptors are used to represent a model in generic templates.
-            * It is also used as an helper.
-            * There are currently 3 descriptors:
-            *   * `__title__`
-            *   * `__description__`
-            *   * `__thumb__`
-            *
-            * To use them add into the model config the descriptors:
-            * {
-            *      __title__: {template: "The {{_id}} !!"},
-            *      __description__: {bindTo: 'remark'},
-            *      __thumb__: 'http://placehold.it/40x40'
-            * }
-            */
+            this.__buildDescriptors();
+        },
+
+
+        /* incremented each time the content is changed in
+         * one of its field */
+        _contentChanged: 0,
+        content: null,
+
+        __type__: null,
+
+
+        __meta__: function() {
+            return App.getMetaModel(this.get('__type__'));
+        }.property('__type__'),
+
+
+        /* build the descriptors (__title__, __description__, __thumb__)
+        * Descriptors are used to represent a model in generic templates.
+        * It is also used as an helper.
+        * There are currently 3 descriptors:
+        *   * `__title__`
+        *   * `__description__`
+        *   * `__thumb__`
+        *
+        * To use them add into the model config the descriptors:
+        * {
+        *      __title__: {template: "The {{_id}} !!"},
+        *      __description__: {bindTo: 'remark'},
+        *      __thumb__: 'http://placehold.it/40x40'
+        * }
+        */
+        __buildDescriptors: function() {
             var _this = this;
             ['title', 'description', 'thumb'].forEach(function(item){
-                var config = _this.get('__config__')['__'+item+'__'];
+                var config = _this.get('__meta__')['__'+item+'__'];
 
                 // precompile descriptor's templates if needed
                 if (config && config.template) {
@@ -380,24 +416,6 @@ Eurekapp = (function(clientConfig){
 
         },
 
-        _modelType: null,
-        _contentChanged: 0,
-        content: null,
-
-
-        __config__: function() {
-            return App.getModelConfig(this.get('_modelType'));
-        }.property('_modelType'),
-
-
-        /* _schema
-         * Returns the model' schema
-         */
-        _schema: function() {
-            return App.getModelSchema(this.get('type'));
-        }.property('type'),
-
-
         /* _toJSONObject
          * Convert the model into a pojo ready to be serialized as JSON
          */
@@ -407,7 +425,7 @@ Eurekapp = (function(clientConfig){
             for (var fieldName in content) {
                 var isRelation = App.db[this.get('type')].isRelation(fieldName);
                 if (content[fieldName] && isRelation) {
-                    var modelSchema = this.get('_schema');
+                    var modelSchema = this.get('__meta__.properties');
                     var relations = content[fieldName];
                     if (!Ember.isArray(relations)) {
                         relations = [relations];
@@ -452,7 +470,7 @@ Eurekapp = (function(clientConfig){
             var content = this.get('content');
             for (var fieldName in content) {
 
-                var fieldSchema = this.get('_schema')[fieldName];
+                var fieldSchema = this.get('__meta__.properties')[fieldName];
                 if (!fieldSchema) {
                     continue;
                 }
@@ -480,7 +498,7 @@ Eurekapp = (function(clientConfig){
 
         _saveModel: function() {
             this._updateContent();
-            var type = this.get('_modelType');
+            var type = this.get('__type__');
             var endpoint = App.config.apiURI+'/'+type.underscore();
             var postData = {payload: this._toJSON()};
             return new Ember.RSVP.Promise(function(resolve, reject) {
@@ -509,7 +527,7 @@ Eurekapp = (function(clientConfig){
 
         fieldsList: function() {
             var fields = Ember.A();
-            var modelSchema = this.get('_schema');
+            var modelSchema = this.get('__meta__.properties');
             for (var fieldName in modelSchema) {
                 var fieldSchema = modelSchema[fieldName];
                 var field;
@@ -582,7 +600,7 @@ Eurekapp = (function(clientConfig){
                 fields.push(field);
             }
             return fields;
-        }.property('_schema').readOnly(),
+        }.property('__meta__.properties').readOnly(),
 
 
         _fields: function() {
@@ -638,8 +656,8 @@ Eurekapp = (function(clientConfig){
         /**** properties ****/
 
         type: function() {
-            return this.get('content._type') || this.get('_modelType');
-        }.property('content._type', '_modelType').readOnly(),
+            return this.get('content._type') || this.get('__type__');
+        }.property('content._type', '__type__').readOnly(),
 
         dasherized_type: function() {
             return this.get('type').dasherize();
@@ -696,15 +714,19 @@ Eurekapp = (function(clientConfig){
      */
     App.DatabaseModel = Ember.Object.extend({
         type: null,
-        schema: null,
+        meta: null,
         model: null,
+
+        properties: function() {
+            return this.get('meta').schema;
+        }.property('meta'),
 
         endpoint: function() {
             return App.config.apiURI+'/'+this.get('type').underscore();
         }.property('App.config.apiURI', 'type'),
 
         isRelation: function(fieldName) {
-            var field = this.get('schema')[fieldName];
+            var field = this.get('properties')[fieldName];
             if (field) {
                 return !!App.db[field.type];
             }
@@ -712,15 +734,15 @@ Eurekapp = (function(clientConfig){
         },
 
         isMulti: function(fieldName) {
-            return !!this.get('schema')[fieldName].multi;
+            return !!this.get('properties')[fieldName].multi;
         },
 
         isI18n: function(fieldName) {
-            return !!this.get('schema')[fieldName].i18n;
+            return !!this.get('properties')[fieldName].i18n;
         },
 
         getFieldType: function(fieldName) {
-            var field = this.get('schema')[fieldName];
+            var field = this.get('properties')[fieldName];
             if (field) {
                 return field.type;
             }
@@ -732,6 +754,13 @@ Eurekapp = (function(clientConfig){
             }
             var that = this;
             var modelType = this.get('type');
+
+            // build query from model's meta
+            var meta = this.get('meta');
+            if (meta.search && meta.search.sortBy) {
+                query._sortBy = meta.search.sortBy;
+            }
+
             // query._populate = false;
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint'), query).done(function(data){
@@ -740,13 +769,13 @@ Eurekapp = (function(clientConfig){
                     data.results.forEach(function(item){
                         var obj = that.get('model').create({
                             content: item,
-                            _modelType: modelType
+                            __type__: modelType
                         });
                         results.push(obj);
                     });
                     var resultSet = App.ResultSet.create({
                         type: modelType,
-                        schema: that.get('schema'),
+                        schema: that.get('properties'),
                         content: results
                     });
                     return resolve(resultSet);
@@ -1177,7 +1206,7 @@ Eurekapp = (function(clientConfig){
             var relationType = this.get('field.schema.type');
             var searchFieldName = this.get('searchFieldName');
             if (!searchFieldName) {
-                searchFieldName = App.getModelConfig(relationType).get('searchFieldName');
+                searchFieldName = App.getMetaModel(relationType).get('searchFieldName');
             }
             var displayFieldName = this.get('displayFieldName') || '__title__';
             var field = this.get('field');
@@ -1223,13 +1252,13 @@ Eurekapp = (function(clientConfig){
 
         placeholder: function() {
             var modelType = this.get('model').get('type');
-            return App.getModelConfig(modelType).get('searchPlaceholder');
+            return App.getMetaModel(modelType).get('searchPlaceholder');
         }.property('model.type'),
 
         buildQuery: function(value) {
             var jsonQuery = {};
             var modelType = this.get('model').get('type');
-            var searchFieldName = App.getModelConfig(modelType).get('searchFieldName');
+            var searchFieldName = App.getMetaModel(modelType).get('searchFieldName');
             jsonQuery[searchFieldName] = {'$iregex': '^'+value};
             return jsonQuery;
         },
@@ -1251,6 +1280,11 @@ Eurekapp = (function(clientConfig){
     App.AdvancedQueryComponent = Ember.TextArea.extend({
         model: null,
         onEvent: 'keyPress',
+
+        placeholder: function() {
+            var modelType = this.get('model').get('type');
+            return App.getMetaModel(modelType).get('searchAdvancedPlaceholder');
+        }.property('model.type'),
 
         keyPress: function(e) {
             if (e.keyCode === 13) {
@@ -1418,7 +1452,7 @@ Eurekapp = (function(clientConfig){
                 for (var _type in clientConfig.schemas) {
                     var dbTypeObject = App.DatabaseModel.create({
                         type: _type,
-                        schema: clientConfig.schemas[_type].schema
+                        meta: clientConfig.schemas[_type]
                     });
                     var Model;
                     if (App[_type+'Model']) {
@@ -1426,7 +1460,7 @@ Eurekapp = (function(clientConfig){
                     } else {
                         Model = App.Model;
                     }
-                    Model = Model.extend({_modelType: _type});
+                    Model = Model.extend({__type__: _type});
                     dbTypeObject.set('model', Model);
                     db.set(_type, dbTypeObject);
                 }
