@@ -1,7 +1,7 @@
 
 <fieldset><legend>Search {{model.type}}</legend>
-{{#simple-query action="updateModel" model=model}}{{/simple-query}}
-{{#advanced-query placeholder="string = test && integer > 24" action="updateModel" model=model}}{{/advanced-query}}
+{{#simple-query action="updateModel" model=model class="simple-query"}}{{/simple-query}}
+{{#advanced-query action="updateModel" model=model class="advanced-query"}}{{/advanced-query}}
 {{model.length}} results
 </fieldset>
 
