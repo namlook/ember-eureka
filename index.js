@@ -690,7 +690,12 @@ Eurekapp = (function(clientConfig){
      */
     App.ResultSet = Ember.ArrayProxy.extend({
         type: null,
-        schema: null,
+        meta: null,
+
+        schema: function() {
+            return this.get('meta.schema');
+        }.property('meta.schema'),
+
         fields: function() {
             var _fields = Ember.A();
             for (var fieldName in this.get('schema')) {
@@ -757,7 +762,7 @@ Eurekapp = (function(clientConfig){
 
             // build query from model's meta
             var meta = this.get('meta');
-            if (meta.search && meta.search.sortBy) {
+            if (query._sortBy === undefined && meta.search && meta.search.sortBy) {
                 query._sortBy = meta.search.sortBy;
             }
 
@@ -765,7 +770,6 @@ Eurekapp = (function(clientConfig){
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint'), query).done(function(data){
                     var results = Ember.A();
-                    console.log(data);
                     data.results.forEach(function(item){
                         var obj = that.get('model').create({
                             content: item,
@@ -775,7 +779,7 @@ Eurekapp = (function(clientConfig){
                     });
                     var resultSet = App.ResultSet.create({
                         type: modelType,
-                        schema: that.get('properties'),
+                        meta: that.get('meta'),
                         content: results
                     });
                     return resolve(resultSet);
@@ -1320,16 +1324,16 @@ Eurekapp = (function(clientConfig){
 
 
     /** Vendors components ***/
-    App.DatePickerComponent = Ember.Component.extend({
-        tagName: 'input',
+    App.DatePickerComponent = Ember.TextField.extend({
         classNames: ['datepicker'],
         value: null,
-        attributeBindings: ['dataValue:data-value', 'placeholder', 'name'],
+        attributeBindings: ['dataValue:data-value'],
+        placeholder: 'select a date...',
 
         dataValue: function() {
             var date = this.get('value');
             if (date) {
-                return date.getTime();
+                return date;
             }
             return '';
         }.property('value'),
@@ -1351,6 +1355,7 @@ Eurekapp = (function(clientConfig){
                     }
                 }
             });
+            this.$().removeAttr('readonly');
         }
     });
 
