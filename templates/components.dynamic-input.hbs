@@ -1,12 +1,12 @@
 
 {{#if isText}}
-    {{input type='text' value=value name=fieldName class="field-input"}}
+    {{input type='text' value=value name=fieldName class="eureka-field-input form-control"}}
 {{else}} {{#if isBoolean}}
-    {{input type='checkbox' checked=value name=fieldName class="field-input"}}
+    {{input type='checkbox' checked=value name=fieldName class="eureka-field-input form-control"}}
 {{else}} {{#if isNumber}}
-    {{input type='number' value=value name=fieldName class="field-input"}}
+    {{input type='number' value=value name=fieldName class="eureka-field-input form-control"}}
 {{else}} {{#if isDate}}
-    {{#date-picker value=value name=fieldName placeholder="select a date&hellip;" class="field-input"}}{{/date-picker}}
+    {{#date-picker value=value name=fieldName class="eureka-field-input form-control"}}{{/date-picker}}
 {{else}}
-    {{input type=inputType value=value name=fieldName class="field-input"}}
+    {{input type=inputType value=value name=fieldName class="eureka-field-input form-control"}}
 {{/if}} {{/if}} {{/if}} {{/if}}

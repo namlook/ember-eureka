@@ -1,25 +1,47 @@
 
-<div {{bind-attr class=":document model.dasherized_type"}}>
-    <span class="label secondary">{{model.type}}</span>
-    {{#model-to 'edit' model classNames="right"}}edit{{/model-to}}
+<div {{bind-attr class=":eureka-document model.__meta__.dasherizedType"}}>
 
-    <h1 {{bind-attr class=":document-title model.dasherized_type"}}>
-        {{{model.__title__}}}
-    </h1>
+    <div class="eureka-head row">
+        {{#if model.__thumb__}}
+            <div class="col-xs-4">
+                {{#cropped-thumb model=model class="eureka-document-thumb"}}{{/cropped-thumb}}
+            </div>
+        {{/if}}
 
-    {{#if model.__description__}}
-        <p class="document-description">{{{model.__description__}}}</p>
-    {{/if}}
+        <div {{bind-attr class="model.__thumb__:col-xs-8"}}>
+            <div class="eureka-document-head-title">
+                <p><span class="label label-default">{{model.__meta__.type}}</span></p>
+                <h1 {{bind-attr class=":eureka-document-title model.__meta__.dasherizedType"}}>
+                    {{{model.__title__}}}
+                </h1>
+            </div>
+            <div class="eureka-document-description">
+                {{#if model.__description__}}
+                    <p>{{{model.__description__}}}</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
 
-    {{#if model.__thumb__}}
-        <img class="document-thumb" {{bind-attr src=model.__thumb__}} />
-    {{/if}}
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#">Informations</a></li>
+      <li class="dropdown pull-right">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>{{#model-to 'edit' model model._id}}edit{{/model-to}}</li>
+            <li><a href="#">delete</a></li>
+        </ul>
+      </li>
+    </ul>
 
-
-    {{#each field in fields}}
-        <fieldset class="field">
-            <legend class="field-name">{{field.name}}</legend>
-            <span class="field-value">{{model-field-display field=field}}</span>
-        </fieldset>
-    {{/each}}
+    <dl class="eureka-document-fields dl-horizontal">
+        {{#each field in fields}}
+            <div class="eureka-field">
+                <dt class="eureka-field-name">{{field.name}}</dt>
+                <dd class="eureka-field-value">{{model-field-display field=field}}</dd>
+            </div>
+        {{/each}}
+    </dl>
 </div>

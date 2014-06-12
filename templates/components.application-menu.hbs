@@ -1,11 +1,8 @@
 
-<ul class="application-menu">
+<ul class="eureka-application-menu nav nav-pills nav-stacked">
   {{#each modelName in modelNames}}
-    <li {{bind-attr class=":menu-item modelName.dasherized"}}>
-        {{#model-to 'list' modelName.underscored}}
-           {{modelName.classified}}
-        {{/model-to}}
-        {{#model-to 'new' modelName.underscored}}+{{/model-to}}
-    </li>
+    {{#model-to 'list' modelName.decamelized tagName="li" href=false classBinding=":eureka-menu-item modelName.dasherized"}}
+        <a href="#">{{modelName.classified}}</a>
+    {{/model-to}}
   {{/each}}
 </ul>

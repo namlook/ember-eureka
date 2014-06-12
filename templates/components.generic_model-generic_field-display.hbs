@@ -19,7 +19,7 @@
         {{#each item in field.content}}
             <li>
                 {{#if field.isRelation}}
-                    {{model-to 'display' item.value}}
+                    {{#model-to 'display' item.value item.value._id}}{{item.value.__title__}}{{/model-to}}
                 {{else}}
                     {{#if field.isSafeString}}
                         {{{item.value}}}
@@ -33,7 +33,7 @@
     </ul>
 {{else}}
     {{#if field.isRelation}}
-        {{model-to 'display' field.content}}
+        {{#model-to 'display' field.content field.content._id}}{{field.content.__title__}}{{/model-to}}
     {{else}}
         {{#if field.isI18n}}
             <ul class="no-bullet">

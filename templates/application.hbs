@@ -1,5 +1,25 @@
-<h2>Welcome to {{applicationName}}</h2>
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">{{applicationName}}</a>
+        </div>
+    </div>
+</nav>
 
-{{application-menu model=model}}
+<div class="container">
 
-{{outlet}}
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas" role="navigation">
+            {{application-menu model=model}}
+        </div>
+        <div class="col-xs-12 col-sm-9 col-lg-10">
+            <p class="visible-xs">
+                <button type="button" onclick="$('.row-offcanvas').toggleClass('active')" class="btn btn-primary btn-xs" data-toggle="offcanvas">
+                    Toggle nav
+                </button>
+            </p>
+            {{outlet}}
+        </div>
+    </div>
+
+</div>

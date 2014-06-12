@@ -22,9 +22,11 @@
   ],
   "dependencies": {
     "ember": "~1.5.0",
-    "foundation": "~5.2.2",
+    "normalize-css": "~3.0.1",
+    "bootstrap": "~3.1.1",
     "typeahead.js": "~0.10.2",
     "pickadate": "~3.5.2",
-    "alertify.js": "~0.3.11"
+    "alertify.js": "~0.3.11",
+    "jQuery-Fakecrop": "VuongN/jQuery-Fakecrop"
   }
 }

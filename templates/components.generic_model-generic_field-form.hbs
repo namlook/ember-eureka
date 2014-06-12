@@ -2,19 +2,21 @@
 {{#if field.isMulti}}
 
     {{#if field.isRelation}}
-        <div class="relations-list">
+        <div class="eureka-relations-list">
         {{#each item in field.content}}
             {{#if item.isEditable}}
-                {{model-form model=item.value isRelation=true}}
-                <button class="button alert" {{action 'removeRelation' item}}>remove</button>
-                <button class="button success" {{action 'doneRelation' item}}>done</button>
+                <div class="eureka-new-relation-form">
+                    {{model-form model=item.value isRelation=true}}
+                    <button class="btn btn-default" {{action 'removeRelation' item}}>remove</button>
+                    <button class="btn btn-success" {{action 'doneRelation' item}}>done</button>
+                </div>
             {{else}}
                 {{#if item.value._id}}
-                    <button {{bind-attr class=":button :secondary :selected-relation field.name"}} {{action 'editRelation' item}}>
-                        {{item.value.__title__}} [X]
+                    <button {{bind-attr class=":btn :btn-primary :eureka-selected-relation field.name"}} {{action 'editRelation' item}}>
+                        {{item.value.__title__}} &times;
                     </button>
                 {{else}}
-                    <button {{bind-attr class=":button :secondary :selected-relation :new-relation field.name"}} {{action 'editRelation' item}}>
+                    <button {{bind-attr class=":btn :btn-danger :eureka-selected-relation :eureka-new-relation field.name"}} {{action 'editRelation' item}}>
                         {{item.value.__title__}}
                     </button>
                 {{/if}}
@@ -27,16 +29,18 @@
                 placeholder="search..."
                 field=field
                 nameBinding='field.name'
-                class="field-input"}}
+                class="eureka-field-input"}}
         {{/unless}}
 
     {{else}}
 
         {{#each item in field.content}}
-            {{dynamic-input field=field value=item.value}}
+            <div class="eureka-multi-field-input">
+                {{dynamic-input field=field value=item.value}}
+            </div>
         {{/each}}
         {{#if displayAddButton}}
-            <a class="multi-field-add-value" {{action 'add'}}>add</a>
+            <button class="btn btn-default eureka-multi-field-add-input" {{action 'add'}}>add</button>
         {{/if}}
 
     {{/if}}
@@ -56,19 +60,20 @@
                          nameBinding='field.name'
                          class="field-input"}}
                 {{else}}
-                    {{model-form model=field.content isRelation=true}}
-                    <button class="button alert" {{action 'removeRelation'}}>remove</button>
-                    <button class="button success" {{action 'doneRelation' field}}>done</button>
-                    <br />
+                    <div class="eureka-new-relation-form">
+                        {{model-form model=field.content isRelation=true}}
+                        <button class="btn btn-default" {{action 'removeRelation'}}>remove</button>
+                        <button class="btn btn-success" {{action 'doneRelation' field}}>done</button>
+                    </div>
                 {{/if}}
 
             {{else}}
                 {{#if field.content._id}}
-                    <button {{bind-attr class=":button :secondary :selected-relation field.name"}} {{action 'editRelation' field}}>
-                        {{{field.content.__title__}}} [X]
+                    <button {{bind-attr class=":btn :btn-primary :eureka-selected-relation field.name"}} {{action 'editRelation' field}}>
+                        {{{field.content.__title__}}} &times;
                     </button>
                 {{else}}
-                    <button {{bind-attr class=":button :alert selected-relation new-relation field.name"}} {{action 'editRelation' field}}>
+                    <button {{bind-attr class=":btn :btn-danger eureka-selected-relation eureka-new-relation field.name"}} {{action 'editRelation' field}}>
                         {{{field.content.__title__}}}
                     </button>
                 {{/if}}
@@ -80,7 +85,7 @@
                 placeholder="search..."
                 field=field
                 nameBinding='field.name'
-                class="field-input"}}
+                class="eureka-field-input"}}
 
         {{/if}}
 
@@ -97,7 +102,7 @@
                 </div>
               </div>
             {{/each}}
-            <a class="i18n-field-add-value" {{action 'add'}}>add</a>
+            <button class="btn btn-default eureka-i18n-field-add-input" {{action 'add'}}>add</button>
 
         {{else}}
             {{dynamic-input field=field value=field.content}}

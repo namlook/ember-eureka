@@ -1,7 +1,13 @@
 
-<h1 class="new-document-title">New {{model.type}}</h1>
+<h1 class="eureka-new-document-title">New {{model.__meta__.type}}</h1>
 
-{{model-form model=model}}
+<form class="form-horizontal" role="form">
+    {{model-form model=model}}
 
-{{#model-to 'list' model classNames="button cancel"}}cancel{{/model-to}}
-<button class="button success save" {{action 'save'}}>save</button>
+     <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            {{#model-to 'list' model classNames="btn btn-default cancel"}}cancel{{/model-to}}
+            <button {{bind-attr class=":btn :btn-primary :eureka-save-action model.__meta__.dasherizedType"}} {{action 'save'}}>save</button>
+        </div>
+    </div>
+<form>

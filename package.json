@@ -10,7 +10,7 @@
   },
   "scripts": {
     "postinstall": "npm run build",
-    "build": "ember-precompile templates/* -f templates.js",
+    "build": "ember-precompile templates/* -f dist/templates.js",
     "test": "echo \"See Eureka.tests for complete integrations tests\""
   },
   "author": "Namlook",

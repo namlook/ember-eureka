@@ -1,24 +1,77 @@
 
-<fieldset><legend>Search {{model.type}}</legend>
-{{#simple-query action="updateModel" model=model class="simple-query"}}{{/simple-query}}
-{{#advanced-query action="updateModel" model=model class="advanced-query"}}{{/advanced-query}}
-{{model.length}} results
-</fieldset>
+<div class="eureka-section-title row">
+    <div class="col-xs-7 col-sm-9">
+        <h1> {{model.__meta__.title}} </h1>
 
-{{#each item in model}}
-    <fieldset class="result-item">
-        <legend>{{model.type}}</legend>
-        <h2 class="item-title">
-            {{model-to 'display' item}}
-        </h2>
+{{!--         <ul class="nav nav-pills">
+            <li class="dropdown active">
+                <a class="dropdown-toggle"  data-toggle="dropdown" href="#">
+                    <span class="badge pull-left">topic</span>
+                    &nbsp;iPhone 5S
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">filter</a></li>
+                    <li><a href="#">remove</a></li>
+                </ul>
+            </li>
+            <li class="dropdown active">
+                <a href="#">
+                    <span class="badge pull-left">topic</span>
+                    &nbsp;Online service provider &times;
+                </a>
+            </li>
+            <li class="dropdown active">
+                <a href="#">
+                    <span class="badge pull-left">author</span>
+                    &nbsp;Namlook &times;
+                </a>
+            </li>
+            <li class="dropdown active">
+                <a href="#">
+                    <span class="badge pull-left">topics.nuggets.author.age</span>
+                    &nbsp; > 18 &times;
+                </a>
+            </li>
+        </ul> --}}
+    </div>
+    <div class="col-xs-5 col-sm-3 text-right">
+        {{#model-to 'new' model classNames="btn btn-default"}}+ Create {{model.__meta__.title}}{{/model-to}}
+    </div>
+</div>
+
+<div class="eureka-section-search">
+    <div class="pull-right form-horizontal">
+        <div class="form-group has-feedback simple-query-container">
+            <span class="glyphicon glyphicon-search form-control-feedback search-icon"></span>
+            {{#simple-query action="updateModel" model=model class="eureka-simple-query form-control"}}{{/simple-query}}
+        </div>
+    </div>
+</div>
+
+{{#if showAdvancedQuery}}
+    {{#advanced-query action="updateModel" model=model class="advanced-query form-control"}}{{/advanced-query}}
+{{/if}}
 
 
-        {{#if item.__description__}}
-            <p class="item-description">{{{item.__description__}}}</p>
-        {{/if}}
+<div class="eureka-results clearfix">
+    {{#each item in model}}
+        <div class="eureka-result-item row">
+            {{#if item.__thumb__}}
+                <div class="eureka-thumb col-xs-4">
+                    {{#cropped-thumb model=item class="eureka-item-thumb"}}{{/cropped-thumb}}
+                </div>
+            {{/if}}
 
-        {{#if item.__thumb__}}
-            <img class="item-thumb" {{bind-attr src=item.__thumb__}} />
-        {{/if}}
-    </fieldset>
-{{/each}}
+            <div {{bind-attr class="item.__thumb__:col-xs-8"}}>
+                <h3 class="eureka-item-title">
+                    {{#model-to 'display' item item._id}}{{item.__title__}}{{/model-to}}
+                </h3>
+                {{#if item.__description__}}
+                    <p class="eureka-item-description">{{{item.__description__}}}</p>
+                {{/if}}
+            </div>
+        </div>
+    {{/each}}
+</div>
+

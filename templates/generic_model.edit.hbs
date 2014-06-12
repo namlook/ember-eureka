@@ -2,7 +2,14 @@
 
 <h1>{{{model.__title__}}}</h1>
 
-{{model-form model=model}}
+<form class="form-horizontal" role="form">
+    {{model-form model=model}}
 
-{{#model-to 'display' model classNames="button cancel"}}cancel{{/model-to}}
-<button class="button success save" {{action 'save'}}>save</button>
+     <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            {{#model-to 'display' model model._id classNames="btn btn-default cancel"}}cancel{{/model-to}}
+            <button class="btn btn-primary save" {{action 'save'}}>save</button>
+        </div>
+    </div>
+</form>
+

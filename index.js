@@ -46,17 +46,10 @@ Eurekapp = (function(clientConfig){
             console.log(this.get('config').name, 'is ready !');
         },
 
-        getMetaModel: function(modelType) {
-            var modelConfig = App.MetaModel.create(this.config.schemas[modelType]);
-            modelConfig.set('type', modelType);
-            return modelConfig;
-        },
-
-        getModelSchema: function(modelType) {
-            var modelConfig = this.getMetaModel(modelType);
-            if (modelConfig) {
-                return modelConfig.schema;
-            }
+        getModelMeta: function(modelType) {
+            var modelMeta = App.ModelMeta.create(this.config.schemas[modelType]);
+            modelMeta.set('type', modelType);
+            return modelMeta;
         }
     });
 
@@ -115,7 +108,7 @@ Eurekapp = (function(clientConfig){
             return Ember.keys(this.get('model').schemas).map(function(modelName){
                 return {
                     classified: modelName.camelize().capitalize(),
-                    underscored: modelName.underscore(),
+                    decamelized: modelName.underscore(),
                     dasherized: modelName.dasherize()
                 };
             });
@@ -253,10 +246,20 @@ Eurekapp = (function(clientConfig){
     /**** Models *****/
 
 
-    /* MetaModel
+    /* ModelMeta
      * this object contains all the information about the model written in schemas.js
      */
-    App.MetaModel = Ember.Object.extend({
+    App.ModelMeta = Ember.Object.extend({
+        type: null,
+
+        dasherizedType: function() {
+            return this.get('type').dasherize();
+        }.property('type').readOnly(),
+
+        decamelizedType: function() {
+            return this.get('type').underscore();
+        }.property('type').readOnly(),
+
         searchFieldName: function() {
             var lookupFieldName = this.get('search.field');
             if (!lookupFieldName) {
@@ -321,7 +324,7 @@ Eurekapp = (function(clientConfig){
                 var relationType = fieldSchema.type;
 
                 // if the field is a relation
-                if (!!App.getModelSchema(relationType)) {
+                if (!!App.getModelMeta(relationType).get('properties')) {
 
                     if (fieldSchema.multi) {
 
@@ -361,7 +364,7 @@ Eurekapp = (function(clientConfig){
 
 
         __meta__: function() {
-            return App.getMetaModel(this.get('__type__'));
+            return App.getModelMeta(this.get('__type__'));
         }.property('__type__'),
 
 
@@ -659,13 +662,13 @@ Eurekapp = (function(clientConfig){
             return this.get('content._type') || this.get('__type__');
         }.property('content._type', '__type__').readOnly(),
 
-        dasherized_type: function() {
-            return this.get('type').dasherize();
-        }.property('type').readOnly(),
+        // dasherized_type: function() {
+        //     return this.get('type').dasherize();
+        // }.property('type').readOnly(),
 
-        underscored_type: function() {
-            return this.get('type').underscore();
-        }.property('type').readOnly(),
+        // underscored_type: function() {
+        //     return this.get('type').underscore();
+        // }.property('type').readOnly(),
 
         unknownProperty: function(key) {
             /*
@@ -690,11 +693,22 @@ Eurekapp = (function(clientConfig){
      */
     App.ResultSet = Ember.ArrayProxy.extend({
         type: null,
-        meta: null,
+
+        __meta__: function() {
+            return App.getModelMeta(this.get('type'));
+        }.property('type'),
+
+        // dasherized_type: function() {
+        //     return this.get('type').dasherize();
+        // }.property('type').readOnly(),
+
+        // underscored_type: function() {
+        //     return this.get('type').underscore();
+        // }.property('type').readOnly(),
 
         schema: function() {
-            return this.get('meta.schema');
-        }.property('meta.schema'),
+            return this.get('__meta__.schema');
+        }.property('__meta__.schema'),
 
         fields: function() {
             var _fields = Ember.A();
@@ -719,12 +733,15 @@ Eurekapp = (function(clientConfig){
      */
     App.DatabaseModel = Ember.Object.extend({
         type: null,
-        meta: null,
         model: null,
 
+        __meta__: function() {
+            return App.getModelMeta(this.get('type'));
+        }.property('type'),
+
         properties: function() {
-            return this.get('meta').schema;
-        }.property('meta'),
+            return this.get('__meta__').schema;
+        }.property('__meta__.schema'),
 
         endpoint: function() {
             return App.config.apiURI+'/'+this.get('type').underscore();
@@ -761,7 +778,7 @@ Eurekapp = (function(clientConfig){
             var modelType = this.get('type');
 
             // build query from model's meta
-            var meta = this.get('meta');
+            var meta = this.get('__meta__');
             if (query._sortBy === undefined && meta.search && meta.search.sortBy) {
                 query._sortBy = meta.search.sortBy;
             }
@@ -779,7 +796,6 @@ Eurekapp = (function(clientConfig){
                     });
                     var resultSet = App.ResultSet.create({
                         type: modelType,
-                        meta: that.get('meta'),
                         content: results
                     });
                     return resolve(resultSet);
@@ -1210,7 +1226,7 @@ Eurekapp = (function(clientConfig){
             var relationType = this.get('field.schema.type');
             var searchFieldName = this.get('searchFieldName');
             if (!searchFieldName) {
-                searchFieldName = App.getMetaModel(relationType).get('searchFieldName');
+                searchFieldName = App.getModelMeta(relationType).get('searchFieldName');
             }
             var displayFieldName = this.get('displayFieldName') || '__title__';
             var field = this.get('field');
@@ -1256,13 +1272,13 @@ Eurekapp = (function(clientConfig){
 
         placeholder: function() {
             var modelType = this.get('model').get('type');
-            return App.getMetaModel(modelType).get('searchPlaceholder');
+            return App.getModelMeta(modelType).get('searchPlaceholder');
         }.property('model.type'),
 
         buildQuery: function(value) {
             var jsonQuery = {};
             var modelType = this.get('model').get('type');
-            var searchFieldName = App.getMetaModel(modelType).get('searchFieldName');
+            var searchFieldName = App.getModelMeta(modelType).get('searchFieldName');
             jsonQuery[searchFieldName] = {'$iregex': '^'+value};
             return jsonQuery;
         },
@@ -1287,7 +1303,7 @@ Eurekapp = (function(clientConfig){
 
         placeholder: function() {
             var modelType = this.get('model').get('type');
-            return App.getMetaModel(modelType).get('searchAdvancedPlaceholder');
+            return App.getModelMeta(modelType).get('searchAdvancedPlaceholder');
         }.property('model.type'),
 
         keyPress: function(e) {
@@ -1318,9 +1334,29 @@ Eurekapp = (function(clientConfig){
                 }
             });
             return jsonQuery;
+        },
+
+        didInsertElement: function() {
+            this.$().focus();
         }
     });
 
+    App.CroppedThumbComponent = Ember.Component.extend({
+        tagName: 'img',
+        model: null,
+        classNames: 'eureka-cropped-thumb',
+        attributeBindings: ['src', 'width', 'height'],
+        width: 150,
+        height: 150,
+
+        src: function() {
+            return this.get('model.__thumb__');
+        }.property('model.__thumb__'),
+
+        didInsertElement: function() {
+            this.$().fakecrop({wrapperWidth: this.get('width'), wrapperHeight: this.get('height')});
+        }
+    });
 
 
     /** Vendors components ***/
@@ -1367,9 +1403,21 @@ Eurekapp = (function(clientConfig){
      * At last, the model-to helper can be used as a block component. The value
      * in the block will be used as the link title
      */
-    Ember.Handlebars.registerHelper('model-to', function(action, name, options) {
+    Ember.Handlebars.registerHelper('model-to', function(action, modelTypeName, modelId, options) {
+        var model = Ember.Handlebars.get(this, modelTypeName, options);
+        var modelType;
+        if (typeof(model) === 'object') {
+            modelType = model.get('type');
+        } else {
+            modelType = model;
+            model = null;
+        }
+        if (options === undefined) {
+            options = modelId;
+            modelId = null;
+        }
+
         var args = [];
-        var model = Ember.Handlebars.get(this, name, options);
 
         options.contexts = [];
         options.types = [];
@@ -1382,53 +1430,41 @@ Eurekapp = (function(clientConfig){
         if (!options.hashContexts){
             options.hashContexts = {};
         }
+        options.hashContexts.classNames = this;
 
         if (!options.hash.classNames) {
             options.hash.classNames = '';
-            options.hashContexts.classNames = this;
         }
         options.hash.classNames += " model-to-" + action;
 
-        // if the helper is not a block helper, we generate the link title via model.__title__
-        if (!options.fn) {
-            args.push(model.get('__title__'));
-            options.types.push('STRING');
-            options.contexts.push(this);
+        if (modelType) {
+            options.hash.classBinding += ' '+modelTypeName+'.__meta__.dasherizedType';
         }
-
-        var modelType = null;
-        var dynamicModel = false;
 
         // check the route to use (default to generic_model.<action>)
         var routeName = 'generic_model.' + action;
-        if (model) {
-            if (typeof(model) === 'string') {
-                modelType = model;
-            } else {
-                modelType = model.get('type');
-                dynamicModel = true;
-            }
-            var capitalized_action = action.capitalize();
-            if(App[modelType + capitalized_action + 'Route']) {
-                routeName = modelType.underscore() + '.' + action;
-            }
+        var capitalized_action = action.capitalize();
+        if(App[modelType + capitalized_action + 'Route']) {
+            routeName = modelType.underscore() + '.' + action;
         }
 
         args.push(routeName);
         options.types.push('STRING');
         options.contexts.push(this);
 
-        if (dynamicModel) {
-            args.push(name+'._type');
-            options.types.push('ID');
-            options.contexts.push(this);
-
-            args.push(name+'._id');
+        if (model) {
+            args.push(modelTypeName+'.__meta__.decamelizedType');
             options.types.push('ID');
             options.contexts.push(this);
         } else {
-            args.push(model);
-            options.types.push('STRING');
+            args.push(modelTypeName);
+            options.types.push('ID');
+            options.contexts.push(this);
+        }
+
+        if (modelId) {
+            args.push(modelId);
+            options.types.push('ID');
             options.contexts.push(this);
         }
 
@@ -1436,6 +1472,7 @@ Eurekapp = (function(clientConfig){
 
         return Ember.Handlebars.helpers['link-to'].apply(this, args);
     });
+
 
     App.ApplicationConfig = Ember.Object.extend({
         // application config used in App.config
@@ -1456,8 +1493,7 @@ Eurekapp = (function(clientConfig){
                 var db = Ember.Object.create();
                 for (var _type in clientConfig.schemas) {
                     var dbTypeObject = App.DatabaseModel.create({
-                        type: _type,
-                        meta: clientConfig.schemas[_type]
+                        type: _type
                     });
                     var Model;
                     if (App[_type+'Model']) {
