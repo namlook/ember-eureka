@@ -15,11 +15,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
     'model': ("model")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['application-menu'] || (depth0 && depth0['application-menu'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "application-menu", options))));
-  data.buffer.push("\n        </div>\n        <div class=\"col-xs-12 col-sm-9 col-lg-10\">\n            <p class=\"visible-xs\">\n                <button type=\"button\" onclick=\"$('.row-offcanvas').toggleClass('active')\" class=\"btn btn-primary btn-xs\" data-toggle=\"offcanvas\">\n                    Toggle nav\n                </button>\n            </p>\n            ");
+  data.buffer.push("\n        </div>\n        <div class=\"col-xs-12 col-sm-9 col-lg-10\">\n            <p class=\"visible-xs\">\n                <button type=\"button\" onclick=\"$('.row-offcanvas').toggleClass('active')\" class=\"btn btn-primary btn-xs\" data-toggle=\"offcanvas\">\n                    Toggle nav\n                </button>\n            </p>\n            <div class=\"eureka-main-content\">\n                ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "outlet", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n        </div>\n    </div>\n\n</div>");
+  data.buffer.push("\n            </div>\n        </div>\n    </div>\n\n</div>");
   return buffer;
   
 });
@@ -1233,7 +1233,7 @@ function program1(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.type", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</h1>\n\n<form class=\"form-horizontal\" role=\"form\">\n    ");
+  data.buffer.push("</h1>\n\n<form class=\"form-horizontal eureka-new-document-form\" role=\"form\">\n    ");
   hashContexts = {'model': depth0};
   hashTypes = {'model': "ID"};
   options = {hash:{
@@ -1259,7 +1259,7 @@ function program1(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">save</button>\n        </div>\n    </div>\n<form>");
+  data.buffer.push(">save</button>\n        </div>\n    </div>\n</form>");
   return buffer;
   
 });
