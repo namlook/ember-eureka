@@ -148,6 +148,7 @@ Eurekapp = (function(clientConfig){
         }
     });
 
+
     App.GenericModelListRoute = Ember.Route.extend(App.RouteTemplateMixin, {
         genericTemplateName: '<generic_model>/list',
         genericControllerName: '<generic_model>List',
@@ -191,9 +192,9 @@ Eurekapp = (function(clientConfig){
     });
 
     /***** Controllers ******/
-    App.GenericModelListController = Ember.Controller.extend({
+    App.GenericModelListController = Ember.ArrayController.extend({
         actions: {
-            updateModel: function(query) {
+            searchModel: function(query) {
                 var modelType = this.get('model').get('type');
                 var _this = this;
                 App.db[modelType].find(query).then(function(model) {
@@ -205,14 +206,37 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    App.GenericModelNewController = Ember.Controller.extend({
 
+    App.GenericModelDisplayController = Ember.ObjectController.extend({
+        actions: {
+            "delete": function() {
+                var _this = this;
+                var model = this.get('model');
+                var type = model.get('__type__').underscore();
+                model.delete().then(function(data) {
+                    console.log('ooo', data);
+                    _this.transitionToRoute('generic_model.list', type);
+                }, function(jqXHR) {
+                    console.log('error !!!', jqXHR);
+                    alertify.error(jqXHR);
+                });
+            },
+            edit: function() {
+                var model = this.get('model');
+                var type = model.get('__type__');
+                var _id = model.get('_id');
+                this.transitionToRoute('generic_model.edit', type, _id);
+            }
+        }
+    });
+
+
+    App.GenericModelNewController = Ember.ObjectController.extend({
         actions: {
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
                     var type = model.get('type').underscore();
-                    var _id = model.get('_id');
                     _this.transitionToRoute('generic_model.list', type);
                 }, function(err){
                     alertify.error(err);
@@ -222,7 +246,7 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    App.GenericModelEditController = Ember.Controller.extend({
+    App.GenericModelEditController = Ember.ObjectController.extend({
         actions: {
             save: function() {
                 var _this = this;
@@ -239,9 +263,6 @@ Eurekapp = (function(clientConfig){
     });
 
     // Ember.TEMPLATES = require('./templates');
-
-    App.Controller = Ember.Controller.extend();
-    App.Route = Ember.Route.extend();
 
     /**** Models *****/
 
@@ -510,7 +531,6 @@ Eurekapp = (function(clientConfig){
                         content: data.object
                     }));
                 }).fail(function(jqXHR) {
-                    alert('An error occured: ', jqXHR.responseText);
                     var error = jqXHR.responseText;
                     if (jqXHR.responseText.error !== undefined) {
                         error = jqXHR.responseText.error;
@@ -525,6 +545,27 @@ Eurekapp = (function(clientConfig){
             var promises = this._getPendingPromises();
             return Ember.RSVP.Promise.all(promises).then(function(relations){
                 return _this._saveModel();
+            });
+        },
+
+        "delete": function() {
+            var type = this.get('__type__');
+            var url = App.config.apiURI+'/'+type.underscore()+'/'+this.get('_id');
+            return new Ember.RSVP.Promise(function(resolve, reject) {
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    success: function(data) {
+                        if (data.status === 'ok') {
+                            return resolve(data);
+                        } else {
+                            return reject(data.error);
+                        }
+                    },
+                    error: function(jqXHR) {
+                        return reject(jqXHR);
+                    }
+                });
             });
         },
 

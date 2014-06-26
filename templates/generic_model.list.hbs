@@ -44,13 +44,13 @@
     <div class="pull-right form-horizontal">
         <div class="form-group has-feedback simple-query-container">
             <span class="glyphicon glyphicon-search form-control-feedback search-icon"></span>
-            {{#simple-query action="updateModel" model=model class="eureka-simple-query form-control"}}{{/simple-query}}
+            {{#simple-query action="searchModel" model=model class="eureka-simple-query form-control"}}{{/simple-query}}
         </div>
     </div>
 </div>
 
 {{#if showAdvancedQuery}}
-    {{#advanced-query action="updateModel" model=model class="advanced-query form-control"}}{{/advanced-query}}
+    {{#advanced-query action="searchModel" model=model class="advanced-query form-control"}}{{/advanced-query}}
 {{/if}}
 
 
@@ -67,6 +67,7 @@
                 <h3 class="eureka-item-title">
                     {{#model-to 'display' item item._id}}{{item.__title__}}{{/model-to}}
                 </h3>
+
                 {{#if item.__description__}}
                     <p class="eureka-item-description">{{{item.__description__}}}</p>
                 {{/if}}
