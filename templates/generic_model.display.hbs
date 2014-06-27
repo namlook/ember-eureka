@@ -22,6 +22,7 @@
         </div>
     </div>
 
+    {{#if modelActions.length}}
     <ul class="nav nav-tabs">
       <li class="active"><a href="#">Informations</a></li>
       <li class="dropdown pull-right">
@@ -29,12 +30,18 @@
           <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-            {{!-- <li>{{#model-to 'edit' model model._id}}edit{{/model-to}}</li> --}}
-            <li><a href="#" {{bind-attr class=":eureka-edit-action model.__meta__.dasherizedType"}} {{action 'edit'}}>edit</a></li>
-            <li><a href="#" {{bind-attr class=":eureka-delete-action model.__meta__.dasherizedType"}} {{action 'delete'}}>delete</a></li>
+            {{#each modelAction in modelActions}}
+                <li><a href="#"
+                    {{bind-attr class=":eureka-action modelAction.cssClass model.__meta__.dasherizedType"}}
+                    {{action 'trigger' modelAction.name}}>
+                      {{modelAction.label}}
+                    </a>
+                </li>
+            {{/each}}
         </ul>
       </li>
     </ul>
+    {{/if}}
 
     {{model-display model=model}}
 </div>

@@ -116,6 +116,9 @@ Eurekapp = (function(clientConfig){
     });
 
 
+    /* the RouteTemplateMixin allow all objects which implement the mixin to
+     * use a generic template if a model doesn't specified one.
+     */
     App.RouteTemplateMixin = Ember.Mixin.create({
         genericTemplateName: null,
         genericControllerName: null,
@@ -192,6 +195,60 @@ Eurekapp = (function(clientConfig){
     });
 
     /***** Controllers ******/
+
+    /* The controllers handles the actions and all variables not needed beetween
+     * two sessions.
+     */
+
+    /* This mixin is used to make the controller aware of the different actions available */
+    App.ActionControllerMixin = Ember.Mixin.create(Ember.TargetActionSupport, {
+        modelActions: function() {
+            var actions = this.get('model.__meta__.actions');
+            if (actions === undefined) {
+                actions = [];
+            }
+            return actions.map(function(action){
+                return {
+                    name: action.name,
+                    label: action.label || action.name,
+                    cssClass: 'eureka-'+action.name.dasherize()+'-action'
+                };
+            });
+        }.property('model.__meta__.actions'),
+
+        transitionToPage: function(page, type, _id) {
+            var args = Array.prototype.slice.call(arguments, 2);
+            // page = args.shift();
+            // type = args.shift();
+            var routeName;
+
+            var modelType = this.get('model.type');
+            type = modelType.underscore();
+            var customRouteName = modelType+page.camelize().capitalize()+'Route';
+
+            if (App[customRouteName]) {
+                routeName = modelType.underscore()+'.'+page;
+                args.unshift(routeName);
+                Ember.Controller.prototype.transitionToRoute.apply(this, args);
+            } else {
+                routeName = 'generic_model.'+page;
+                args.unshift(type);
+                args.unshift(routeName);
+                Ember.Controller.prototype.transitionToRoute.apply(this, args);
+            }
+        },
+
+        actions: {
+            trigger: function(actionName) {
+               this.triggerAction({
+                    action:actionName,
+                    target: this
+                });
+            }
+        }
+    });
+
+    /* List the documents */
     App.GenericModelListController = Ember.ArrayController.extend({
         actions: {
             searchModel: function(query) {
@@ -207,15 +264,15 @@ Eurekapp = (function(clientConfig){
     });
 
 
-    App.GenericModelDisplayController = Ember.ObjectController.extend({
+    /* Display a document */
+    App.GenericModelDisplayController = Ember.ObjectController.extend(App.ActionControllerMixin, {
         actions: {
             "delete": function() {
                 var _this = this;
                 var model = this.get('model');
                 var type = model.get('__type__').underscore();
                 model.delete().then(function(data) {
-                    console.log('ooo', data);
-                    _this.transitionToRoute('generic_model.list', type);
+                    _this.transitionToPage('list', type);
                 }, function(jqXHR) {
                     console.log('error !!!', jqXHR);
                     alertify.error(jqXHR);
@@ -225,19 +282,20 @@ Eurekapp = (function(clientConfig){
                 var model = this.get('model');
                 var type = model.get('__type__');
                 var _id = model.get('_id');
-                this.transitionToRoute('generic_model.edit', type, _id);
+                this.transitionToPage('edit', type, _id);
             }
         }
     });
 
 
-    App.GenericModelNewController = Ember.ObjectController.extend({
+    /* Display a form to create a new document */
+    App.GenericModelNewController = Ember.ObjectController.extend(App.ActionControllerMixin, {
         actions: {
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
                     var type = model.get('type').underscore();
-                    _this.transitionToRoute('generic_model.list', type);
+                    _this.transitionToPage('list', type);
                 }, function(err){
                     alertify.error(err);
                     return console.log('err', err);
@@ -246,14 +304,15 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    App.GenericModelEditController = Ember.ObjectController.extend({
+    /* Display a form to edit an existing document */
+    App.GenericModelEditController = Ember.ObjectController.extend(App.ActionControllerMixin, {
         actions: {
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
                     var type = model.get('type').underscore();
                     var _id = model.get('_id');
-                    _this.transitionToRoute('generic_model.display', type, _id);
+                    _this.transitionToPage('display', type, _id);
                 }, function(err){
                     alertify.error(err);
                     return console.log('err', err);
@@ -521,7 +580,7 @@ Eurekapp = (function(clientConfig){
         },
 
         _saveModel: function() {
-            this._updateContent();
+            // this._updateContent();
             var type = this.get('__type__');
             var endpoint = App.config.apiURI+'/'+type.underscore();
             var postData = {payload: this._toJSON()};
@@ -1191,8 +1250,8 @@ Eurekapp = (function(clientConfig){
             return this.get('type') === 'date';
         }.property('type'),
 
-        focusOut: function() {
-            // update the model content when the user leave the input
+        change: function() {
+            // update the model content when the user change the input
             this.get('field')._triggerModelChanged();
         }
 
@@ -1258,6 +1317,7 @@ Eurekapp = (function(clientConfig){
             this.set('value', null);
             this.$().typeahead('val', '');
             this.sendAction('onSelected');
+            field._triggerModelChanged();
         },
 
         willDestroyElement: function() {},
@@ -1484,7 +1544,7 @@ Eurekapp = (function(clientConfig){
 
         // check the route to use (default to generic_model.<action>)
         var routeName = 'generic_model.' + action;
-        var capitalized_action = action.capitalize();
+        var capitalized_action = action.camelize().capitalize();
         if(App[modelType + capitalized_action + 'Route']) {
             routeName = modelType.underscore() + '.' + action;
         }
