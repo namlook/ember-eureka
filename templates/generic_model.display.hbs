@@ -28,9 +28,9 @@
             {{#each modelAction in modelActions}}
                 {{#unless modelAction.isSecondary}}
                     <li><a href="#"
-                        {{bind-attr class=":eureka-action modelAction.cssClass model.__meta__.dasherizedType"}}
+                        {{bind-attr class=":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.dasherizedType"}}
                         {{action 'trigger' modelAction.name}}>
-                          <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.secondary}} {{modelAction.label}}
+                          <i {{bind-attr class="modelAction.iconClass"}}></i> <span class="hidden-xs">{{modelAction.label}}</span>
                         </a>
                     </li>
                 {{/unless}}
@@ -43,9 +43,9 @@
                 {{#each modelAction in modelActions}}
                     {{#if modelAction.isSecondary}}
                     <li><a href="#"
-                        {{bind-attr class=":eureka-action modelAction.cssClass model.__meta__.dasherizedType"}}
+                        {{bind-attr class=":eureka-action :eureka-secondary-action modelAction.cssClass model.__meta__.dasherizedType"}}
                         {{action 'trigger' modelAction.name}}>
-                          <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.secondary}} {{modelAction.label}}
+                          <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.label}}
                         </a>
                     </li>
                     {{/if}}
