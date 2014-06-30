@@ -204,13 +204,24 @@ Eurekapp = (function(clientConfig){
     App.ActionControllerMixin = Ember.Mixin.create(Ember.TargetActionSupport, {
         modelActions: function() {
             var actions = this.get('model.__meta__.actions');
+            var model = this.get('model');
             if (actions === undefined) {
                 actions = [];
             }
             return actions.map(function(action){
+                if (action.toggle !== undefined) {
+                    if (!action.field) {
+                        alertify.error('WARNING ! action.field unknown. Please contact your administrator.', 0);
+                    }
+                    var value = model.get(action.field);
+                    for (var key in action.toggle[value]) {
+                        action[key] = action.toggle[value][key];
+                    }
+                }
                 return {
                     name: action.name,
                     label: action.label || action.name,
+                    isSecondary: action.secondary,
                     iconClass: action.icon,
                     cssClass: 'eureka-'+action.name.dasherize()+'-action'
                 };
@@ -351,7 +362,7 @@ Eurekapp = (function(clientConfig){
                     lookupFieldName = 'title';
                 } else {
                     // TODO check this when starting server
-                    alertify.log('WARNING ! no search field found for '+this.get('type')+'. Please add one in config ');
+                    alertify.log('WARNING ! no search field found for '+this.get('type')+'. Please contact your administrator ');
                 }
             }
             return lookupFieldName;

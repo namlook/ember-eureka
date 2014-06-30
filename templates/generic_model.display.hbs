@@ -24,21 +24,33 @@
 
     {{#if modelActions.length}}
     <ul class="nav nav-tabs">
-      <li class="active"><a href="#">Informations</a></li>
-      <li class="dropdown pull-right">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-          <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
+        <li class="active"><a href="#">Informations</a></li>
             {{#each modelAction in modelActions}}
-                <li><a href="#"
-                    {{bind-attr class=":eureka-action modelAction.cssClass model.__meta__.dasherizedType"}}
-                    {{action 'trigger' modelAction.name}}>
-                      <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.label}}
-                    </a>
-                </li>
+                {{#unless modelAction.isSecondary}}
+                    <li><a href="#"
+                        {{bind-attr class=":eureka-action modelAction.cssClass model.__meta__.dasherizedType"}}
+                        {{action 'trigger' modelAction.name}}>
+                          <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.secondary}} {{modelAction.label}}
+                        </a>
+                    </li>
+                {{/unless}}
             {{/each}}
-        </ul>
+        <li class="dropdown pull-right">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                {{#each modelAction in modelActions}}
+                    {{#if modelAction.isSecondary}}
+                    <li><a href="#"
+                        {{bind-attr class=":eureka-action modelAction.cssClass model.__meta__.dasherizedType"}}
+                        {{action 'trigger' modelAction.name}}>
+                          <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.secondary}} {{modelAction.label}}
+                        </a>
+                    </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
       </li>
     </ul>
     {{/if}}
