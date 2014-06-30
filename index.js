@@ -228,6 +228,17 @@ Eurekapp = (function(clientConfig){
             });
         }.property('model.__meta__.actions'),
 
+        mainModelActions: function() {
+            console.log(this.get('modelActions'));
+            return this.get('modelActions').filter(function(item) {
+                return !item.isSecondary;
+            });
+        }.property('modelActions.[]'),
+
+        secondaryModelActions: function() {
+            return this.get('modelActions').filterBy('isSecondary');
+        }.property('modelActions.[]'),
+
         transitionToPage: function(page, type, _id) {
             var args = Array.prototype.slice.call(arguments, 2);
             // page = args.shift();

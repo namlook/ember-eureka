@@ -22,38 +22,36 @@
         </div>
     </div>
 
-    {{#if modelActions.length}}
+    {{log 'mainModelActions' mainModelActions}}
+    {{log 'secondaryModelActions' secondaryModelActions}}
     <ul class="nav nav-tabs">
         <li class="active"><a href="#">Informations</a></li>
-            {{#each modelAction in modelActions}}
-                {{#unless modelAction.isSecondary}}
-                    <li><a href="#"
-                        {{bind-attr class=":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.dasherizedType"}}
-                        {{action 'trigger' modelAction.name}}>
-                          <i {{bind-attr class="modelAction.iconClass"}}></i> <span class="hidden-xs">{{modelAction.label}}</span>
-                        </a>
-                    </li>
-                {{/unless}}
+            {{#each modelAction in mainModelActions}}
+                <li><a href="#"
+                    {{bind-attr class=":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.dasherizedType"}}
+                    {{action 'trigger' modelAction.name}}>
+                      <i {{bind-attr class="modelAction.iconClass"}}></i> <span class="hidden-xs">{{modelAction.label}}</span>
+                    </a>
+                </li>
             {{/each}}
+        {{#if secondaryModelActions.length}}
         <li class="dropdown pull-right">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
               <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                {{#each modelAction in modelActions}}
-                    {{#if modelAction.isSecondary}}
+                {{#each modelAction in secondaryModelActions}}
                     <li><a href="#"
                         {{bind-attr class=":eureka-action :eureka-secondary-action modelAction.cssClass model.__meta__.dasherizedType"}}
                         {{action 'trigger' modelAction.name}}>
                           <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.label}}
                         </a>
                     </li>
-                    {{/if}}
                 {{/each}}
             </ul>
-      </li>
+        </li>
+        {{/if}}
     </ul>
-    {{/if}}
 
     {{model-display model=model}}
 </div>
