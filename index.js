@@ -211,6 +211,7 @@ Eurekapp = (function(clientConfig){
                 return {
                     name: action.name,
                     label: action.label || action.name,
+                    iconClass: action.icon,
                     cssClass: 'eureka-'+action.name.dasherize()+'-action'
                 };
             });

@@ -34,7 +34,7 @@
                 <li><a href="#"
                     {{bind-attr class=":eureka-action modelAction.cssClass model.__meta__.dasherizedType"}}
                     {{action 'trigger' modelAction.name}}>
-                      {{modelAction.label}}
+                      <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.label}}
                     </a>
                 </li>
             {{/each}}
