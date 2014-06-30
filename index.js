@@ -933,6 +933,10 @@ Eurekapp = (function(clientConfig){
         schema: null,
         content: null,
 
+        cssClass: function() {
+            return 'eureka-'+this.get('name').dasherize()+'-field';
+        }.property('name'),
+
         isSafeString: function() {
             return !!this.get('schema').safeString;
         }.property('schema.safeString'),
