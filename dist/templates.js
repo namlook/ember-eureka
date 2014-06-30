@@ -953,6 +953,30 @@ function program37(depth0,data) {
   return buffer;
   
 });
+Ember.TEMPLATES["components/search-query"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, stack2, hashContexts, hashTypes, options, self=this, helperMissing=helpers.helperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = '';
+  return buffer;
+  }
+
+  data.buffer.push("<div class=\"form-group has-feedback eureka-search-query-container\">\n    <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n    ");
+  hashContexts = {'action': depth0,'model': depth0};
+  hashTypes = {'action': "STRING",'model': "ID"};
+  options = {hash:{
+    'action': ("searchModel"),
+    'model': ("model")
+  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['search-query-input'] || (depth0 && depth0['search-query-input'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "search-query-input", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n</div>");
+  return buffer;
+  
+});
 Ember.TEMPLATES["generic_model/display"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
@@ -1102,15 +1126,7 @@ function program9(depth0,data) {
   hashContexts = {};
   stack2 = helpers['if'].call(depth0, "model.__description__", {hash:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n            </div>\n        </div>\n    </div>\n\n    ");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.log.call(depth0, "mainModelActions", "mainModelActions", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n    ");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.log.call(depth0, "secondaryModelActions", "secondaryModelActions", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n    <ul class=\"nav nav-tabs\">\n        <li class=\"active\"><a href=\"#\">Informations</a></li>\n            ");
+  data.buffer.push("\n            </div>\n        </div>\n    </div>\n\n    <ul class=\"nav nav-tabs\">\n        <li class=\"active\"><a href=\"#\">Informations</a></li>\n            ");
   hashTypes = {};
   hashContexts = {};
   stack2 = helpers.each.call(depth0, "modelAction", "in", "mainModelActions", {hash:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
@@ -1194,28 +1210,11 @@ function program3(depth0,data) {
 
 function program5(depth0,data) {
   
-  var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
-  data.buffer.push("\n    ");
-  hashContexts = {'action': depth0,'model': depth0,'class': depth0};
-  hashTypes = {'action': "STRING",'model': "ID",'class': "STRING"};
-  options = {hash:{
-    'action': ("searchModel"),
-    'model': ("model"),
-    'class': ("advanced-query form-control")
-  },inverse:self.noop,fn:self.program(3, program3, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['advanced-query'] || (depth0 && depth0['advanced-query'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "advanced-query", options));
-  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n");
-  return buffer;
-  }
-
-function program7(depth0,data) {
-  
   var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
   data.buffer.push("\n        <div class=\"eureka-result-item row\">\n            ");
   hashTypes = {};
   hashContexts = {};
-  stack1 = helpers['if'].call(depth0, "item.__thumb__", {hash:{},inverse:self.noop,fn:self.program(8, program8, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack1 = helpers['if'].call(depth0, "item.__thumb__", {hash:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n\n            <div ");
   hashContexts = {'class': depth0};
@@ -1227,18 +1226,18 @@ function program7(depth0,data) {
   data.buffer.push(">\n                <h3 class=\"eureka-item-title\">\n                    ");
   hashTypes = {};
   hashContexts = {};
-  options = {hash:{},inverse:self.noop,fn:self.program(10, program10, data),contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  options = {hash:{},inverse:self.noop,fn:self.program(8, program8, data),contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "display", "item", "item._id", options) : helperMissing.call(depth0, "model-to", "display", "item", "item._id", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n                </h3>\n\n                ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "item.__description__", {hash:{},inverse:self.noop,fn:self.program(12, program12, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers['if'].call(depth0, "item.__description__", {hash:{},inverse:self.noop,fn:self.program(10, program10, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n            </div>\n        </div>\n    ");
   return buffer;
   }
-function program8(depth0,data) {
+function program6(depth0,data) {
   
   var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
   data.buffer.push("\n                <div class=\"eureka-thumb col-xs-4\">\n                    ");
@@ -1254,7 +1253,7 @@ function program8(depth0,data) {
   return buffer;
   }
 
-function program10(depth0,data) {
+function program8(depth0,data) {
   
   var hashTypes, hashContexts;
   hashTypes = {};
@@ -1262,7 +1261,7 @@ function program10(depth0,data) {
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "item.__title__", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   }
 
-function program12(depth0,data) {
+function program10(depth0,data) {
   
   var buffer = '', hashContexts, hashTypes;
   data.buffer.push("\n                    <p class=\"eureka-item-description\">");
@@ -1287,25 +1286,19 @@ function program12(depth0,data) {
   },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "new", "model", options) : helperMissing.call(depth0, "model-to", "new", "model", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n    </div>\n</div>\n\n<div class=\"eureka-section-search\">\n    <div class=\"pull-right form-horizontal\">\n        <div class=\"form-group has-feedback simple-query-container\">\n            <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n            ");
-  hashContexts = {'action': depth0,'model': depth0,'class': depth0};
-  hashTypes = {'action': "STRING",'model': "ID",'class': "STRING"};
+  data.buffer.push("\n    </div>\n</div>\n\n");
+  hashContexts = {'action': depth0,'model': depth0};
+  hashTypes = {'action': "STRING",'model': "ID"};
   options = {hash:{
     'action': ("searchModel"),
-    'model': ("model"),
-    'class': ("eureka-simple-query form-control")
+    'model': ("model")
   },inverse:self.noop,fn:self.program(3, program3, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['simple-query'] || (depth0 && depth0['simple-query'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "simple-query", options));
-  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n        </div>\n    </div>\n</div>\n\n");
-  hashTypes = {};
-  hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "showAdvancedQuery", {hash:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = ((stack1 = helpers['search-query'] || (depth0 && depth0['search-query'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "search-query", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n\n\n<div class=\"eureka-results clearfix\">\n    ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(7, program7, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n</div>\n\n");
   return buffer;

@@ -40,18 +40,7 @@
     </div>
 </div>
 
-<div class="eureka-section-search">
-    <div class="pull-right form-horizontal">
-        <div class="form-group has-feedback simple-query-container">
-            <span class="glyphicon glyphicon-search form-control-feedback search-icon"></span>
-            {{#simple-query action="searchModel" model=model class="eureka-simple-query form-control"}}{{/simple-query}}
-        </div>
-    </div>
-</div>
-
-{{#if showAdvancedQuery}}
-    {{#advanced-query action="searchModel" model=model class="advanced-query form-control"}}{{/advanced-query}}
-{{/if}}
+{{#search-query action="searchModel" model=model}}{{/search-query}}
 
 
 <div class="eureka-results clearfix">

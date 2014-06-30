@@ -1397,80 +1397,87 @@ Eurekapp = (function(clientConfig){
 
     /*** query components **/
 
-    App.SimpleQueryComponent = Ember.TextField.extend({
+    App.SearchQueryComponent = Ember.Component.extend({
+        model: null,
+        collapsedWidth: '30%',
+        collapsedHeight: '40px',
+        expandedWidth: '100%',
+        expandedHeight: '80px',
+        classNames: 'pull-right eureka-section-search form-horizontal',
+
+        expand: function() {
+            var width = this.get('expandedWidth');
+            var height = this.get('expandedHeight');
+            this.$().css({width: width, height: height});
+            this.$('.eureka-search-query-input').css({height: height});
+        },
+
+        collapse: function() {
+            var width = this.get('collapsedWidth');
+            var height = this.get('collapsedHeight');
+            this.$().css({width: width, height: height});
+            this.$('.eureka-search-query-input').css({height: height});
+        },
+
+        actions: {
+            searchModel: function(query){
+                this.sendAction('action', query);
+            }
+        }
+    });
+
+    App.SearchQueryInputComponent = Ember.TextArea.extend({
         model: null,
         autocomplete: 'off',
+        onEvent: 'keyPress',
+        classNames: 'eureka-search-query-input form-control',
 
         placeholder: function() {
             var modelType = this.get('model').get('type');
             return App.getModelMeta(modelType).get('searchPlaceholder');
         }.property('model.type'),
 
-        buildQuery: function(value) {
-            var jsonQuery = {};
-            var modelType = this.get('model').get('type');
-            var searchFieldName = App.getModelMeta(modelType).get('searchFieldName');
-            jsonQuery[searchFieldName] = {'$iregex': '^'+value};
-            return jsonQuery;
-        },
-
-        valueObserver: function() {
-            if (this.get('value')) {
-                Ember.run.debounce(this, this.sendQuery, 200);
-            }
-        }.observes('value'),
-
-        sendQuery: function() {
-            var query = this.buildQuery(this.get('value'));
-            this.sendAction('action', query);
-        }
-
-    });
-
-
-    App.AdvancedQueryComponent = Ember.TextArea.extend({
-        model: null,
-        onEvent: 'keyPress',
-
-        placeholder: function() {
-            var modelType = this.get('model').get('type');
-            return App.getModelMeta(modelType).get('searchAdvancedPlaceholder');
-        }.property('model.type'),
-
         keyPress: function(e) {
             if (e.keyCode === 13) {
-                this.sendAction('action', this.parseQuery(this.get('value')));
+                this.sendQuery();
                 e.preventDefault();
                 e.stopPropagation();
             }
         },
 
-        parseQuery: function(query) {
-            var jsonQuery = {};
-            query = query.trim();
-            query.split('&&').forEach(function(statement) {
+        parseQuery: function(value) {
+            var _this = this;
+            var query = {};
+            value = value.trim();
+            value.split('&&').forEach(function(statement) {
                 var splited;
                 if (statement.indexOf('>') > -1) {
                     splited = statement.split('>');
-                    jsonQuery[splited[0].trim()] = {'$gt': splited[1].trim()};
+                    query[splited[0].trim()] = {'$gt': splited[1].trim()};
                 } else if (statement.indexOf('<') > -1) {
                     splited = statement.split('<');
-                    jsonQuery[splited[0].trim()] = {'$lt': splited[1].trim()};
+                    query[splited[0].trim()] = {'$lt': splited[1].trim()};
                 } else if (statement.indexOf('!=') > -1) {
                     splited = statement.split('!=');
-                    jsonQuery[splited[0].trim()] = {'$ne': splited[1].trim()};
+                    query[splited[0].trim()] = {'$ne': splited[1].trim()};
                 } else if (statement.indexOf('=') > -1) {
                     splited = statement.split('=');
-                    jsonQuery[splited[0].trim()] = splited[1].trim();
+                    query[splited[0].trim()] = splited[1].trim();
+                } else {
+                    var modelType = _this.get('model').get('type');
+                    var searchFieldName = App.getModelMeta(modelType).get('searchFieldName');
+                    query[searchFieldName] = {'$iregex': '^'+value};
                 }
             });
-            return jsonQuery;
+            return query;
         },
 
-        didInsertElement: function() {
-            this.$().focus();
+        sendQuery: function() {
+            var query = this.parseQuery(this.get('value'));
+            this.sendAction('action', query);
         }
     });
+
 
     App.CroppedThumbComponent = Ember.Component.extend({
         tagName: 'img',

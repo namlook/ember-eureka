@@ -54,8 +54,22 @@
   margin-bottom: 20px;
 }
 
+/** search-query-component **/
 
-/* typeahead styling */
+.eureka-search-query-input.form-control {
+  height: 40px;
+}
+
+.form-group.has-feedback.eureka-search-query-container {
+  margin-right: 1px;
+  margin-left: 1px;
+}
+
+.glyphicon.glyphicon-search.form-control-feedback.search-icon {
+  right: 5px;
+}
+
+/**** typeahead styling ****/
 
 .typeahead.tt-input {
     margin-bottom: 0;
