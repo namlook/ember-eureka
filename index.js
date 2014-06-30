@@ -229,7 +229,6 @@ Eurekapp = (function(clientConfig){
         }.property('model.__meta__.actions'),
 
         mainModelActions: function() {
-            console.log(this.get('modelActions'));
             return this.get('modelActions').filter(function(item) {
                 return !item.isSecondary;
             });
@@ -292,13 +291,17 @@ Eurekapp = (function(clientConfig){
         actions: {
             "delete": function() {
                 var _this = this;
-                var model = this.get('model');
-                var type = model.get('__type__').underscore();
-                model.delete().then(function(data) {
-                    _this.transitionToPage('list', type);
-                }, function(jqXHR) {
-                    console.log('error !!!', jqXHR);
-                    alertify.error(jqXHR);
+                alertify.confirm("Are you sure you want to delete this document ?", function (e) {
+                    if (e) {
+                        var model = _this.get('model');
+                        var type = model.get('__type__').underscore();
+                        model.delete().then(function(data) {
+                            _this.transitionToPage('list', type);
+                        }, function(jqXHR) {
+                            console.log('error !!!', jqXHR);
+                            alertify.error(jqXHR);
+                        });
+                    }
                 });
             },
             edit: function() {
