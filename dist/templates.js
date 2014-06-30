@@ -73,12 +73,13 @@ function program1(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'type': depth0,'value': depth0,'name': depth0,'class': depth0};
-  hashTypes = {'type': "STRING",'value': "ID",'name': "ID",'class': "STRING"};
+  hashContexts = {'type': depth0,'value': depth0,'name': depth0,'autocomplete': depth0,'class': depth0};
+  hashTypes = {'type': "STRING",'value': "ID",'name': "ID",'autocomplete': "STRING",'class': "STRING"};
   options = {hash:{
     'type': ("text"),
     'value': ("value"),
     'name': ("fieldName"),
+    'autocomplete': ("off"),
     'class': ("eureka-field-input form-control")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
@@ -101,12 +102,13 @@ function program4(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'type': depth0,'checked': depth0,'name': depth0,'class': depth0};
-  hashTypes = {'type': "STRING",'checked': "ID",'name': "ID",'class': "STRING"};
+  hashContexts = {'type': depth0,'checked': depth0,'name': depth0,'autocomplete': depth0,'class': depth0};
+  hashTypes = {'type': "STRING",'checked': "ID",'name': "ID",'autocomplete': "STRING",'class': "STRING"};
   options = {hash:{
     'type': ("checkbox"),
     'checked': ("value"),
     'name': ("fieldName"),
+    'autocomplete': ("off"),
     'class': ("eureka-field-input form-control")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
@@ -129,12 +131,13 @@ function program7(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'type': depth0,'value': depth0,'name': depth0,'class': depth0};
-  hashTypes = {'type': "STRING",'value': "ID",'name': "ID",'class': "STRING"};
+  hashContexts = {'type': depth0,'value': depth0,'name': depth0,'autocomplete': depth0,'class': depth0};
+  hashTypes = {'type': "STRING",'value': "ID",'name': "ID",'autocomplete': "STRING",'class': "STRING"};
   options = {hash:{
     'type': ("number"),
     'value': ("value"),
     'name': ("fieldName"),
+    'autocomplete': ("off"),
     'class': ("eureka-field-input form-control")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
@@ -157,11 +160,12 @@ function program10(depth0,data) {
   
   var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'value': depth0,'name': depth0,'class': depth0};
-  hashTypes = {'value': "ID",'name': "ID",'class': "STRING"};
+  hashContexts = {'value': depth0,'name': depth0,'autocomplete': depth0,'class': depth0};
+  hashTypes = {'value': "ID",'name': "ID",'autocomplete': "STRING",'class': "STRING"};
   options = {hash:{
     'value': ("value"),
     'name': ("fieldName"),
+    'autocomplete': ("off"),
     'class': ("eureka-field-input form-control")
   },inverse:self.noop,fn:self.program(11, program11, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['date-picker'] || (depth0 && depth0['date-picker'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "date-picker", options));
@@ -179,12 +183,13 @@ function program13(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'type': depth0,'value': depth0,'name': depth0,'class': depth0};
-  hashTypes = {'type': "ID",'value': "ID",'name': "ID",'class': "STRING"};
+  hashContexts = {'type': depth0,'value': depth0,'name': depth0,'autocomplete': depth0,'class': depth0};
+  hashTypes = {'type': "ID",'value': "ID",'name': "ID",'autocomplete': "STRING",'class': "STRING"};
   options = {hash:{
     'type': ("inputType"),
     'value': ("value"),
     'name': ("fieldName"),
+    'autocomplete': ("off"),
     'class': ("eureka-field-input form-control")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
