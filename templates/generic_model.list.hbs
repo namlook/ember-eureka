@@ -40,6 +40,14 @@
     </div>
 </div>
 
+{{#if filters.length}}
+filter by {{view Ember.Select
+               content=filters
+               optionValuePath="content.order"
+               optionLabelPath="content.label"
+               value=currentFilter}}
+{{/if}}
+
 {{#search-query action="searchModel" model=model}}{{/search-query}}
 
 

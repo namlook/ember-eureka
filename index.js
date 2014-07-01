@@ -124,7 +124,8 @@ Eurekapp = (function(clientConfig){
         genericControllerName: null,
 
         setupController: function(controller, model) {
-            controller.set('model', model);
+            this._super(controller, model);
+            // controller.set('model', model); // needed anymore ?
         },
 
         renderTemplate: function(controller, model) {
@@ -272,15 +273,34 @@ Eurekapp = (function(clientConfig){
 
     /* List the documents */
     App.GenericModelListController = Ember.ArrayController.extend({
+        filters: function() {
+            var _filters = [];
+            var sortBy = this.get('model.__meta__.sortBy');
+            if (typeof(sortBy) === 'object') {
+                _filters = sortBy;
+            }
+            return _filters;
+        }.property('model'),
+
+        currentFilter: Ember.computed.defaultTo('model.defaultFilter'),
+
+        updateModel: function() {
+            var query = this.getWithDefault('query', {});
+            var sortBy = this.get('currentFilter');
+            query._sortBy = sortBy;
+
+            var _this = this;
+            var modelType = this.get('model').get('type');
+            App.db[modelType].find(query).then(function(model) {
+                _this.set('model', model);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('query', 'currentFilter'),
+
         actions: {
             searchModel: function(query) {
-                var modelType = this.get('model').get('type');
-                var _this = this;
-                App.db[modelType].find(query).then(function(model) {
-                    _this.set('model', model);
-                }, function(e) {
-                    alertify.error(e.error);
-                });
+                this.set('query', query);
             }
         }
     });
@@ -386,14 +406,6 @@ Eurekapp = (function(clientConfig){
             var placeholder = this.get('search.placeholder');
             if (!placeholder) {
                 placeholder = "search a "+this.get('title')+"...";
-            }
-            return placeholder;
-        }.property('search.placeholder', 'title'),
-
-        searchAdvancedPlaceholder: function() {
-            var placeholder = this.get('search.advancedPlaceholder');
-            if (!placeholder) {
-                placeholder = "prop1 = value && prop2 > 30";
             }
             return placeholder;
         }.property('search.placeholder', 'title'),
@@ -824,6 +836,20 @@ Eurekapp = (function(clientConfig){
             return App.getModelMeta(this.get('type'));
         }.property('type'),
 
+        defaultFilter: function() {
+            var sortBy = this.get('__meta__.sortBy');
+            if (typeof(sortBy) === 'object') {
+                if (sortBy.filterBy('default').length) {
+                    return sortBy.filterBy('default')[0].order;
+                } else {
+                    return sortBy[0].order;
+                }
+            } else if (typeof(sortBy) === 'string') {
+                return sortBy;
+            }
+            return null;
+        }.property('type').readOnly(),
+
         // dasherized_type: function() {
         //     return this.get('type').dasherize();
         // }.property('type').readOnly(),
@@ -905,8 +931,16 @@ Eurekapp = (function(clientConfig){
 
             // build query from model's meta
             var meta = this.get('__meta__');
-            if (query._sortBy === undefined && meta.search && meta.search.sortBy) {
-                query._sortBy = meta.search.sortBy;
+            if (query._sortBy === undefined && meta.sortBy) {
+                var order;
+                if (typeof(meta.sortBy) === 'string') {
+                    order = meta.sortBy;
+                } else if (meta.sortBy.filterBy('default').length) {
+                    order = meta.sortBy.filterBy('default')[0].order;
+                } else {
+                    order = meta.sortBy[0].order;
+                }
+                query._sortBy = order;
             }
 
             // query._populate = false;
