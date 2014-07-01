@@ -973,7 +973,7 @@ function program1(depth0,data) {
   },inverse:self.noop,fn:self.program(1, program1, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['search-query-input'] || (depth0 && depth0['search-query-input'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "search-query-input", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n</div>");
+  data.buffer.push("\n    <p class=\"hint\"><small>Hit enter key to search</small></p>\n</div>");
   return buffer;
   
 });

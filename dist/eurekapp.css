@@ -56,6 +56,10 @@
 
 /** search-query-component **/
 
+.eureka-section-search .hint {
+  color: #aaa;
+}
+
 .eureka-search-query-input.form-control {
   height: 40px;
 }

@@ -1353,7 +1353,6 @@ Eurekapp = (function(clientConfig){
         willDestroyElement: function() {},
 
         getSource: function() {
-
             var relationType = this.get('field.schema.type');
             var searchFieldName = this.get('searchFieldName');
             if (!searchFieldName) {
@@ -1399,24 +1398,37 @@ Eurekapp = (function(clientConfig){
 
     App.SearchQueryComponent = Ember.Component.extend({
         model: null,
-        collapsedWidth: '30%',
+        collapsedWidth: '40%',
         collapsedHeight: '40px',
         expandedWidth: '100%',
-        expandedHeight: '80px',
+        // expandedHeight: '80px',
         classNames: 'pull-right eureka-section-search form-horizontal',
 
         expand: function() {
             var width = this.get('expandedWidth');
             var height = this.get('expandedHeight');
-            this.$().css({width: width, height: height});
-            this.$('.eureka-search-query-input').css({height: height});
+            this.$().animate({width: width, height: height}, 300);
+            this.$('.eureka-search-query-input').animate({height: height}, 300);
+            this.$('.hint').show('slow');
         },
 
         collapse: function() {
             var width = this.get('collapsedWidth');
             var height = this.get('collapsedHeight');
-            this.$().css({width: width, height: height});
-            this.$('.eureka-search-query-input').css({height: height});
+            this.$().animate({width: width, height: height}, 300);
+            this.$('.eureka-search-query-input').animate({height: height}, 300);
+            this.$('.hint').hide('slow');
+        },
+
+        didInsertElement: function() {
+            var _this = this;
+            this.$('.hint').hide();
+            this.$('.eureka-search-query-input').focusin(function() {
+                _this.expand();
+            });
+            this.$('.eureka-search-query-input').focusout(function() {
+                _this.collapse();
+            });
         },
 
         actions: {
@@ -1437,12 +1449,72 @@ Eurekapp = (function(clientConfig){
             return App.getModelMeta(modelType).get('searchPlaceholder');
         }.property('model.type'),
 
+        focusOut: function(e) {
+            this.sendQuery();
+        },
+
         keyPress: function(e) {
             if (e.keyCode === 13) {
                 this.sendQuery();
                 e.preventDefault();
                 e.stopPropagation();
             }
+        },
+
+        didInsertElement: function() {
+            var currentModelContext;
+            var _this = this;
+            this.$().textcomplete([
+                { // fields available
+                    match: /(^|\s*)\?(\w*)$/,
+                    replace: function (value) {
+                        var model = _this.get('model');
+                        currentModelContext = model
+                          .get('__meta__.properties')[value].type;
+                        return '$1' + value;
+                    },
+                    search: function (term, callback) {
+                        var model = _this.get('model');
+                        var fieldsList = model.get('fields').map(function(field){
+                            return field.name;
+                        });
+                        callback($.map(fieldsList, function (word) {
+                            return word.indexOf(term) === 0 ? word : null;
+                        }));
+                    },
+                    index: 2,
+                    appendTo: '.eureka-section-search'
+                }, { // fields available in relations
+                    words: ['arf', 'foo', 'bla'],
+                    match: /([\w\.]+)\.(\w*)$/,
+                    replace: function(value) {
+                        currentModelContext = App.getModelMeta(currentModelContext)
+                          .get('properties')[value].type;
+                        return '$1.' + value;
+                    },
+                    search: function (term, callback) {
+                        var relProperties = App.getModelMeta(currentModelContext)
+                          .get('properties');
+                        var relFieldNames = [];
+                        for (var prop in relProperties) {
+                            relFieldNames.push(prop);
+                        }
+                        var results = $.map(relFieldNames, function (word) {
+                            return word.indexOf(term) === 0 ? word : null;
+                        });
+                        if (results.length === 1 && results[0] === term) {
+                            results = [];
+                        }
+                        callback(results);
+                    },
+                    index: 2,
+                    appendTo: '.eureka-section-search'
+                }
+            ]);
+        },
+
+        willDestroyElement: function() {
+            this.$().textcomplete('destroy');
         },
 
         parseQuery: function(value) {
