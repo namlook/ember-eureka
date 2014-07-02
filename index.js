@@ -142,7 +142,7 @@ Eurekapp = (function(clientConfig){
         genericControllerName: '<generic_model>List',
 
         model: function(params) {
-            var query = {};
+            var query = params.query || {};
             var filter = this.controllerFor(params.modelType+'_list').get('currentFilter');
             if (filter) {
                 query._sortBy = filter;

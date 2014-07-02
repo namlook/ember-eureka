@@ -1,5 +1,8 @@
 <nav class="eureka-navbar navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
+        <div class="visible-xs">
+            <a class="navbar-brand" onclick="$('.row-offcanvas').toggleClass('active')" class="btn btn-primary btn-xs" data-toggle="offcanvas"><i class="glyphicon glyphicon-align-justify"></i></a>
+        </div>
         <div class="navbar-header">
             <a class="navbar-brand" href="#">{{applicationName}}</a>
         </div>
@@ -13,11 +16,6 @@
             {{application-menu model=model}}
         </div>
         <div class="col-xs-12 col-sm-9 col-lg-10">
-            <p class="visible-xs">
-                <button type="button" onclick="$('.row-offcanvas').toggleClass('active')" class="btn btn-primary btn-xs" data-toggle="offcanvas">
-                    Toggle nav
-                </button>
-            </p>
             <div class="eureka-main-content">
                 {{outlet}}
             </div>

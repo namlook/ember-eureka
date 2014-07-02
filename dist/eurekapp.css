@@ -31,12 +31,15 @@ select {
 }
 
 .eureka-navigation {
-  padding-top: 15px;
   background-color: #222222;
   height: 100%;
   padding-left: 0;
   padding-right: 0;
   padding-top: 15px;
+}
+
+.eureka-menu-item {
+  padding-left: 15px;
 }
 
 .eureka-application-menu li.active > a,
@@ -85,7 +88,7 @@ select {
 }
 
 .eureka-result-item {
-  margin-top: 20px;
+  /*margin-top: 20px;*/
   margin-bottom: 20px;
 }
 
