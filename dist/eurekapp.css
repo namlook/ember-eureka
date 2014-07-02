@@ -17,13 +17,57 @@ select {
   padding: 5px;
 }
 
-.eureka-relations-list {
-  margin-bottom: 5px;
+/*** navbar ***/
+.eureka-navbar {
+  border-radius: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
 }
 
-.eureka-new-relation-form {
-  margin-top: 5px;
+.eureka-application.row.row-offcanvas.row-offcanvas-left {
+  height: 100%;
+  position: fixed;
+  width: 100%;
 }
+
+.eureka-navigation {
+  padding-top: 15px;
+  background-color: #222222;
+  height: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 15px;
+}
+
+.eureka-application-menu li.active > a,
+.eureka-application-menu li > a:hover,
+.eureka-application-menu li > a:focus {
+  border-radius: 0;
+}
+
+.eureka-application-menu li.active > a,
+.eureka-application-menu li.active > a:hover,
+.eureka-application-menu li.active > a:focus {
+  color: #222222;
+  background-color: #ffffff;
+}
+
+.eureka-application-menu li > a:hover,
+.eureka-application-menu li > a:focus {
+  color: #222222;
+  background-color: #428bca;
+}
+
+
+/**** main-content ****/
+
+.eureka-main-content {
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-top: 15px;
+}
+
+/*** list ***/
 
 .eureka-title-section {
   padding-bottom: 20px;
@@ -34,6 +78,27 @@ select {
   margin-top: 25px;
   margin-bottom: 10px;
 }
+
+
+.eureka-document-head-title.clearfix {
+  margin-left: 120px;
+}
+
+.eureka-result-item {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/*** new/edit ***/
+
+.eureka-relations-list {
+  margin-bottom: 5px;
+}
+
+.eureka-new-relation-form {
+  margin-top: 5px;
+}
+
 
 .eureka-multi-field-input {
   margin-bottom: 5px;
@@ -53,14 +118,6 @@ select {
   /*border-bottom: 1px solid #e5e5e5;*/
 }
 
-.eureka-document-head-title.clearfix {
-  margin-left: 120px;
-}
-
-.eureka-result-item {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
 
 /**** search section ****/
 

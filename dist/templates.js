@@ -4,11 +4,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, hashTypes, hashContexts, options, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
 
 
-  data.buffer.push("<nav class=\"navbar navbar-inverse\" role=\"navigation\">\n    <div class=\"container-fluid\">\n        <div class=\"navbar-header\">\n            <a class=\"navbar-brand\" href=\"#\">");
+  data.buffer.push("<nav class=\"eureka-navbar navbar navbar-inverse\" role=\"navigation\">\n    <div class=\"container-fluid\">\n        <div class=\"navbar-header\">\n            <a class=\"navbar-brand\" href=\"#\">");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "applicationName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</a>\n        </div>\n    </div>\n</nav>\n\n<div class=\"container\">\n\n    <div class=\"row row-offcanvas row-offcanvas-left\">\n        <div class=\"col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas\" role=\"navigation\">\n            ");
+  data.buffer.push("</a>\n        </div>\n    </div>\n</nav>\n\n<div class=\"container-fluid\">\n\n    <div class=\"eureka-application row row-offcanvas row-offcanvas-left\">\n        <div class=\"col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas eureka-navigation\" role=\"navigation\">\n            ");
   hashContexts = {'model': depth0};
   hashTypes = {'model': "ID"};
   options = {hash:{
