@@ -1495,6 +1495,9 @@ Eurekapp = (function(clientConfig){
 
         keyPress: function(e) {
             if (e.keyCode === 13) {
+                 // remove any question marks ('?') at the begining of the query
+                this.set('value', this.get('value').replace(/^\?+/,""));
+
                 this.sendQuery();
                 e.preventDefault();
                 e.stopPropagation();
