@@ -1214,10 +1214,10 @@ function program5(depth0,data) {
   hashContexts = {'content': depth0,'optionValuePath': depth0,'optionLabelPath': depth0,'value': depth0};
   hashTypes = {'content': "ID",'optionValuePath': "STRING",'optionLabelPath': "STRING",'value': "ID"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "Ember.Select", {hash:{
-    'content': ("filters"),
+    'content': ("sorting"),
     'optionValuePath': ("content.order"),
     'optionLabelPath': ("content.label"),
-    'value': ("currentFilter")
+    'value': ("currentSorting")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\n        </div>\n    ");
   return buffer;
@@ -1313,7 +1313,7 @@ function program12(depth0,data) {
   data.buffer.push("\n    </div>\n    ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "filters.length", {hash:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers['if'].call(depth0, "sorting.length", {hash:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n</form>\n\n\n<div class=\"eureka-results clearfix\">\n    ");
   hashTypes = {};

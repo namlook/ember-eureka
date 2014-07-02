@@ -143,7 +143,7 @@ Eurekapp = (function(clientConfig){
 
         model: function(params) {
             var query = params.query || {};
-            var filter = this.controllerFor(params.modelType+'_list').get('currentFilter');
+            var filter = this.controllerFor(params.modelType+'_list').get('currentSorting');
             if (filter) {
                 query._sortBy = filter;
             }
@@ -280,7 +280,7 @@ Eurekapp = (function(clientConfig){
      * searching, and sorting the results.
      */
     App.GenericModelListController = Ember.ArrayController.extend({
-        filters: function() {
+        sorting: function() {
             var _filters = [];
             var sortBy = this.get('__modelMeta__').sortBy;
             if (typeof(sortBy) === 'object') {
@@ -289,15 +289,15 @@ Eurekapp = (function(clientConfig){
             return _filters;
         }.property('__modelMeta__.sortBy'),
 
-        defaultFilter: function() {
-            return this.get('filters').filterBy('default', true).objectAt(0);
-        }.property('filters'),
+        defaultSorting: function() {
+            return this.get('sorting').filterBy('default', true).objectAt(0);
+        }.property('sorting'),
 
-        currentFilter: Ember.computed.oneWay('defaultFilter.order'),
+        currentSorting: Ember.computed.oneWay('defaultSorting.order'),
 
         updateModel: function() {
             var query = this.getWithDefault('query', {});
-            var sortBy = this.get('currentFilter');
+            var sortBy = this.get('currentSorting');
             query._sortBy = sortBy;
 
             var _this = this;
@@ -307,7 +307,7 @@ Eurekapp = (function(clientConfig){
             }, function(e) {
                 alertify.error(e.error);
             });
-        }.observes('query', 'currentFilter'),
+        }.observes('query', 'currentSorting'),
 
         actions: {
             searchModel: function(query) {
@@ -847,19 +847,19 @@ Eurekapp = (function(clientConfig){
             return App.getModelMeta(this.get('type'));
         }.property('type'),
 
-        defaultFilter: function() {
-            var sortBy = this.get('__meta__.sortBy');
-            if (typeof(sortBy) === 'object') {
-                if (sortBy.filterBy('default').length) {
-                    return sortBy.filterBy('default')[0].order;
-                } else {
-                    return sortBy[0].order;
-                }
-            } else if (typeof(sortBy) === 'string') {
-                return sortBy;
-            }
-            return null;
-        }.property('type'),
+        // defaultFilter: function() {
+        //     var sortBy = this.get('__meta__.sortBy');
+        //     if (typeof(sortBy) === 'object') {
+        //         if (sortBy.filterBy('default').length) {
+        //             return sortBy.filterBy('default')[0].order;
+        //         } else {
+        //             return sortBy[0].order;
+        //         }
+        //     } else if (typeof(sortBy) === 'string') {
+        //         return sortBy;
+        //     }
+        //     return null;
+        // }.property('type'),
 
         // dasherized_type: function() {
         //     return this.get('type').dasherize();

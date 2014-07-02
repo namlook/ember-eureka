@@ -40,19 +40,31 @@
     </div>
 </div>
 
+{{!-- {{#if filters.length}}
+    <div class="eureka-filter-section">
+        <ul class="nav nav-tabs">
+            {{#model-to 'list' model tagName="li" href=false }}<a href="#">All</a>{{/model-to}}
+            {{#each filter in filters}}
+                {{#link-to filter.route tagName="li" href=false}}
+                    <a href="#"><i {{bind-attr class="filter.icon"}}></i> <span class="hidden-xs">{{filter.label}}</span></a>
+                {{/link-to}}
+            {{/each}}
+        </ul>
+    </div>
+{{/if}} --}}
 
 <form class="eureka-search-section form-inline text-right" role="form">
     <div class="form-group has-feedback eureka-search-query-container">
         <span class="glyphicon glyphicon-search form-control-feedback search-icon"></span>
         {{#search-query action="searchModel" model=model}}{{/search-query}}
     </div>
-    {{#if filters.length}}
+    {{#if sorting.length}}
         <div class="form-group eureka-sortby-selection">
             order by {{view Ember.Select
-                           content=filters
+                           content=sorting
                            optionValuePath="content.order"
                            optionLabelPath="content.label"
-                           value=currentFilter}}
+                           value=currentSorting}}
         </div>
     {{/if}}
 </form>
