@@ -964,7 +964,6 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  data.buffer.push("<div class=\"form-group has-feedback eureka-search-query-container\">\n    <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n    ");
   hashContexts = {'action': depth0,'model': depth0};
   hashTypes = {'action': "STRING",'model': "ID"};
   options = {hash:{
@@ -973,7 +972,7 @@ function program1(depth0,data) {
   },inverse:self.noop,fn:self.program(1, program1, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['search-query-input'] || (depth0 && depth0['search-query-input'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "search-query-input", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n    <p class=\"hint\"><small>Hit enter key to search</small></p>\n</div>");
+  data.buffer.push("\n<div class=\"eureka-hint\"><p class=\"eureka-hint-message\">Hit enter key to search</p></div>\n");
   return buffer;
   
 });
@@ -1204,8 +1203,14 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
+  var buffer = '';
+  return buffer;
+  }
+
+function program5(depth0,data) {
+  
   var buffer = '', hashContexts, hashTypes;
-  data.buffer.push("\nfilter by ");
+  data.buffer.push("\n        <div class=\"form-group eureka-sortby-selection\">\n            order by ");
   hashContexts = {'content': depth0,'optionValuePath': depth0,'optionLabelPath': depth0,'value': depth0};
   hashTypes = {'content': "ID",'optionValuePath': "STRING",'optionLabelPath': "STRING",'value': "ID"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "Ember.Select", {hash:{
@@ -1214,13 +1219,7 @@ function program3(depth0,data) {
     'optionLabelPath': ("content.label"),
     'value': ("currentFilter")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n");
-  return buffer;
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = '';
+  data.buffer.push("\n        </div>\n    ");
   return buffer;
   }
 
@@ -1262,7 +1261,7 @@ function program8(depth0,data) {
   options = {hash:{
     'model': ("item"),
     'class': ("eureka-item-thumb")
-  },inverse:self.noop,fn:self.program(5, program5, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  },inverse:self.noop,fn:self.program(3, program3, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['cropped-thumb'] || (depth0 && depth0['cropped-thumb'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "cropped-thumb", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n                </div>\n            ");
@@ -1290,7 +1289,7 @@ function program12(depth0,data) {
   return buffer;
   }
 
-  data.buffer.push("\n<div class=\"eureka-section-title row\">\n    <div class=\"col-xs-7 col-sm-9\">\n        <h1> ");
+  data.buffer.push("\n<div class=\"eureka-title-section row\">\n    <div class=\"col-xs-7 col-sm-9\">\n        <h1> ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -1302,21 +1301,21 @@ function program12(depth0,data) {
   },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "new", "model", options) : helperMissing.call(depth0, "model-to", "new", "model", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n    </div>\n</div>\n\n");
-  hashTypes = {};
-  hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "filters.length", {hash:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
-  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n\n");
+  data.buffer.push("\n    </div>\n</div>\n\n\n<form class=\"eureka-search-section form-inline text-right\" role=\"form\">\n    <div class=\"form-group has-feedback eureka-search-query-container\">\n        <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n        ");
   hashContexts = {'action': depth0,'model': depth0};
   hashTypes = {'action': "STRING",'model': "ID"};
   options = {hash:{
     'action': ("searchModel"),
     'model': ("model")
-  },inverse:self.noop,fn:self.program(5, program5, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  },inverse:self.noop,fn:self.program(3, program3, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['search-query'] || (depth0 && depth0['search-query'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "search-query", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n\n\n<div class=\"eureka-results clearfix\">\n    ");
+  data.buffer.push("\n    </div>\n    ");
+  hashTypes = {};
+  hashContexts = {};
+  stack2 = helpers['if'].call(depth0, "filters.length", {hash:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n</form>\n\n\n<div class=\"eureka-results clearfix\">\n    ");
   hashTypes = {};
   hashContexts = {};
   stack2 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(7, program7, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});

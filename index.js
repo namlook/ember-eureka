@@ -81,6 +81,10 @@ Eurekapp = (function(clientConfig){
         }
     };
 
+
+    /***** Routes ******/
+
+
     App.Router.map(function() {
         this.resource('generic_model', { path: '/' }, function() {
             this.route('display', {path: '/:modelType/:id'});
@@ -95,26 +99,6 @@ Eurekapp = (function(clientConfig){
             return App.config;
         }
     });
-
-    App.ApplicationController = Ember.ObjectController.extend({
-        applicationName: Ember.computed.alias('name')
-    });
-
-
-    App.ApplicationMenuComponent = Ember.Component.extend({
-        model: null,
-
-        modelNames: function() {
-            return Ember.keys(this.get('model').schemas).map(function(modelName){
-                return {
-                    classified: modelName.camelize().capitalize(),
-                    decamelized: modelName.underscore(),
-                    dasherized: modelName.dasherize()
-                };
-            });
-        }.property('model.schemas')
-    });
-
 
     /* the RouteTemplateMixin allow all objects which implement the mixin to
      * use a generic template if a model doesn't specified one.
@@ -158,7 +142,12 @@ Eurekapp = (function(clientConfig){
         genericControllerName: '<generic_model>List',
 
         model: function(params) {
-            return this.get('db')[params.modelType.camelize().capitalize()].find();
+            var query = {};
+            var filter = this.controllerFor(params.modelType+'_list').get('currentFilter');
+            if (filter) {
+                query._sortBy = filter;
+            }
+            return this.get('db')[params.modelType.camelize().capitalize()].find(query);
         }
     });
 
@@ -195,10 +184,25 @@ Eurekapp = (function(clientConfig){
         }
     });
 
+
     /***** Controllers ******/
 
     /* The controllers handles the actions and all variables not needed beetween
      * two sessions.
+     */
+
+
+    App.ApplicationController = Ember.ObjectController.extend({
+        applicationName: Ember.computed.alias('name')
+    });
+
+
+    /* There are 4 types of Generic controller:
+     *
+     *  - list
+     *  - display
+     *  - new
+     *  - edit
      */
 
     /* This mixin is used to make the controller aware of the different actions available */
@@ -241,8 +245,6 @@ Eurekapp = (function(clientConfig){
 
         transitionToPage: function(page, type, _id) {
             var args = Array.prototype.slice.call(arguments, 2);
-            // page = args.shift();
-            // type = args.shift();
             var routeName;
 
             var modelType = this.get('model.type');
@@ -271,18 +273,27 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    /* List the documents */
+    /*
+     * GenericModelListController
+     *
+     * This controller display a list the documents. It is responsible of
+     * searching, and sorting the results.
+     */
     App.GenericModelListController = Ember.ArrayController.extend({
         filters: function() {
             var _filters = [];
-            var sortBy = this.get('model.__meta__.sortBy');
+            var sortBy = this.get('__modelMeta__').sortBy;
             if (typeof(sortBy) === 'object') {
                 _filters = sortBy;
             }
             return _filters;
-        }.property('model'),
+        }.property('__modelMeta__.sortBy'),
 
-        currentFilter: Ember.computed.defaultTo('model.defaultFilter'),
+        defaultFilter: function() {
+            return this.get('filters').filterBy('default', true).objectAt(0);
+        }.property('filters'),
+
+        currentFilter: Ember.computed.oneWay('defaultFilter.order'),
 
         updateModel: function() {
             var query = this.getWithDefault('query', {});
@@ -848,7 +859,7 @@ Eurekapp = (function(clientConfig){
                 return sortBy;
             }
             return null;
-        }.property('type').readOnly(),
+        }.property('type'),
 
         // dasherized_type: function() {
         //     return this.get('type').dasherize();
@@ -1057,6 +1068,21 @@ Eurekapp = (function(clientConfig){
     });
 
     /*** Components ****/
+
+    App.ApplicationMenuComponent = Ember.Component.extend({
+        model: null,
+
+        modelNames: function() {
+            return Ember.keys(this.get('model').schemas).map(function(modelName){
+                return {
+                    classified: modelName.camelize().capitalize(),
+                    decamelized: modelName.underscore(),
+                    dasherized: modelName.dasherize()
+                };
+            });
+        }.property('model.schemas')
+    });
+
 
     /* TemplateMixin
      * If a components extend this mixin, its template can be overloaded
@@ -1432,36 +1458,16 @@ Eurekapp = (function(clientConfig){
 
     App.SearchQueryComponent = Ember.Component.extend({
         model: null,
-        collapsedWidth: '40%',
-        collapsedHeight: '40px',
-        expandedWidth: '100%',
-        // expandedHeight: '80px',
-        classNames: 'pull-right eureka-section-search form-horizontal',
-
-        expand: function() {
-            var width = this.get('expandedWidth');
-            var height = this.get('expandedHeight');
-            this.$().animate({width: width, height: height}, 300);
-            this.$('.eureka-search-query-input').animate({height: height}, 300);
-            this.$('.hint').show('slow');
-        },
-
-        collapse: function() {
-            var width = this.get('collapsedWidth');
-            var height = this.get('collapsedHeight');
-            this.$().animate({width: width, height: height}, 300);
-            this.$('.eureka-search-query-input').animate({height: height}, 300);
-            this.$('.hint').hide('slow');
-        },
 
         didInsertElement: function() {
             var _this = this;
-            this.$('.hint').hide();
+            var $hintMessage = this.$('.eureka-hint-message');
+            $hintMessage.hide();
             this.$('.eureka-search-query-input').focusin(function() {
-                _this.expand();
+                $hintMessage.show('slow');
             });
             this.$('.eureka-search-query-input').focusout(function() {
-                _this.collapse();
+                $hintMessage.hide('slow');
             });
         },
 
@@ -1472,7 +1478,7 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    App.SearchQueryInputComponent = Ember.TextArea.extend({
+    App.SearchQueryInputComponent = Ember.TextField.extend({
         model: null,
         autocomplete: 'off',
         onEvent: 'keyPress',
@@ -1519,7 +1525,6 @@ Eurekapp = (function(clientConfig){
                     index: 2,
                     appendTo: '.eureka-section-search'
                 }, { // fields available in relations
-                    words: ['arf', 'foo', 'bla'],
                     match: /([\w\.]+)\.(\w*)$/,
                     replace: function(value) {
                         currentModelContext = App.getModelMeta(currentModelContext)
@@ -1756,6 +1761,20 @@ Eurekapp = (function(clientConfig){
             application.set('db', database);
         }
 
+    });
+
+    App.initializer({
+        name: 'generateControllers',
+
+        initialize: function(container, application) {
+            for (var _type in clientConfig.schemas) {
+                var content = {__modelMeta__: App.getModelMeta(_type)};
+                App[_type+'DisplayController'] = App.GenericModelDisplayController.extend(content);
+                App[_type+'ListController'] = App.GenericModelListController.extend(content);
+                App[_type+'NewController'] = App.GenericModelNewController.extend(content);
+                App[_type+'EditController'] = App.GenericModelEditController.extend(content);
+            }
+        }
     });
     return App;
 });

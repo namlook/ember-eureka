@@ -1,5 +1,5 @@
 
-<div class="eureka-section-title row">
+<div class="eureka-title-section row">
     <div class="col-xs-7 col-sm-9">
         <h1> {{model.__meta__.title}} </h1>
 
@@ -40,15 +40,22 @@
     </div>
 </div>
 
-{{#if filters.length}}
-filter by {{view Ember.Select
-               content=filters
-               optionValuePath="content.order"
-               optionLabelPath="content.label"
-               value=currentFilter}}
-{{/if}}
 
-{{#search-query action="searchModel" model=model}}{{/search-query}}
+<form class="eureka-search-section form-inline text-right" role="form">
+    <div class="form-group has-feedback eureka-search-query-container">
+        <span class="glyphicon glyphicon-search form-control-feedback search-icon"></span>
+        {{#search-query action="searchModel" model=model}}{{/search-query}}
+    </div>
+    {{#if filters.length}}
+        <div class="form-group eureka-sortby-selection">
+            order by {{view Ember.Select
+                           content=filters
+                           optionValuePath="content.order"
+                           optionLabelPath="content.label"
+                           value=currentFilter}}
+        </div>
+    {{/if}}
+</form>
 
 
 <div class="eureka-results clearfix">

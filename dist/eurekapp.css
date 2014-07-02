@@ -9,6 +9,14 @@
   margin-bottom: 20px;
 }
 
+/*** basic elements ***/
+
+select {
+  background: none;
+  border: 1px solid #eee;
+  padding: 5px;
+}
+
 .eureka-relations-list {
   margin-bottom: 5px;
 }
@@ -17,12 +25,12 @@
   margin-top: 5px;
 }
 
-.eureka-section-title {
-  margin-bottom: 20px;
+.eureka-title-section {
+  padding-bottom: 20px;
   border-bottom: 1px solid #e5e5e5;
 }
 
-.eureka-section-title .model-to-new{
+.eureka-title-section .model-to-new{
   margin-top: 25px;
   margin-bottom: 10px;
 }
@@ -54,24 +62,40 @@
   margin-bottom: 20px;
 }
 
-/** search-query-component **/
+/**** search section ****/
 
-.eureka-section-search .hint {
+
+.eureka-search-section .eureka-search-query-container.form-group.has-feedback{
+  /*margin-right: 1px;*/
+  /*margin-left: 1px;*/
+  margin-top: 10px;
+}
+
+.eureka-search-section .eureka-search-query-container.has-feedback .search-icon.form-control-feedback {
+  top: 0;
+}
+
+.eureka-search-section .eureka-search-query-input.form-control {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.eureka-search-section .eureka-hint {
+  height: 5px;
+}
+
+.eureka-search-section .eureka-hint-message {
   color: #aaa;
+  font-size: 85%;
 }
 
-.eureka-search-query-input.form-control {
-  height: 40px;
+.eureka-sortby-selection {
+  color: #666;
 }
 
-.form-group.has-feedback.eureka-search-query-container {
-  margin-right: 1px;
-  margin-left: 1px;
-}
-
-.glyphicon.glyphicon-search.form-control-feedback.search-icon {
-  right: 5px;
-}
 
 /**** typeahead styling ****/
 
