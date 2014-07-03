@@ -1101,18 +1101,23 @@ Eurekapp = (function(clientConfig){
     /*** Components ****/
 
     App.ApplicationMenuComponent = Ember.Component.extend({
-        model: null,
+        model: null, // the application model
+        currentPath: null,
+
+        currentType: function() {
+            return this.get('currentPath').split('.')[0].camelize().capitalize();
+        }.property('currentPath'),
 
         modelMetas: function() {
+            var currentType = this.get('currentType');
             return Ember.keys(this.get('model').schemas).map(function(modelName){
-                return App.getModelMeta(modelName);
-                // return {
-                    // classified: modelName.camelize().capitalize(),
-                    // decamelized: modelName.underscore(),
-                    // dasherized: modelName.dasherize()
-                // };
+                var modelMeta = App.getModelMeta(modelName);
+                if (currentType === modelName) {
+                    modelMeta.set('isActive', true);
+                }
+                return modelMeta;
             });
-        }.property('model.schemas')
+        }.property('model.schemas', 'currentType')
     });
 
 

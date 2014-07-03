@@ -9,10 +9,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "applicationName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</a>\n        </div>\n    </div>\n</nav>\n\n<div class=\"container-fluid\">\n\n    <div class=\"eureka-application row row-offcanvas row-offcanvas-left\">\n        <div class=\"col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas eureka-navigation\" role=\"navigation\">\n            ");
-  hashContexts = {'model': depth0};
-  hashTypes = {'model': "ID"};
+  hashContexts = {'model': depth0,'currentPath': depth0};
+  hashTypes = {'model': "ID",'currentPath': "ID"};
   options = {hash:{
-    'model': ("model")
+    'model': ("model"),
+    'currentPath': ("currentPath")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['application-menu'] || (depth0 && depth0['application-menu'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "application-menu", options))));
   data.buffer.push("\n        </div>\n        <div class=\"col-xs-12 col-sm-9 col-lg-10\">\n            <div class=\"eureka-main-content\">\n                ");
@@ -32,11 +33,12 @@ function program1(depth0,data) {
   
   var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
   data.buffer.push("\n    ");
-  hashContexts = {'tagName': depth0,'href': depth0,'classBinding': depth0};
-  hashTypes = {'tagName': "STRING",'href': "BOOLEAN",'classBinding': "STRING"};
+  hashContexts = {'tagName': depth0,'href': depth0,'active': depth0,'classBinding': depth0};
+  hashTypes = {'tagName': "STRING",'href': "BOOLEAN",'active': "ID",'classBinding': "STRING"};
   options = {hash:{
     'tagName': ("li"),
     'href': (false),
+    'active': ("modelMeta.isActive"),
     'classBinding': (":eureka-menu-item modelMeta.EurekaGenericModelModelCSS")
   },inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "modelMeta.indexRouteName", options) : helperMissing.call(depth0, "link-to", "modelMeta.indexRouteName", options));
@@ -47,7 +49,7 @@ function program1(depth0,data) {
 function program2(depth0,data) {
   
   var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("\n        <a href=\"#\">");
+  data.buffer.push("\n            <a href=\"#\">");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "modelMeta.type", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
