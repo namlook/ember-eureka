@@ -1,4 +1,4 @@
-<div {{bind-attr class=":eureka-document model.__meta__.dasherizedType"}}>
+<div {{bind-attr class=":eureka-document model.__meta__.EurekaGenericModelModelCSS"}}>
 
     <div class="eureka-head row">
         {{#if model.__thumb__}}
@@ -10,7 +10,7 @@
         <div {{bind-attr class="model.__thumb__:col-xs-8"}}>
             <div class="eureka-document-head-title">
                 <p><span class="label label-default">{{model.__meta__.type}}</span></p>
-                <h1 {{bind-attr class=":eureka-document-title model.__meta__.dasherizedType"}}>
+                <h1 {{bind-attr class=":eureka-document-title model.__meta__.EurekaGenericModelModelCSS"}}>
                     {{{model.__title__}}}
                 </h1>
             </div>
@@ -26,7 +26,7 @@
         <li class="active"><a href="#">Informations</a></li>
             {{#each modelAction in mainModelActions}}
                 <li><a href="#"
-                    {{bind-attr class=":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.dasherizedType"}}
+                    {{bind-attr class=":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.EurekaGenericModelModelCSS"}}
                     {{action 'trigger' modelAction.name}}>
                       <i {{bind-attr class="modelAction.iconClass"}}></i> <span class="hidden-xs">{{modelAction.label}}</span>
                     </a>
@@ -40,7 +40,7 @@
             <ul class="dropdown-menu">
                 {{#each modelAction in secondaryModelActions}}
                     <li><a href="#"
-                        {{bind-attr class=":eureka-action :eureka-secondary-action modelAction.cssClass model.__meta__.dasherizedType"}}
+                        {{bind-attr class=":eureka-action :eureka-secondary-action modelAction.cssClass model.__meta__.EurekaGenericModelModelCSS"}}
                         {{action 'trigger' modelAction.name}}>
                           <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.label}}
                         </a>

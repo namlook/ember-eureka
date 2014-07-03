@@ -19,7 +19,11 @@
         {{#each item in field.content}}
             <li>
                 {{#if field.isRelation}}
-                    {{#model-to 'display' item.value item.value._id}}{{item.value.__title__}}{{/model-to}}
+                    {{#link-to item.value.__meta__.displayRouteName item.value._id
+                        classNames="eureka-link-to-display"
+                        classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
+                            {{item.value.__title__}}
+                    {{/link-to}}
                 {{else}}
                     {{#if field.isSafeString}}
                         {{{item.value}}}
@@ -33,7 +37,11 @@
     </ul>
 {{else}}
     {{#if field.isRelation}}
-        {{#model-to 'display' field.content field.content._id}}{{field.content.__title__}}{{/model-to}}
+        {{#link-to field.content.__meta__.displayRouteName field.content._id
+            classNames="eureka-link-to-display"
+            classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
+                {{field.content.__title__}}
+        {{/link-to}}
     {{else}}
         {{#if field.isI18n}}
             <ul class="no-bullet">

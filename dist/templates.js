@@ -37,9 +37,9 @@ function program1(depth0,data) {
   options = {hash:{
     'tagName': ("li"),
     'href': (false),
-    'classBinding': (":eureka-menu-item modelName.dasherized")
-  },inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "list", "modelName.decamelized", options) : helperMissing.call(depth0, "model-to", "list", "modelName.decamelized", options));
+    'classBinding': (":eureka-menu-item modelMeta.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "modelMeta.indexRouteName", options) : helperMissing.call(depth0, "link-to", "modelMeta.indexRouteName", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n  ");
   return buffer;
@@ -50,7 +50,7 @@ function program2(depth0,data) {
   data.buffer.push("\n        <a href=\"#\">");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "modelName.classified", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "modelMeta.type", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</a>\n    ");
   return buffer;
   }
@@ -58,7 +58,7 @@ function program2(depth0,data) {
   data.buffer.push("\n<ul class=\"eureka-application-menu nav nav-pills nav-stacked\">\n  ");
   hashTypes = {};
   hashContexts = {};
-  stack1 = helpers.each.call(depth0, "modelName", "in", "modelNames", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack1 = helpers.each.call(depth0, "modelMeta", "in", "modelMetas", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n</ul>");
   return buffer;
@@ -392,22 +392,28 @@ function program10(depth0,data) {
   }
 function program11(depth0,data) {
   
-  var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
+  var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
   data.buffer.push("\n                    ");
-  hashTypes = {};
-  hashContexts = {};
-  options = {hash:{},inverse:self.noop,fn:self.program(12, program12, data),contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "display", "item.value", "item.value._id", options) : helperMissing.call(depth0, "model-to", "display", "item.value", "item.value._id", options));
+  hashContexts = {'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
+  options = {hash:{
+    'classNames': ("eureka-link-to-display"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(12, program12, data),contexts:[depth0,depth0],types:["ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "item.value.__meta__.displayRouteName", "item.value._id", options) : helperMissing.call(depth0, "link-to", "item.value.__meta__.displayRouteName", "item.value._id", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n                ");
   return buffer;
   }
 function program12(depth0,data) {
   
-  var hashTypes, hashContexts;
+  var buffer = '', hashTypes, hashContexts;
+  data.buffer.push("\n                            ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "item.value.__title__", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n                    ");
+  return buffer;
   }
 
 function program14(depth0,data) {
@@ -435,22 +441,28 @@ function program16(depth0,data) {
   }
 function program17(depth0,data) {
   
-  var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
+  var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
   data.buffer.push("\n        ");
-  hashTypes = {};
-  hashContexts = {};
-  options = {hash:{},inverse:self.noop,fn:self.program(18, program18, data),contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "display", "field.content", "field.content._id", options) : helperMissing.call(depth0, "model-to", "display", "field.content", "field.content._id", options));
+  hashContexts = {'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
+  options = {hash:{
+    'classNames': ("eureka-link-to-display"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(18, program18, data),contexts:[depth0,depth0],types:["ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "field.content.__meta__.displayRouteName", "field.content._id", options) : helperMissing.call(depth0, "link-to", "field.content.__meta__.displayRouteName", "field.content._id", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n    ");
   return buffer;
   }
 function program18(depth0,data) {
   
-  var hashTypes, hashContexts;
+  var buffer = '', hashTypes, hashContexts;
+  data.buffer.push("\n                ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.content.__title__", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n        ");
+  return buffer;
   }
 
 function program20(depth0,data) {
@@ -1022,7 +1034,7 @@ function program6(depth0,data) {
   hashContexts = {'class': depth0};
   hashTypes = {'class': "STRING"};
   options = {hash:{
-    'class': (":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.dasherizedType")
+    'class': (":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.EurekaGenericModelModelCSS")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
   data.buffer.push("\n                    ");
@@ -1062,7 +1074,7 @@ function program9(depth0,data) {
   hashContexts = {'class': depth0};
   hashTypes = {'class': "STRING"};
   options = {hash:{
-    'class': (":eureka-action :eureka-secondary-action modelAction.cssClass model.__meta__.dasherizedType")
+    'class': (":eureka-action :eureka-secondary-action modelAction.cssClass model.__meta__.EurekaGenericModelModelCSS")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
   data.buffer.push("\n                        ");
@@ -1088,7 +1100,7 @@ function program9(depth0,data) {
   hashContexts = {'class': depth0};
   hashTypes = {'class': "STRING"};
   options = {hash:{
-    'class': (":eureka-document model.__meta__.dasherizedType")
+    'class': (":eureka-document model.__meta__.EurekaGenericModelModelCSS")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
   data.buffer.push(">\n\n    <div class=\"eureka-head row\">\n        ");
@@ -1111,7 +1123,7 @@ function program9(depth0,data) {
   hashContexts = {'class': depth0};
   hashTypes = {'class': "STRING"};
   options = {hash:{
-    'class': (":eureka-document-title model.__meta__.dasherizedType")
+    'class': (":eureka-document-title model.__meta__.EurekaGenericModelModelCSS")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
   data.buffer.push(">\n                    ");
@@ -1171,12 +1183,13 @@ function program1(depth0,data) {
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['model-form'] || (depth0 && depth0['model-form'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-form", options))));
   data.buffer.push("\n\n     <div class=\"form-group\">\n        <div class=\"col-sm-offset-2 col-sm-10\">\n            ");
-  hashContexts = {'classNames': depth0};
-  hashTypes = {'classNames': "STRING"};
+  hashContexts = {'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
   options = {hash:{
-    'classNames': ("btn btn-default cancel")
-  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "display", "model", "model._id", options) : helperMissing.call(depth0, "model-to", "display", "model", "model._id", options));
+    'classNames': ("btn btn-default cancel eureka-link-to-display"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0],types:["ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "model.__meta__.displayRouteName", "model._id", options) : helperMissing.call(depth0, "link-to", "model.__meta__.displayRouteName", "model._id", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n            <button class=\"btn btn-primary save\" ");
   hashTypes = {};
@@ -1189,25 +1202,89 @@ function program1(depth0,data) {
 Ember.TEMPLATES["generic_model/list"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, stack2, hashTypes, hashContexts, options, escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
+  var buffer = '', stack1, stack2, hashTypes, hashContexts, options, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this;
 
 function program1(depth0,data) {
   
   var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("+ Create ");
+  data.buffer.push("\n                + Create ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n        ");
   return buffer;
   }
 
 function program3(depth0,data) {
   
+  var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
+  data.buffer.push("\n            ");
+  hashContexts = {'tagName': depth0,'href': depth0,'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'tagName': "STRING",'href': "BOOLEAN",'classNames': "STRING",'classNameBindings': "STRING"};
+  options = {hash:{
+    'tagName': ("li"),
+    'href': (false),
+    'classNames': ("eureka-link-to-index"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "model.__meta__.indexRouteName", options) : helperMissing.call(depth0, "link-to", "model.__meta__.indexRouteName", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n            ");
+  hashTypes = {};
+  hashContexts = {};
+  stack2 = helpers.each.call(depth0, "filter", "in", "filters", {hash:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n        ");
+  return buffer;
+  }
+function program4(depth0,data) {
+  
+  
+  data.buffer.push("\n                    <a href=\"#\">All</a>\n            ");
+  }
+
+function program6(depth0,data) {
+  
+  var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
+  data.buffer.push("\n                ");
+  hashContexts = {'tagName': depth0,'href': depth0,'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'tagName': "STRING",'href': "BOOLEAN",'classNames': "STRING",'classNameBindings': "STRING"};
+  options = {hash:{
+    'tagName': ("li"),
+    'href': (false),
+    'classNames': ("eureka-filter-to"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(7, program7, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "filter.route", options) : helperMissing.call(depth0, "link-to", "filter.route", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n            ");
+  return buffer;
+  }
+function program7(depth0,data) {
+  
+  var buffer = '', stack1, hashContexts, hashTypes, options;
+  data.buffer.push("\n                        <a href=\"#\">\n                            <i ");
+  hashContexts = {'class': depth0};
+  hashTypes = {'class': "STRING"};
+  options = {hash:{
+    'class': ("filter.icon")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
+  data.buffer.push("></i>\n                            <span class=\"hidden-xs\">");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "filter.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("</span>\n                        </a>\n                ");
+  return buffer;
+  }
+
+function program9(depth0,data) {
+  
   var buffer = '';
   return buffer;
   }
 
-function program5(depth0,data) {
+function program11(depth0,data) {
   
   var buffer = '', hashContexts, hashTypes;
   data.buffer.push("\n        <div class=\"form-group eureka-sortby-selection\">\n            order by ");
@@ -1223,13 +1300,13 @@ function program5(depth0,data) {
   return buffer;
   }
 
-function program7(depth0,data) {
+function program13(depth0,data) {
   
   var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
   data.buffer.push("\n        <div class=\"eureka-result-item row\">\n            ");
   hashTypes = {};
   hashContexts = {};
-  stack1 = helpers['if'].call(depth0, "item.__thumb__", {hash:{},inverse:self.noop,fn:self.program(8, program8, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack1 = helpers['if'].call(depth0, "item.__thumb__", {hash:{},inverse:self.noop,fn:self.program(14, program14, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n\n            <div ");
   hashContexts = {'class': depth0};
@@ -1239,20 +1316,23 @@ function program7(depth0,data) {
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
   data.buffer.push(">\n                <h3 class=\"eureka-item-title\">\n                    ");
-  hashTypes = {};
-  hashContexts = {};
-  options = {hash:{},inverse:self.noop,fn:self.program(10, program10, data),contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "display", "item", "item._id", options) : helperMissing.call(depth0, "model-to", "display", "item", "item._id", options));
+  hashContexts = {'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
+  options = {hash:{
+    'classNames': ("eureka-link-to-display"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(16, program16, data),contexts:[depth0,depth0],types:["ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "item.__meta__.displayRouteName", "item._id", options) : helperMissing.call(depth0, "link-to", "item.__meta__.displayRouteName", "item._id", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n                </h3>\n\n                ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "item.__description__", {hash:{},inverse:self.noop,fn:self.program(12, program12, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers['if'].call(depth0, "item.__description__", {hash:{},inverse:self.noop,fn:self.program(18, program18, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n            </div>\n        </div>\n    ");
   return buffer;
   }
-function program8(depth0,data) {
+function program14(depth0,data) {
   
   var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
   data.buffer.push("\n                <div class=\"eureka-thumb col-xs-4\">\n                    ");
@@ -1261,22 +1341,25 @@ function program8(depth0,data) {
   options = {hash:{
     'model': ("item"),
     'class': ("eureka-item-thumb")
-  },inverse:self.noop,fn:self.program(3, program3, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  },inverse:self.noop,fn:self.program(9, program9, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['cropped-thumb'] || (depth0 && depth0['cropped-thumb'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "cropped-thumb", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n                </div>\n            ");
   return buffer;
   }
 
-function program10(depth0,data) {
+function program16(depth0,data) {
   
-  var hashTypes, hashContexts;
+  var buffer = '', hashTypes, hashContexts;
+  data.buffer.push("\n                            ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "item.__title__", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n                    ");
+  return buffer;
   }
 
-function program12(depth0,data) {
+function program18(depth0,data) {
   
   var buffer = '', hashContexts, hashTypes;
   data.buffer.push("\n                    <p class=\"eureka-item-description\">");
@@ -1289,36 +1372,49 @@ function program12(depth0,data) {
   return buffer;
   }
 
-  data.buffer.push("\n<div class=\"eureka-title-section row\">\n    <div class=\"col-xs-7 col-sm-9\">\n        <h1> ");
+  data.buffer.push("\n<div class=\"eureka-title-section\">\n    <div class=\"col-xs-7 col-sm-9\">\n        <h1> ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push(" </h1>\n\n\n    </div>\n    <div class=\"col-xs-5 col-sm-3 text-right\">\n        ");
-  hashContexts = {'classNames': depth0};
-  hashTypes = {'classNames': "STRING"};
+  hashContexts = {'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
   options = {hash:{
-    'classNames': ("btn btn-default")
-  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "new", "model", options) : helperMissing.call(depth0, "model-to", "new", "model", options));
+    'classNames': ("btn btn-default eureka-link-to-new"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "model.__meta__.newRouteName", options) : helperMissing.call(depth0, "link-to", "model.__meta__.newRouteName", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n    </div>\n</div>\n\n\n\n<form class=\"eureka-search-section form-inline text-right\" role=\"form\">\n    <div class=\"form-group has-feedback eureka-search-query-container\">\n        <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n        ");
+  data.buffer.push("\n    </div>\n</div>\n\n<div ");
+  hashContexts = {'class': depth0};
+  hashTypes = {'class': "STRING"};
+  options = {hash:{
+    'class': (":eureka-filter-section filters.length::eureka-filter-section-empty")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
+  data.buffer.push(">\n    <ul class=\"nav nav-tabs\">\n        ");
+  hashTypes = {};
+  hashContexts = {};
+  stack2 = helpers['if'].call(depth0, "filters.length", {hash:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n    </ul>\n</div>\n\n<form class=\"eureka-search-section form-inline text-right\" role=\"form\">\n    <div class=\"form-group has-feedback eureka-search-query-container\">\n        <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n        ");
   hashContexts = {'action': depth0,'model': depth0};
   hashTypes = {'action': "STRING",'model': "ID"};
   options = {hash:{
     'action': ("searchModel"),
     'model': ("model")
-  },inverse:self.noop,fn:self.program(3, program3, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  },inverse:self.noop,fn:self.program(9, program9, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['search-query'] || (depth0 && depth0['search-query'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "search-query", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n    </div>\n    ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "sorting.length", {hash:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers['if'].call(depth0, "sorting.length", {hash:{},inverse:self.noop,fn:self.program(11, program11, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n</form>\n\n\n<div class=\"eureka-results clearfix\">\n    ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(7, program7, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(13, program13, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n</div>\n\n");
   return buffer;
@@ -1332,7 +1428,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
-  data.buffer.push("cancel");
+  data.buffer.push("\n                    cancel\n            ");
   }
 
   data.buffer.push("\n<h1 class=\"eureka-new-document-title\">New ");
@@ -1347,21 +1443,22 @@ function program1(depth0,data) {
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['model-form'] || (depth0 && depth0['model-form'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-form", options))));
   data.buffer.push("\n\n     <div class=\"form-group\">\n        <div class=\"col-sm-offset-2 col-sm-10\">\n            ");
-  hashContexts = {'classNames': depth0};
-  hashTypes = {'classNames': "STRING"};
+  hashContexts = {'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
   options = {hash:{
-    'classNames': ("btn btn-default cancel")
-  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['model-to'] || (depth0 && depth0['model-to'])),stack1 ? stack1.call(depth0, "list", "model", options) : helperMissing.call(depth0, "model-to", "list", "model", options));
+    'classNames': ("btn btn-default cancel eureka-link-to-index"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "model.__meta__.indexRouteName", options) : helperMissing.call(depth0, "link-to", "model.__meta__.indexRouteName", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n            <button ");
   hashContexts = {'class': depth0};
   hashTypes = {'class': "STRING"};
   options = {hash:{
-    'class': (":btn :btn-primary :eureka-save-action model.__meta__.dasherizedType")
+    'class': (":btn :btn-primary :eureka-save-action model.__meta__.EurekaGenericModelModelCSS")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
-  data.buffer.push(" ");
+  data.buffer.push("\n                    ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));

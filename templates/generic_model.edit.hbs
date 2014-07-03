@@ -7,7 +7,9 @@
 
      <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            {{#model-to 'display' model model._id classNames="btn btn-default cancel"}}cancel{{/model-to}}
+            {{#link-to model.__meta__.displayRouteName model._id
+                classNames="btn btn-default cancel eureka-link-to-display"
+                classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}cancel{{/link-to}}
             <button class="btn btn-primary save" {{action 'save'}}>save</button>
         </div>
     </div>

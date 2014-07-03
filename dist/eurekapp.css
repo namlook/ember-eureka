@@ -74,7 +74,10 @@ select {
 
 .eureka-title-section {
   padding-bottom: 20px;
-  border-bottom: 1px solid #e5e5e5;
+}
+
+.eureka-filter-section {
+  margin-top: 80px;
 }
 
 .eureka-title-section .model-to-new{

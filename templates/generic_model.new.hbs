@@ -6,8 +6,13 @@
 
      <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            {{#model-to 'list' model classNames="btn btn-default cancel"}}cancel{{/model-to}}
-            <button {{bind-attr class=":btn :btn-primary :eureka-save-action model.__meta__.dasherizedType"}} {{action 'save'}}>save</button>
+            {{#link-to model.__meta__.indexRouteName
+                classNames="btn btn-default cancel eureka-link-to-index"
+                classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
+                    cancel
+            {{/link-to}}
+            <button {{bind-attr class=":btn :btn-primary :eureka-save-action model.__meta__.EurekaGenericModelModelCSS"}}
+                    {{action 'save'}}>save</button>
         </div>
     </div>
 </form>

@@ -1,8 +1,8 @@
 
 <ul class="eureka-application-menu nav nav-pills nav-stacked">
-  {{#each modelName in modelNames}}
-    {{#model-to 'list' modelName.decamelized tagName="li" href=false classBinding=":eureka-menu-item modelName.dasherized"}}
-        <a href="#">{{modelName.classified}}</a>
-    {{/model-to}}
+  {{#each modelMeta in modelMetas}}
+    {{#link-to modelMeta.indexRouteName tagName="li" href=false classBinding=":eureka-menu-item modelMeta.EurekaGenericModelModelCSS"}}
+        <a href="#">{{modelMeta.type}}</a>
+    {{/link-to}}
   {{/each}}
 </ul>

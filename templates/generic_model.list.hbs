@@ -1,5 +1,5 @@
 
-<div class="eureka-title-section row">
+<div class="eureka-title-section">
     <div class="col-xs-7 col-sm-9">
         <h1> {{model.__meta__.title}} </h1>
 
@@ -36,22 +36,39 @@
         </ul> --}}
     </div>
     <div class="col-xs-5 col-sm-3 text-right">
-        {{#model-to 'new' model classNames="btn btn-default"}}+ Create {{model.__meta__.title}}{{/model-to}}
+        {{#link-to model.__meta__.newRouteName
+            classNames="btn btn-default eureka-link-to-new"
+            classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
+                + Create {{model.__meta__.title}}
+        {{/link-to}}
     </div>
 </div>
 
-{{!-- {{#if filters.length}}
-    <div class="eureka-filter-section">
-        <ul class="nav nav-tabs">
-            {{#model-to 'list' model tagName="li" href=false }}<a href="#">All</a>{{/model-to}}
+<div {{bind-attr class=":eureka-filter-section filters.length::eureka-filter-section-empty"}}>
+    <ul class="nav nav-tabs">
+        {{#if filters.length}}
+            {{#link-to model.__meta__.indexRouteName
+                tagName="li"
+                href=false
+                classNames="eureka-link-to-index"
+                classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
+                    <a href="#">All</a>
+            {{/link-to}}
             {{#each filter in filters}}
-                {{#link-to filter.route tagName="li" href=false}}
-                    <a href="#"><i {{bind-attr class="filter.icon"}}></i> <span class="hidden-xs">{{filter.label}}</span></a>
+                {{#link-to filter.route
+                    tagName="li"
+                    href=false
+                    classNames="eureka-filter-to"
+                    classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
+                        <a href="#">
+                            <i {{bind-attr class="filter.icon"}}></i>
+                            <span class="hidden-xs">{{filter.label}}</span>
+                        </a>
                 {{/link-to}}
             {{/each}}
-        </ul>
-    </div>
-{{/if}} --}}
+        {{/if}}
+    </ul>
+</div>
 
 <form class="eureka-search-section form-inline text-right" role="form">
     <div class="form-group has-feedback eureka-search-query-container">
@@ -81,7 +98,11 @@
 
             <div {{bind-attr class="item.__thumb__:col-xs-8"}}>
                 <h3 class="eureka-item-title">
-                    {{#model-to 'display' item item._id}}{{item.__title__}}{{/model-to}}
+                    {{#link-to item.__meta__.displayRouteName item._id
+                        classNames="eureka-link-to-display"
+                        classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
+                            {{item.__title__}}
+                    {{/link-to}}
                 </h3>
 
                 {{#if item.__description__}}

@@ -85,14 +85,14 @@ Eurekapp = (function(clientConfig){
     /***** Routes ******/
 
 
-    App.Router.map(function() {
-        this.resource('generic_model', { path: '/' }, function() {
-            this.route('display', {path: '/:modelType/:id'});
-            this.route('edit', {path: '/:modelType/:id/edit'});
-            this.route('new', {path: '/:modelType/new'});
-            this.route('list', {path: '/:modelType'});
-        });
-    });
+    // App.Router.map(function() {
+    //     this.resource('generic_model', { path: '/' }, function() {
+    //         this.route('display', {path: '/:modelType/:id'});
+    //         this.route('edit', {path: '/:modelType/:id/edit'});
+    //         this.route('new', {path: '/:modelType/new'});
+    //         this.route('list', {path: '/:modelType'});
+    //     });
+    // });
 
     App.ApplicationRoute = Ember.Route.extend({
         model: function() {
@@ -106,6 +106,10 @@ Eurekapp = (function(clientConfig){
     App.RouteTemplateMixin = Ember.Mixin.create({
         genericTemplateName: null,
         genericControllerName: null,
+
+        modelType: function() {
+            return this.get('routeName').split('.')[0].camelize().capitalize();
+        }.property('routeName'),
 
         setupController: function(controller, model) {
             this._super(controller, model);
@@ -137,17 +141,18 @@ Eurekapp = (function(clientConfig){
     });
 
 
-    App.GenericModelListRoute = Ember.Route.extend(App.RouteTemplateMixin, {
+    App.GenericModelIndexRoute = Ember.Route.extend(App.RouteTemplateMixin, {
         genericTemplateName: '<generic_model>/list',
-        genericControllerName: '<generic_model>List',
+        genericControllerName: '<generic_model>Index',
 
         model: function(params) {
+            var _type = this.get('modelType');
             var query = params.query || {};
-            var filter = this.controllerFor(params.modelType+'_list').get('currentSorting');
+            var filter = this.controllerFor(_type+'Index').get('currentSorting');
             if (filter) {
                 query._sortBy = filter;
             }
-            return this.get('db')[params.modelType.camelize().capitalize()].find(query);
+            return this.get('db')[_type].find(query);
         }
     });
 
@@ -157,7 +162,7 @@ Eurekapp = (function(clientConfig){
         genericControllerName: '<generic_model>Display',
 
         model: function(params) {
-            var _type = params.modelType.camelize().capitalize();
+            var _type = this.get('modelType');
             var _id = params.id;
             return this.get('db')[_type].first({_id: _id, _type: _type});
         }
@@ -168,7 +173,7 @@ Eurekapp = (function(clientConfig){
         genericControllerName: '<generic_model>New',
 
         model: function(params) {
-            var _type = params.modelType.camelize().capitalize();
+            var _type = this.get('modelType');
             return this.get('db')[_type].get('model').create({content: {}});
         }
     });
@@ -178,7 +183,7 @@ Eurekapp = (function(clientConfig){
         genericControllerName: '<generic_model>Edit',
 
         model: function(params) {
-            var _type = params.modelType.camelize().capitalize();
+            var _type = this.get('modelType');
             var _id = params.id;
             return this.get('db')[_type].first({_id: _id, _type: _type});
         }
@@ -199,7 +204,7 @@ Eurekapp = (function(clientConfig){
 
     /* There are 4 types of Generic controller:
      *
-     *  - list
+     *  - index
      *  - display
      *  - new
      *  - edit
@@ -274,12 +279,16 @@ Eurekapp = (function(clientConfig){
     });
 
     /*
-     * GenericModelListController
+     * GenericModelIndexController
      *
      * This controller display a list the documents. It is responsible of
      * searching, and sorting the results.
      */
-    App.GenericModelListController = Ember.ArrayController.extend({
+    App.GenericModelIndexController = Ember.ArrayController.extend({
+        filters: function() {
+            return this.get('__modelMeta__.filters') || [];
+        }.property('__modelMeta__.filters'),
+
         sorting: function() {
             var _filters = [];
             var sortBy = this.get('__modelMeta__').sortBy;
@@ -327,7 +336,7 @@ Eurekapp = (function(clientConfig){
                         var model = _this.get('model');
                         var type = model.get('__type__').underscore();
                         model.delete().then(function(data) {
-                            _this.transitionToPage('list', type);
+                            _this.transitionToPage('index', type);
                         }, function(jqXHR) {
                             console.log('error !!!', jqXHR);
                             alertify.error(jqXHR);
@@ -352,7 +361,7 @@ Eurekapp = (function(clientConfig){
                 var _this = this;
                 this.get('model').save().then(function(model) {
                     var type = model.get('type').underscore();
-                    _this.transitionToPage('list', type);
+                    _this.transitionToPage('index', type);
                 }, function(err){
                     alertify.error(err);
                     return console.log('err', err);
@@ -427,7 +436,30 @@ Eurekapp = (function(clientConfig){
 
         properties: function() {
             return this.get('schema');
-        }.property('schema')
+        }.property('schema'),
+
+        unknownProperty: function(key) {
+            /*
+             * If a property name ends with 'routeName', then the corresponding
+             * route name is returned. This is useful when using link-to:
+             *
+             *    {{#link-to model.__meta__.indexRouteName}}list{{/link-to}}
+             *
+             * blogPostModel.__meta__.favoriteRouteName will return:
+             *    'blog_post.favorite'
+             */
+            if (Ember.endsWith(key, "RouteName")){
+                var routeName = key.slice(0, key.length - "RouteName".length);
+                routeName = routeName.underscore();
+                return this.get('decamelizedType')+'.'+routeName;
+            } else if (Ember.endsWith(key, "CSS")) {
+                var cssClass = key.slice(0, key.length - "CSS".length);
+                if (cssClass.indexOf('GenericModel') > -1) {
+                    cssClass = cssClass.replace('GenericModel', this.get('type'));
+                }
+                return cssClass.dasherize();
+            }
+        }
     });
 
     /* Model
@@ -490,7 +522,6 @@ Eurekapp = (function(clientConfig){
         content: null,
 
         __type__: null,
-
 
         __meta__: function() {
             return App.getModelMeta(this.get('__type__'));
@@ -1072,13 +1103,14 @@ Eurekapp = (function(clientConfig){
     App.ApplicationMenuComponent = Ember.Component.extend({
         model: null,
 
-        modelNames: function() {
+        modelMetas: function() {
             return Ember.keys(this.get('model').schemas).map(function(modelName){
-                return {
-                    classified: modelName.camelize().capitalize(),
-                    decamelized: modelName.underscore(),
-                    dasherized: modelName.dasherize()
-                };
+                return App.getModelMeta(modelName);
+                // return {
+                    // classified: modelName.camelize().capitalize(),
+                    // decamelized: modelName.underscore(),
+                    // dasherized: modelName.dasherize()
+                // };
             });
         }.property('model.schemas')
     });
@@ -1647,84 +1679,91 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    /* model-to helper
-     * This helper is used as a replacement to the link-to helper.
-     * The model-to helper will check if the model has a specific route.
-     * If so, the correponding url is used. This helper also add some css classes
-     * useful to idenitify the link that are related to a model.
-     * At last, the model-to helper can be used as a block component. The value
-     * in the block will be used as the link title
-     */
-    Ember.Handlebars.registerHelper('model-to', function(action, modelTypeName, modelId, options) {
-        var model = Ember.Handlebars.get(this, modelTypeName, options);
-        var modelType;
-        if (typeof(model) === 'object') {
-            modelType = model.get('type');
-        } else {
-            modelType = model;
-            model = null;
-        }
-        if (options === undefined) {
-            options = modelId;
-            modelId = null;
-        }
+    // /* model-to helper
+    //  * This helper is used as a replacement to the link-to helper.
+    //  * The model-to helper will check if the model has a specific route.
+    //  * If so, the correponding url is used. This helper also add some css classes
+    //  * useful to idenitify the link that are related to a model.
+    //  * At last, the model-to helper can be used as a block component. The value
+    //  * in the block will be used as the link title
+    //  */
+    // Ember.Handlebars.registerHelper('model-to', function(action, modelTypeName, modelId, options) {
+    //     console.log('action>', action, 'modelTypeName>', modelTypeName, 'modelId>', modelId);
+    //     var model = Ember.Handlebars.get(this, modelTypeName, options);
+    //     console.log('model>', modelTypeName, model);
 
-        var args = [];
+    //     if (!options && typeof(modelId) === 'object') {
+    //         options = modelId;
+    //         modelId = null;
+    //     }
+    //     var modelType;
+    //     if (typeof(model) === 'object') {
+    //         modelType = model.get('type');
+    //     } else {
+    //         modelType = model;
+    //         model = null;
+    //     }
+    //     if (options === undefined) {
+    //         options = modelId;
+    //         modelId = null;
+    //     }
 
-        options.contexts = [];
-        options.types = [];
+    //     var args = [];
 
-        // classNames
-        // bootstraping hash and hashContext
-        if (!options.hash) {
-            options.hash = {};
-        }
-        if (!options.hashContexts){
-            options.hashContexts = {};
-        }
-        options.hashContexts.classNames = this;
+    //     options.contexts = [];
+    //     options.types = [];
 
-        if (!options.hash.classNames) {
-            options.hash.classNames = '';
-        }
-        options.hash.classNames += " model-to-" + action;
+    //     // classNames
+    //     // bootstraping hash and hashContext
+    //     if (!options.hash) {
+    //         options.hash = {};
+    //     }
+    //     if (!options.hashContexts){
+    //         options.hashContexts = {};
+    //     }
+    //     options.hashContexts.classNames = this;
 
-        if (modelType) {
-            options.hash.classBinding += ' '+modelTypeName+'.__meta__.dasherizedType';
-        }
+    //     if (!options.hash.classNames) {
+    //         options.hash.classNames = '';
+    //     }
+    //     options.hash.classNames += " model-to-" + action;
 
-        // check the route to use (default to generic_model.<action>)
-        var routeName = 'generic_model.' + action;
-        var capitalized_action = action.camelize().capitalize();
-        if(App[modelType + capitalized_action + 'Route']) {
-            routeName = modelType.underscore() + '.' + action;
-        }
+    //     if (modelType) {
+    //         options.hash.classBinding += ' '+modelTypeName+'.__meta__.dasherizedType';
+    //     }
 
-        args.push(routeName);
-        options.types.push('STRING');
-        options.contexts.push(this);
+    //     // check the route to use (default to generic_model.<action>)
+    //     var routeName = 'generic_model.' + action;
+    //     var capitalized_action = action.camelize().capitalize();
+    //     if(App[modelType + capitalized_action + 'Route']) {
+    //         routeName = modelType.underscore() + '.' + action;
+    //     }
+    //     console.log('---', routeName, modelType, action);
 
-        if (model) {
-            args.push(modelTypeName+'.__meta__.decamelizedType');
-            options.types.push('ID');
-            options.contexts.push(this);
-        } else {
-            args.push(modelTypeName);
-            options.types.push('ID');
-            options.contexts.push(this);
-        }
+    //     args.push(routeName);
+    //     options.types.push('STRING');
+    //     options.contexts.push(this);
 
-        if (modelId) {
-            args.push(modelId);
-            options.types.push('ID');
-            options.contexts.push(this);
-        }
+    //     if (model) {
+    //         args.push(modelTypeName+'.__meta__.decamelizedType');
+    //         options.types.push('ID');
+    //         options.contexts.push(this);
+    //     } else {
+    //         args.push(modelTypeName);
+    //         options.types.push('ID');
+    //         options.contexts.push(this);
+    //     }
 
-        args.push(options);
+    //     if (modelId) {
+    //         args.push(modelId);
+    //         options.types.push('ID');
+    //         options.contexts.push(this);
+    //     }
 
-        return Ember.Handlebars.helpers['link-to'].apply(this, args);
-    });
+    //     args.push(options);
 
+    //     return Ember.Handlebars.helpers['link-to'].apply(this, args);
+    // });
 
     App.ApplicationConfig = Ember.Object.extend({
         // application config used in App.config
@@ -1733,9 +1772,18 @@ Eurekapp = (function(clientConfig){
 
 
     /**** Initialization *****/
-    // attach the config, and the db to the application
+
+    // attach the config to the application
     App.initializer({
-        name: "eureka",
+        name: "eureka-config",
+
+        initialize: function(container, application) {
+        }
+    });
+
+    // attach the database to the application
+    App.initializer({
+        name: "eureka-db",
 
         initialize: function(container, application) {
             application.register('eureka:config', App.ApplicationConfig.create(clientConfig), {instantiate: false});
@@ -1766,16 +1814,40 @@ Eurekapp = (function(clientConfig){
 
     });
 
+    // generate routes and controllers from the schema
     App.initializer({
-        name: 'generateControllers',
+        name: 'routes-n-controllers-generation',
 
         initialize: function(container, application) {
             for (var _type in clientConfig.schemas) {
-                var content = {__modelMeta__: App.getModelMeta(_type)};
-                App[_type+'DisplayController'] = App.GenericModelDisplayController.extend(content);
-                App[_type+'ListController'] = App.GenericModelListController.extend(content);
-                App[_type+'NewController'] = App.GenericModelNewController.extend(content);
-                App[_type+'EditController'] = App.GenericModelEditController.extend(content);
+
+                if (_type === 'Basic') {
+                    throw new Ember.Error("'Basic' is a reserved word and can not be used as model name");
+                }
+
+
+                var underscoredType = _type.underscore();
+                // router
+                application.Router.map(function() {
+                    this.resource(underscoredType, function(){
+                        this.route('new', {path: '/new'});
+                        this.route('display', {path: '/:id'});
+                        this.route('edit', {path: '/:id/edit'});
+                    });
+                });
+
+                // routes
+                application[_type+'IndexRoute'] = application.GenericModelIndexRoute.extend();
+                application[_type+'NewRoute'] = application.GenericModelNewRoute.extend();
+                application[_type+'DisplayRoute'] = application.GenericModelDisplayRoute.extend();
+                application[_type+'EditRoute'] = application.GenericModelEditRoute.extend();
+
+                // controllers
+                var content = {__modelMeta__: application.getModelMeta(_type)};
+                application[_type+'IndexController'] = application.GenericModelIndexController.extend(content);
+                application[_type+'DisplayController'] = application.GenericModelDisplayController.extend(content);
+                application[_type+'NewController'] = application.GenericModelNewController.extend(content);
+                application[_type+'EditController'] = application.GenericModelEditController.extend(content);
             }
         }
     });
