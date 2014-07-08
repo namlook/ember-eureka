@@ -474,6 +474,10 @@ Eurekapp = (function(clientConfig){
              * Process the model content in order to
              * wrap relations with Models
              */
+
+            if (!this.get('__meta__.properties')) {
+                console.log('Error: cannot find any schema for '+this.get('__type__')+'. Are you sure there is a schema specified ?');
+            }
             var content = this.get('content');
             for (var key in content) {
 
