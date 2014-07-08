@@ -65,12 +65,18 @@ select {
 /**** main-content ****/
 
 .eureka-main-content {
-  margin-left: 25px;
-  margin-right: 25px;
-  margin-top: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 15px;
 }
 
 /*** list ***/
+
+.eureka-result-item {
+  /*margin-top: 20px;*/
+  margin-bottom: 50px;
+}
+
 
 .eureka-title-section {
   padding-bottom: 20px;
@@ -90,9 +96,8 @@ select {
   margin-left: 120px;
 }
 
-.eureka-result-item {
-  /*margin-top: 20px;*/
-  margin-bottom: 20px;
+.eureka-link-to-new-section {
+  padding-right: 0;
 }
 
 /*** new/edit ***/

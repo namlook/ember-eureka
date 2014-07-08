@@ -16,11 +16,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
     'currentPath': ("currentPath")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['application-menu'] || (depth0 && depth0['application-menu'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "application-menu", options))));
-  data.buffer.push("\n        </div>\n        <div class=\"col-xs-12 col-sm-9 col-lg-10\">\n            <div class=\"eureka-main-content\">\n                ");
+  data.buffer.push("\n        </div>\n        <div class=\"col-xs-12 col-sm-9 col-lg-10 eureka-main-content\">\n            ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "outlet", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n            </div>\n        </div>\n    </div>\n\n</div>");
+  data.buffer.push("\n        </div>\n    </div>\n\n</div>");
   return buffer;
   
 });
@@ -1305,7 +1305,7 @@ function program11(depth0,data) {
 function program13(depth0,data) {
   
   var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
-  data.buffer.push("\n        <div class=\"eureka-result-item row\">\n            ");
+  data.buffer.push("\n        <div class=\"eureka-result-item\">\n            ");
   hashTypes = {};
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "item.__thumb__", {hash:{},inverse:self.noop,fn:self.program(14, program14, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
@@ -1378,7 +1378,7 @@ function program18(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(" </h1>\n\n\n    </div>\n    <div class=\"col-xs-5 col-sm-3 text-right\">\n        ");
+  data.buffer.push(" </h1>\n\n\n    </div>\n    <div class=\"col-xs-5 col-sm-3 text-right eureka-link-to-new-section\">\n        ");
   hashContexts = {'classNames': depth0,'classNameBindings': depth0};
   hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
   options = {hash:{

@@ -35,7 +35,7 @@
             </li>
         </ul> --}}
     </div>
-    <div class="col-xs-5 col-sm-3 text-right">
+    <div class="col-xs-5 col-sm-3 text-right eureka-link-to-new-section">
         {{#link-to model.__meta__.newRouteName
             classNames="btn btn-default eureka-link-to-new"
             classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
@@ -89,7 +89,7 @@
 
 <div class="eureka-results clearfix">
     {{#each item in model}}
-        <div class="eureka-result-item row">
+        <div class="eureka-result-item">
             {{#if item.__thumb__}}
                 <div class="eureka-thumb col-xs-4">
                     {{#cropped-thumb model=item class="eureka-item-thumb"}}{{/cropped-thumb}}
