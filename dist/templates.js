@@ -269,11 +269,11 @@ function program1(depth0,data) {
     'for': ("field.name")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
-  data.buffer.push(" class=\"col-sm-2 control-label eureka-field-name\">");
+  data.buffer.push(" class=\"col-sm-4 control-label eureka-field-name\">");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.name", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</label>\n        <div class=\"col-sm-10\">\n            ");
+  data.buffer.push("</label>\n        <div class=\"col-sm-8\">\n            ");
   hashContexts = {'field': depth0};
   hashTypes = {'field': "ID"};
   options = {hash:{
@@ -1184,7 +1184,7 @@ function program1(depth0,data) {
     'model': ("model")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['model-form'] || (depth0 && depth0['model-form'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-form", options))));
-  data.buffer.push("\n\n     <div class=\"form-group\">\n        <div class=\"col-sm-offset-2 col-sm-10\">\n            ");
+  data.buffer.push("\n\n     <div class=\"form-group\">\n        <div class=\"col-sm-offset-4 col-sm-8\">\n            ");
   hashContexts = {'classNames': depth0,'classNameBindings': depth0};
   hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
   options = {hash:{
@@ -1444,7 +1444,7 @@ function program1(depth0,data) {
     'model': ("model")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['model-form'] || (depth0 && depth0['model-form'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-form", options))));
-  data.buffer.push("\n\n     <div class=\"form-group\">\n        <div class=\"col-sm-offset-2 col-sm-10\">\n            ");
+  data.buffer.push("\n\n     <div class=\"form-group\">\n        <div class=\"col-sm-offset-4 col-sm-8\">\n            ");
   hashContexts = {'classNames': depth0,'classNameBindings': depth0};
   hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
   options = {hash:{

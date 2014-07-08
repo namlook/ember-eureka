@@ -113,6 +113,9 @@ select {
   margin-top: 5px;
 }
 
+.eureka-field-input.form-control {
+  box-shadow: none;
+}
 
 .eureka-multi-field-input {
   margin-bottom: 5px;

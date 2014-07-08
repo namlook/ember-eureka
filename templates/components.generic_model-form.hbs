@@ -1,8 +1,8 @@
 
 {{#each field in fields}}
     <div {{bind-attr class=":form-group :eureka-field field.cssClass"}}>
-        <label {{bind-attr for="field.name"}} class="col-sm-2 control-label eureka-field-name">{{field.name}}</label>
-        <div class="col-sm-10">
+        <label {{bind-attr for="field.name"}} class="col-sm-4 control-label eureka-field-name">{{field.name}}</label>
+        <div class="col-sm-8">
             {{model-field-form field=field}}
         </div>
     </div>
