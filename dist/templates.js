@@ -4,7 +4,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, hashTypes, hashContexts, options, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
 
 
-  data.buffer.push("<nav class=\"eureka-navbar navbar navbar-inverse\" role=\"navigation\">\n    <div class=\"container-fluid\">\n        <div class=\"visible-xs\">\n            <a class=\"navbar-brand\" onclick=\"$('.row-offcanvas').toggleClass('active')\" class=\"btn btn-primary btn-xs\" data-toggle=\"offcanvas\"><i class=\"glyphicon glyphicon-align-justify\"></i></a>\n        </div>\n        <div class=\"navbar-header\">\n            <a class=\"navbar-brand\" href=\"#\">");
+  data.buffer.push("<div class=\"eureka-header\"></div>\n<nav class=\"eureka-navbar navbar\" role=\"navigation\">\n    <div class=\"container-fluid\">\n        <div class=\"visible-xs\">\n            <a class=\"navbar-brand\" onclick=\"$('.row-offcanvas').toggleClass('active')\" class=\"btn btn-primary btn-xs\" data-toggle=\"offcanvas\"><i class=\"glyphicon glyphicon-align-justify\"></i></a>\n        </div>\n        <div class=\"navbar-header\">\n            <a class=\"navbar-brand\" href=\"#\">");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "applicationName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -20,7 +20,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "outlet", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n        </div>\n    </div>\n\n</div>");
+  data.buffer.push("\n        </div>\n    </div>\n\n</div>\n<div class=\"eureka-footer\"></div>");
   return buffer;
   
 });

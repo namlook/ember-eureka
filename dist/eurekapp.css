@@ -22,6 +22,7 @@ select {
   border-radius: 0;
   margin-bottom: 0;
   border-bottom: 0;
+  background-color: #222222;
 }
 
 .eureka-application.row.row-offcanvas.row-offcanvas-left {
@@ -67,7 +68,8 @@ select {
 .eureka-main-content {
   padding-left: 25px;
   padding-right: 25px;
-  padding-top: 15px;
+  height: 90%;
+  overflow-y: scroll;
 }
 
 /*** list ***/
@@ -98,6 +100,7 @@ select {
 
 .eureka-link-to-new-section {
   padding-right: 0;
+  margin-top: 25px;
 }
 
 /*** new/edit ***/
