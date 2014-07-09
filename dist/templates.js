@@ -4,11 +4,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, hashTypes, hashContexts, options, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
 
 
-  data.buffer.push("<div class=\"eureka-header\"></div>\n<nav class=\"eureka-navbar navbar\" role=\"navigation\">\n    <div class=\"container-fluid\">\n        <div class=\"visible-xs\">\n            <a class=\"navbar-brand\" onclick=\"$('.row-offcanvas').toggleClass('active')\" class=\"btn btn-primary btn-xs\" data-toggle=\"offcanvas\"><i class=\"glyphicon glyphicon-align-justify\"></i></a>\n        </div>\n        <div class=\"navbar-header\">\n            <a class=\"navbar-brand\" href=\"#\">");
+  data.buffer.push("<div class=\"eureka-banner-top\"></div>\n<nav class=\"eureka-navbar navbar\" role=\"navigation\">\n    <div class=\"container-fluid\">\n        <div class=\"visible-xs\">\n            <a class=\"navbar-brand\" onclick=\"$('.row-offcanvas').toggleClass('active')\" class=\"btn btn-primary btn-xs\" data-toggle=\"offcanvas\"><i class=\"glyphicon glyphicon-align-justify\"></i></a>\n        </div>\n        <div class=\"navbar-header\">\n            <a class=\"navbar-brand\" href=\"#\">");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "applicationName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</a>\n        </div>\n    </div>\n</nav>\n\n<div class=\"container-fluid\">\n\n    <div class=\"eureka-application row row-offcanvas row-offcanvas-left\">\n        <div class=\"col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas eureka-navigation\" role=\"navigation\">\n            ");
+  data.buffer.push("</a>\n        </div>\n    </div>\n</nav>\n<div class=\"eureka-banner-bottom\"></div>\n\n<div class=\"container-fluid\">\n\n    <div class=\"eureka-application row row-offcanvas row-offcanvas-left\">\n        <div class=\"col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas eureka-navigation\" role=\"navigation\">\n            ");
   hashContexts = {'model': depth0,'currentPath': depth0};
   hashTypes = {'model': "ID",'currentPath': "ID"};
   options = {hash:{

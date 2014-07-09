@@ -22,17 +22,21 @@ select {
   border-radius: 0;
   margin-bottom: 0;
   border-bottom: 0;
+}
+
+html,
+.eureka-navbar,
+.eureka-navigation,
+.eureka-application {
   background-color: #222222;
 }
 
 .eureka-application.row.row-offcanvas.row-offcanvas-left {
-  height: 100%;
-  position: fixed;
+  min-height: 500px;
   width: 100%;
 }
 
 .eureka-navigation {
-  background-color: #222222;
   height: 100%;
   padding-left: 0;
   padding-right: 0;
@@ -68,14 +72,14 @@ select {
 .eureka-main-content {
   padding-left: 25px;
   padding-right: 25px;
-  height: 90%;
   overflow-y: scroll;
+  background-color: #ffffff;
+  min-height: 500px;
 }
 
 /*** list ***/
 
 .eureka-result-item {
-  /*margin-top: 20px;*/
   margin-bottom: 50px;
 }
 
@@ -140,8 +144,6 @@ select {
 
 
 .eureka-search-section .eureka-search-query-container.form-group.has-feedback{
-  /*margin-right: 1px;*/
-  /*margin-left: 1px;*/
   margin-top: 10px;
 }
 
