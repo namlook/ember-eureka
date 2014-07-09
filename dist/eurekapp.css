@@ -31,13 +31,9 @@ html,
   background-color: #222222;
 }
 
-.eureka-application.row.row-offcanvas.row-offcanvas-left {
-  min-height: 500px;
-  width: 100%;
-}
 
 .eureka-navigation {
-  height: 100%;
+  /*height: 100%;*/
   padding-left: 0;
   padding-right: 0;
   padding-top: 15px;
@@ -70,17 +66,21 @@ html,
 /**** main-content ****/
 
 .eureka-main-content {
+  min-height: 700px;
   padding-left: 25px;
   padding-right: 25px;
   overflow-y: scroll;
   background-color: #ffffff;
-  min-height: 500px;
 }
 
 /*** list ***/
 
 .eureka-result-item {
   margin-bottom: 50px;
+}
+
+.eureka-result-item.row {
+  margin-left: 0;
 }
 
 

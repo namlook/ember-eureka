@@ -1305,7 +1305,7 @@ function program11(depth0,data) {
 function program13(depth0,data) {
   
   var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
-  data.buffer.push("\n        <div class=\"eureka-result-item\">\n            ");
+  data.buffer.push("\n        <div class=\"eureka-result-item row\">\n            ");
   hashTypes = {};
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "item.__thumb__", {hash:{},inverse:self.noop,fn:self.program(14, program14, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
