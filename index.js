@@ -431,7 +431,7 @@ Eurekapp = (function(clientConfig){
         }.property('search.placeholder', 'title'),
 
         title: function() {
-            return this.get('content.title') || this.get('type').underscore().replace('_', ' ');
+            return this.get('content.title') || this.get('type').underscore().replace(/_/g, ' ');
         }.property('content.title'),
 
         properties: function() {
@@ -455,7 +455,7 @@ Eurekapp = (function(clientConfig){
             } else if (Ember.endsWith(key, "CSS")) {
                 var cssClass = key.slice(0, key.length - "CSS".length);
                 if (cssClass.indexOf('GenericModel') > -1) {
-                    cssClass = cssClass.replace('GenericModel', this.get('type'));
+                    cssClass = cssClass.replace(/GenericModel/g, this.get('type'));
                 }
                 return cssClass.dasherize();
             }
@@ -503,12 +503,20 @@ Eurekapp = (function(clientConfig){
                         });
 
                         this.set('content.'+key, values);
+                        // TODO XXX you better handle the following...
+                        this.set('content.'+key+'.__title__', values.get('__title__'));
+                        this.set('content.'+key+'.__description__', values.get('__description__'));
+                        this.set('content.'+key+'.__thumb__', values.get('__thumb__'));
                     }
                     else {
                         var rel = App.db[relationType].get('model').create({
                             content: value
                         });
                         this.set('content.'+key, rel);
+                        // TODO XXX you better handle the following...
+                        this.set('content.'+key+'.__title__', rel.get('__title__'));
+                        this.set('content.'+key+'.__description__', rel.get('__description__'));
+                        this.set('content.'+key+'.thumb', rel.get('thumb'));
                     }
                 } else {
                     value = App.utils.convertValue(fieldSchema, key, value);
@@ -549,39 +557,48 @@ Eurekapp = (function(clientConfig){
         */
         __buildDescriptors: function() {
             var _this = this;
-            ['title', 'description', 'thumb'].forEach(function(item){
-                var config = _this.get('__meta__')['__'+item+'__'];
+            ['title', 'description', 'thumb'].forEach(function(descriptor){
+                var config = _this.get('__meta__')['__'+descriptor+'__'];
+
+                // var templateName = _this.get('__meta__.decamelizedType')+'/__'+descriptor+'__';
+                // if (config && config.template && !Ember.TEMPLATES[templateName]) {
+                //     Ember.TEMPLATES[templateName] = Handlebars.compile(config.template);
+                // }
 
                 // precompile descriptor's templates if needed
                 if (config && config.template) {
                     var compiledTemplate = Handlebars.compile(config.template);
-                    _this.set('_'+item+'CompiledTemplate', compiledTemplate);
+                    _this.set('_'+descriptor+'CompiledTemplate', compiledTemplate);
                 }
 
                 // define the computed properties
-                Ember.defineProperty(_this, '__'+item+'__', Ember.computed(function(key) {
+                Ember.defineProperty(_this, '__'+descriptor+'__', Ember.computed(function(key) {
                     if (config) {
                         if (config.template) {
-                            return this.get('_'+item+'CompiledTemplate')(this.get('content'));
+                            // return Ember.TEMPLATES[templateName](_this.get('content'));
+                            return _this.get('_'+descriptor+'CompiledTemplate')(_this.get('content'));
                         }
 
                         if (config.bindTo) {
-                            return this.get(config.bindTo);
+                            return _this.get(config.bindTo);
                         }
                         return config;
                     }
-                    if (this.get('content.'+item)) {
-                        return this.get('content.'+item);
+                    if (_this.get('content.'+descriptor)) {
+                        return _this.get('content.'+descriptor);
                     }
-                    if (item === 'title') {
-                        return this.get('_id');
+
+                    // if there is no __title__ and there is not title in content
+                    // then we display the _id
+                    if (descriptor === 'title') {
+                        return _this.get('_id');
+                    } else {
+                        return '';
                     }
-                    return '';
                 }).property('_contentChanged'));
-
             });
-
         },
+
 
         /* _toJSONObject
          * Convert the model into a pojo ready to be serialized as JSON
@@ -989,7 +1006,8 @@ Eurekapp = (function(clientConfig){
                 query._sortBy = order;
             }
 
-            // query._populate = false;
+            query._populate = meta.populate || false;
+            query._limit = meta.limit;
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint'), query).done(function(data){
                     var results = Ember.A();
@@ -1688,90 +1706,14 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    // /* model-to helper
-    //  * This helper is used as a replacement to the link-to helper.
-    //  * The model-to helper will check if the model has a specific route.
-    //  * If so, the correponding url is used. This helper also add some css classes
-    //  * useful to idenitify the link that are related to a model.
-    //  * At last, the model-to helper can be used as a block component. The value
-    //  * in the block will be used as the link title
+    // /* title helper
+    //  * will return the title of a model
     //  */
-    // Ember.Handlebars.registerHelper('model-to', function(action, modelTypeName, modelId, options) {
-    //     console.log('action>', action, 'modelTypeName>', modelTypeName, 'modelId>', modelId);
-    //     var model = Ember.Handlebars.get(this, modelTypeName, options);
-    //     console.log('model>', modelTypeName, model);
-
-    //     if (!options && typeof(modelId) === 'object') {
-    //         options = modelId;
-    //         modelId = null;
-    //     }
-    //     var modelType;
-    //     if (typeof(model) === 'object') {
-    //         modelType = model.get('type');
-    //     } else {
-    //         modelType = model;
-    //         model = null;
-    //     }
-    //     if (options === undefined) {
-    //         options = modelId;
-    //         modelId = null;
-    //     }
-
-    //     var args = [];
-
-    //     options.contexts = [];
-    //     options.types = [];
-
-    //     // classNames
-    //     // bootstraping hash and hashContext
-    //     if (!options.hash) {
-    //         options.hash = {};
-    //     }
-    //     if (!options.hashContexts){
-    //         options.hashContexts = {};
-    //     }
-    //     options.hashContexts.classNames = this;
-
-    //     if (!options.hash.classNames) {
-    //         options.hash.classNames = '';
-    //     }
-    //     options.hash.classNames += " model-to-" + action;
-
-    //     if (modelType) {
-    //         options.hash.classBinding += ' '+modelTypeName+'.__meta__.dasherizedType';
-    //     }
-
-    //     // check the route to use (default to generic_model.<action>)
-    //     var routeName = 'generic_model.' + action;
-    //     var capitalized_action = action.camelize().capitalize();
-    //     if(App[modelType + capitalized_action + 'Route']) {
-    //         routeName = modelType.underscore() + '.' + action;
-    //     }
-    //     console.log('---', routeName, modelType, action);
-
-    //     args.push(routeName);
-    //     options.types.push('STRING');
-    //     options.contexts.push(this);
-
-    //     if (model) {
-    //         args.push(modelTypeName+'.__meta__.decamelizedType');
-    //         options.types.push('ID');
-    //         options.contexts.push(this);
-    //     } else {
-    //         args.push(modelTypeName);
-    //         options.types.push('ID');
-    //         options.contexts.push(this);
-    //     }
-
-    //     if (modelId) {
-    //         args.push(modelId);
-    //         options.types.push('ID');
-    //         options.contexts.push(this);
-    //     }
-
-    //     args.push(options);
-
-    //     return Ember.Handlebars.helpers['link-to'].apply(this, args);
+    // Ember.Handlebars.registerHelper('description', function(contextModel, options) {
+    //     console.log('---', contextModel, options);
+    //     var model = Ember.Handlebars.get(this, contextModel, options);
+    //     var templateName = model.get('__meta__.decamelizedType')+".__description__";
+    //     return Ember.Handlebars.helpers.render.call(this, templateName, contextModel, options);
     // });
 
     App.ApplicationConfig = Ember.Object.extend({
