@@ -31,7 +31,11 @@
             <li><a href="#"
                 {{bind-attr class=":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.EurekaGenericModelModelCSS"}}
                 {{action 'trigger' modelAction.name}}>
-                  <i {{bind-attr class="modelAction.iconClass"}}></i> <span class="hidden-xs">{{modelAction.label}}</span>
+                    {{#if modelAction.iconClass}}
+                        <i {{bind-attr class="modelAction.iconClass"}}></i> <span class="hidden-xs">{{modelAction.label}}</span>
+                    {{else}}
+                        {{modelAction.label}}
+                    {{/if}}
                 </a>
             </li>
         {{/each}}
@@ -45,7 +49,7 @@
                     <li><a href="#"
                         {{bind-attr class=":eureka-action :eureka-secondary-action modelAction.cssClass model.__meta__.EurekaGenericModelModelCSS"}}
                         {{action 'trigger' modelAction.name}}>
-                          <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.label}}
+                            <i {{bind-attr class="modelAction.iconClass"}}></i> {{modelAction.label}}
                         </a>
                     </li>
                 {{/each}}
