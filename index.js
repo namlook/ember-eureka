@@ -50,7 +50,10 @@ Eurekapp = (function(clientConfig){
             var modelMeta = App.ModelMeta.create(this.config.schemas[modelType]);
             modelMeta.set('type', modelType);
             return modelMeta;
-        }
+        },
+
+        defaultLang: 'en',
+        currentLang: null
     });
 
     App.utils = {
@@ -539,7 +542,6 @@ Eurekapp = (function(clientConfig){
             return App.getModelMeta(this.get('__type__'));
         }.property('__type__'),
 
-
         /* build the descriptors (__title__, __description__, __thumb__)
         * Descriptors are used to represent a model in generic templates.
         * It is also used as an helper.
@@ -573,24 +575,31 @@ Eurekapp = (function(clientConfig){
 
                 // define the computed properties
                 Ember.defineProperty(_this, '__'+descriptor+'__', Ember.computed(function(key) {
-                    if (config) {
-                        if (config.template) {
-                            // return Ember.TEMPLATES[templateName](_this.get('content'));
-                            return _this.get('_'+descriptor+'CompiledTemplate')(_this.get('content'));
-                        }
-
-                        if (config.bindTo) {
-                            return _this.get(config.bindTo);
-                        }
-                        return config;
-                    }
-                    if (_this.get('content.'+descriptor)) {
-                        return _this.get('content.'+descriptor);
+                    if (config && config.template) {
+                        // return Ember.TEMPLATES[templateName](_this.get('content'));
+                        return _this.get('_'+descriptor+'CompiledTemplate')(_this.get('content'));
                     }
 
-                    // if there is no __title__ and there is not title in content
-                    // then we display the _id
-                    if (descriptor === 'title') {
+                    var fieldName = null;
+                    if (config && config.bindTo) {
+                        fieldName = config.bindTo;
+                    } else if (_this.get('content.'+descriptor)) {
+                        fieldName = descriptor;
+                    }
+
+                    if (fieldName) {
+                        if (_this.get(fieldName+'Field').get('isI18n')) {
+                            var value = _this.get('content.'+fieldName)[App.currentLang];
+                            if (!value) {
+                                value = _this.get('content.'+fieldName)[App.defaultLang];
+                            }
+                            return value;
+                        } else {
+                            return _this.get('content.'+fieldName);
+                        }
+                    } else if (descriptor === 'title') {
+                        // if there is no __title__ and there is not title in content
+                        // then we display the _id
                         return _this.get('_id');
                     } else {
                         return '';
@@ -763,17 +772,40 @@ Eurekapp = (function(clientConfig){
                 else {
                     var values = Ember.A();
                     if (field.get('isMulti')) {
-                        if(!Ember.isArray(value)) {
-                            value = [value];
-                        }
-                        value.forEach(function(val){
-                            values.pushObject(Ember.Object.create({value: val}));
-                        });
-
-                        if (values.length) {
-                            value = values;
+                        if (field.get('isI18n')) {
+                            for (var lang in value) {
+                                var _values = value[lang];
+                                _values.forEach(function(val) {
+                                    values.pushObject(Ember.Object.create({
+                                        value: val,
+                                        lang: lang
+                                    }));
+                                });
+                            }
+                            if (values.length) {
+                                // sort by lang and value
+                                value = values.sort(function(a, b){
+                                    if (a.get('lang') === b.get('lang')) {
+                                        return a.get('value') > b.get('value');
+                                    }
+                                    return a.get('lang') > b.get('lang');
+                                });
+                            } else {
+                                value = null;
+                            }
                         } else {
-                            value = null;
+                            if(!Ember.isArray(value)) {
+                                value = [value];
+                            }
+                            value.forEach(function(val){
+                                values.pushObject(Ember.Object.create({value: val}));
+                            });
+
+                            if (values.length) {
+                                value = values.sortBy('value');
+                            } else {
+                                value = null;
+                            }
                         }
                     } else if (field.get('isI18n')) {
                         for (var lang in value) {
@@ -784,7 +816,8 @@ Eurekapp = (function(clientConfig){
                             }));
                         }
                         if (values.length) {
-                            value = values;
+                            // sort by lang
+                            value = values.sortBy('lang');
                         } else {
                             value = null;
                         }
@@ -823,14 +856,30 @@ Eurekapp = (function(clientConfig){
                 var value = null;
                 var content = field.get('content');
                 if (field.get('isMulti')) {
-                    value = [];
-                    content.forEach(function(item){
-                        if (item.get('value') !== null) {
-                            value.push(item.get('value'));
+                    if (field.get('isI18n')) {
+                        var i18nValues = {};
+                        content.forEach(function(item) {
+                            var lang = item.get('lang');
+                            if (!i18nValues[lang] && item.get('value') !== null) {
+                                i18nValues[lang] = [];
+                            }
+                            if (item.get('value') !== null) {
+                                i18nValues[lang].push(item.get('value'));
+                            }
+                        });
+                        if (!Ember.isEmpty(i18nValues)) {
+                            value = i18nValues;
                         }
-                    });
-                    if (value.length === 0) {
-                       value = null;
+                    } else {
+                        value = [];
+                        content.forEach(function(item){
+                            if (item.get('value') !== null) {
+                                value.push(item.get('value'));
+                            }
+                        });
+                        if (value.length === 0) {
+                           value = null;
+                        }
                     }
                 } else if (field.get('isI18n')){
                     value = {};
@@ -1361,10 +1410,19 @@ Eurekapp = (function(clientConfig){
     App.DynamicInputComponent = Ember.Component.extend({
         field: null,
         value: null,
+        lang: null,
 
         fieldName: function() {
             return this.get('field.name');
         }.property('field.name'),
+
+        underscoredFieldName: function() {
+            return this.get('fieldName').underscore();
+        }.property('fieldName'),
+
+        underscoredFieldNameLang: function() {
+            return this.get('underscoredFieldName')+'-lang';
+        }.property('underscoredFieldName'),
 
         schema: function() {
             return this.get('field.schema');
@@ -1373,6 +1431,10 @@ Eurekapp = (function(clientConfig){
         type: function() {
             return this.get('schema.type');
         }.property('schema.type'),
+
+        isI18n: function() {
+            return this.get('field.isI18n');
+        }.property('field.isI18n'),
 
         isText: function() {
             return this.get('type') === 'string';

@@ -1,23 +1,23 @@
 {{#if field.schema.multi}}
     {{#if field.isI18n}}
+        <ul class="eureka-i18n-multi-field-values">
         {{#each i18tem in field.content}}
-            <span class="label secondary">{{i18tem.lang}}</span>
-            <ul>
-            {{#each item in i18tem.value}}
-                <li>
+            <li class="eureka-i18n-item">
+                <span class="eureka-i18n-value">
                     {{#if field.isSafeString}}
-                        {{{item.value}}}
-                    {{else}}
-                        {{item.value}}
+                            {{{i18tem.value}}}
+                        {{else}}
+                            {{i18tem.value}}
                     {{/if}}
-                </li>
-            {{/each}}
-            </ul>
+                </span>
+                <span class="eureka-i18n-lang label label-default">{{i18tem.lang}}</span>
+            </li>
         {{/each}}
+        </ul>
     {{else}}
-        <ul>
+        <ul class="eureka-multi-field-values">
         {{#each item in field.content}}
-            <li>
+            <li class="eureka-multi-field-item">
                 {{#if field.isRelation}}
                     {{#link-to item.value.__meta__.displayRouteName item.value._id
                         classNames="eureka-link-to-display"
@@ -44,15 +44,17 @@
         {{/link-to}}
     {{else}}
         {{#if field.isI18n}}
-            <ul class="no-bullet">
+            <ul class="list-unstyled eureka-i18n-field-values">
             {{#each item in field.content}}
-                <li>
-                    <span class="label secondary">{{item.lang}}</span>
+                <li class="eureka-i18n-field-item">
+                    <span class="eureka-i18n-value">
                     {{#if field.isSafeString}}
                         {{{item.value}}}
                     {{else}}
                         {{item.value}}
                     {{/if}}
+                    </span>
+                    <span class="eureka-i18n-lang label label-default">{{item.lang}}</span>
                 </li>
             {{/each}}
             </ul>

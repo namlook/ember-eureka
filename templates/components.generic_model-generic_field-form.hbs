@@ -33,11 +33,16 @@
         {{/unless}}
 
     {{else}}
-
         {{#each item in field.content}}
-            <div class="eureka-multi-field-input">
-                {{dynamic-input field=field value=item.value}}
-            </div>
+            {{#if field.isI18n}}
+                <div class="eureka-multi-field-input eureka-i18n-field-inputs">
+                    {{dynamic-input field=field value=item.value lang=item.lang}}
+                </div>
+            {{else}}
+                <div class="eureka-multi-field-input">
+                    {{dynamic-input field=field value=item.value}}
+                </div>
+            {{/if}}
         {{/each}}
         {{#if displayAddButton}}
             <button class="btn btn-default eureka-multi-field-add-input" {{action 'add'}}>add</button>
@@ -90,23 +95,18 @@
         {{/if}}
 
     {{else}}
-
         {{#if field.isI18n}}
-            {{#each item in field.content}}
-              <div class="row collapse">
-                <div class="small-2 columns">
-                    {{input type='text' placeholder='lang' classNames="prefix" value=item.lang}}
-                </div>
-                <div class="small-10 columns">
-                    {{input type='text' placeholder='value' value=item.value}}
-                </div>
-              </div>
-            {{/each}}
+            <div class="eureka-i18n-field-inputs">
+                {{#each item in field.content}}
+                    {{dynamic-input field=field value=item.value lang=item.lang}}
+                {{/each}}
+            </div>
             <button class="btn btn-default eureka-i18n-field-add-input" {{action 'add'}}>add</button>
 
         {{else}}
             {{dynamic-input field=field value=field.content}}
         {{/if}}
+
     {{/if}}
 
 {{/if}}

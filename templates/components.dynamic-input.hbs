@@ -1,12 +1,27 @@
 
-{{#if isText}}
-    {{input type='text' value=value name=fieldName autocomplete="off" class="eureka-field-input form-control"}}
+{{#if isI18n}}
+    <div class="input-group eureka-i18n-field-input">
+        <span class="input-group-addon">
+            {{input type='text' value=lang
+                    placeholder='lang'
+                    name=underscoredFieldNameLang
+                    autocomplete="off"
+                    classNames="eureka-i18n-field-lang-input"}}
+         </span>
+        {{input type='text' value=value
+                placeholder='value'
+                name=underscoredFieldName
+                autocomplete="off"
+                classNames="eureka-field-input eureka-i18n-field-value-input form-control"}}
+    </div>
+{{else }} {{#if isText}}
+    {{input type='text' value=value name=underscoredFieldName autocomplete="off" class="eureka-field-input form-control"}}
 {{else}} {{#if isBoolean}}
-    {{input type='checkbox' checked=value name=fieldName autocomplete="off" class="eureka-field-input form-control"}}
+    {{input type='checkbox' checked=value name=underscoredFieldName autocomplete="off" class="eureka-field-input form-control"}}
 {{else}} {{#if isNumber}}
-    {{input type='number' value=value name=fieldName autocomplete="off" class="eureka-field-input form-control"}}
+    {{input type='number' value=value name=underscoredFieldName autocomplete="off" class="eureka-field-input form-control"}}
 {{else}} {{#if isDate}}
-    {{#date-picker value=value name=fieldName autocomplete="off" class="eureka-field-input form-control"}}{{/date-picker}}
+    {{#date-picker value=value name=underscoredFieldName autocomplete="off" class="eureka-field-input form-control"}}{{/date-picker}}
 {{else}}
-    {{input type=inputType value=value name=fieldName autocomplete="off" class="eureka-field-input form-control"}}
-{{/if}} {{/if}} {{/if}} {{/if}}
+    {{input type=inputType value=value name=underscoredFieldName autocomplete="off" class="eureka-field-input form-control"}}
+{{/if}} {{/if}} {{/if}} {{/if}} {{/if}}
