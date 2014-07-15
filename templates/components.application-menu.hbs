@@ -1,12 +1,14 @@
 
 <ul class="eureka-application-menu nav nav-pills nav-stacked">
   {{#each modelMeta in modelMetas}}
-    {{#link-to modelMeta.indexRouteName
-        tagName="li"
-        href=false
-        active=modelMeta.isActive
-        classBinding=":eureka-menu-item modelMeta.EurekaGenericModelModelCSS"}}
-            <a href="#">{{modelMeta.type}}</a>
-    {{/link-to}}
+    {{#unless modelMeta.hidden}}
+        {{#link-to modelMeta.indexRouteName
+            tagName="li"
+            href=false
+            active=modelMeta.isActive
+            classBinding=":eureka-menu-item modelMeta.EurekaGenericModelModelCSS"}}
+                <a href="#">{{modelMeta.type}}</a>
+        {{/link-to}}
+    {{/unless}}
   {{/each}}
 </ul>
