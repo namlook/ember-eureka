@@ -24,14 +24,17 @@
 
     <ul class="nav nav-tabs">
         <li class="active"><a href="#">Informations</a></li>
-            {{#each modelAction in mainModelActions}}
-                <li><a href="#"
-                    {{bind-attr class=":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.EurekaGenericModelModelCSS"}}
-                    {{action 'trigger' modelAction.name}}>
-                      <i {{bind-attr class="modelAction.iconClass"}}></i> <span class="hidden-xs">{{modelAction.label}}</span>
-                    </a>
-                </li>
-            {{/each}}
+    </ul>
+
+    <ul class="eureka-actions nav nav-pills pull-right">
+        {{#each modelAction in mainModelActions}}
+            <li><a href="#"
+                {{bind-attr class=":eureka-action :eureka-main-action modelAction.cssClass model.__meta__.EurekaGenericModelModelCSS"}}
+                {{action 'trigger' modelAction.name}}>
+                  <i {{bind-attr class="modelAction.iconClass"}}></i> <span class="hidden-xs">{{modelAction.label}}</span>
+                </a>
+            </li>
+        {{/each}}
         {{#if secondaryModelActions.length}}
         <li class="dropdown pull-right">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
