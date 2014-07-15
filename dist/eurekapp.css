@@ -107,6 +107,16 @@ html,
   margin-top: 25px;
 }
 
+/*** display ***/
+
+.eureka-i18n-lang.label {
+  font-weight: normal;
+}
+
+.eureka-i18n-multi-field-values {
+  padding-left: 15px;
+}
+
 /*** new/edit ***/
 
 .eureka-relations-list {
@@ -137,6 +147,19 @@ html,
   padding-top: 10px;
   padding-bottom: 10px;
   /*border-bottom: 1px solid #e5e5e5;*/
+}
+
+.eureka-i18n-field-input {
+  margin-bottom: 10px;
+}
+
+.eureka-i18n-field-inputs .eureka-i18n-field-lang-input {
+  padding: 5px;
+  border: 1px solid #cccccc;
+}
+
+.eureka-i18n-field-inputs .eureka-i18n-field-value-input.form-control {
+  height: 44px;
 }
 
 
