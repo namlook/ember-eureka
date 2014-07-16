@@ -786,9 +786,9 @@ Eurekapp = (function(clientConfig){
                                 // sort by lang and value
                                 value = values.sort(function(a, b){
                                     if (a.get('lang') === b.get('lang')) {
-                                        return a.get('value') > b.get('value');
+                                        return a.get('value').localeCompare(b.get('value'));
                                     }
-                                    return a.get('lang') > b.get('lang');
+                                    return a.get('lang').localeCompare(b.get('lang'));
                                 });
                             } else {
                                 value = null;
@@ -902,9 +902,6 @@ Eurekapp = (function(clientConfig){
             });
         }.observes('_contentChanged'),
 
-        // _observeFields: function() {
-        //     Ember.run.debounce(this, this._updateContent, 300, true);
-        // }.observes('_contentChanged'),
 
         /**** properties ****/
 
@@ -912,25 +909,43 @@ Eurekapp = (function(clientConfig){
             return this.get('content._type') || this.get('__type__');
         }.property('content._type', '__type__').readOnly(),
 
-        // dasherized_type: function() {
-        //     return this.get('type').dasherize();
-        // }.property('type').readOnly(),
-
-        // underscored_type: function() {
-        //     return this.get('type').underscore();
-        // }.property('type').readOnly(),
 
         unknownProperty: function(key) {
+            var fieldName;
             /*
              * If a property name ends with 'Field', then the ModelField
-             * object is return. This is useful if we're looking for the
+             * object is returned. This is useful if we're looking for the
              * field schema and model relations...
              */
             if (Ember.endsWith(key, "Field")){
-                var fieldName = key.slice(0, key.length - "Field".length);
+                fieldName = key.slice(0, key.length - "Field".length);
                 var field = this.get('_fields').get(fieldName);
                 if (field) {
                     return field;
+                }
+            }
+            /*
+             * If the property name ends with 'Localized', then the
+             * i18n value corresponding to the current language is returned.
+             * If the value of the current language is undefined, then the value
+             * of the default language is returned
+             * If the property name ends with 'Localized<lang>' (ex: 'titleLocalizedFr')
+             * then the value corresponding to the lang is returned (in our
+             * example, the french version of the title)
+             */
+            else if (key.indexOf('Localized') > -1) {
+                if (Ember.endsWith(key, 'Localized')) {
+                    fieldName = key.slice(0, key.length - "Localized".length);
+                    var value = this.get(fieldName)[App.currentLang];
+                    if (value === undefined) {
+                        value = this.get(fieldName)[App.defaultLang];
+                    }
+                    return value;
+                } else {
+                    var splitedKey = key.split('Localized');
+                    fieldName = splitedKey[0];
+                    var lang = splitedKey[1].decamelize();
+                    return this.get(fieldName)[lang];
                 }
             }
             return this.get('content.'+key);
@@ -947,28 +962,6 @@ Eurekapp = (function(clientConfig){
         __meta__: function() {
             return App.getModelMeta(this.get('type'));
         }.property('type'),
-
-        // defaultFilter: function() {
-        //     var sortBy = this.get('__meta__.sortBy');
-        //     if (typeof(sortBy) === 'object') {
-        //         if (sortBy.filterBy('default').length) {
-        //             return sortBy.filterBy('default')[0].order;
-        //         } else {
-        //             return sortBy[0].order;
-        //         }
-        //     } else if (typeof(sortBy) === 'string') {
-        //         return sortBy;
-        //     }
-        //     return null;
-        // }.property('type'),
-
-        // dasherized_type: function() {
-        //     return this.get('type').dasherize();
-        // }.property('type').readOnly(),
-
-        // underscored_type: function() {
-        //     return this.get('type').underscore();
-        // }.property('type').readOnly(),
 
         schema: function() {
             return this.get('__meta__.schema');
@@ -1112,6 +1105,27 @@ Eurekapp = (function(clientConfig){
         isSafeString: function() {
             return !!this.get('schema').safeString;
         }.property('schema.safeString'),
+
+        displayAllLanguages: function() {
+            return !!this.get('schema.displayAllLanguages');
+        }.property('schema.displayAllLanguages'),
+
+        /*
+         * return the content that match the current language
+         * if no content is found and `fallbackDefaultLang` is true
+         * then return the content that match the default language
+         */
+        currentLangContent: function() {
+            var content = this.get('content').filterBy('lang', App.currentLang);
+            if (content.length === 0 && this.get('schema').fallbackDefaultLang) {
+                content = this.get('content').filterBy('lang', App.defaultLang);
+            }
+            content = content.mapBy('value');
+            if (!this.get('isMulti')) {
+                return content[0];
+            }
+            return content;
+        }.property('content', 'App.currentLang'),
 
         isRelation: function() {
             return !!App.db[this.get('schema').get('type')];
@@ -1416,13 +1430,13 @@ Eurekapp = (function(clientConfig){
             return this.get('field.name');
         }.property('field.name'),
 
-        underscoredFieldName: function() {
-            return this.get('fieldName').underscore();
+        dasherizedFieldName: function() {
+            return this.get('fieldName').dasherize();
         }.property('fieldName'),
 
-        underscoredFieldNameLang: function() {
-            return this.get('underscoredFieldName')+'-lang';
-        }.property('underscoredFieldName'),
+        dasherizedFieldNameLang: function() {
+            return this.get('dasherizedFieldName')+'-lang';
+        }.property('dasherizedFieldName'),
 
         schema: function() {
             return this.get('field.schema');

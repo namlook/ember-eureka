@@ -1,18 +1,30 @@
 {{#if field.schema.multi}}
     {{#if field.isI18n}}
         <ul class="eureka-i18n-multi-field-values">
-        {{#each i18tem in field.content}}
-            <li class="eureka-i18n-item">
-                <span class="eureka-i18n-value">
+        {{#if field.displayAllLanguages}}
+            {{#each i18tem in field.content}}
+                <li class="eureka-i18n-item">
+                    <span class="eureka-i18n-value">
+                        {{#if field.isSafeString}}
+                                {{{i18tem.value}}}
+                            {{else}}
+                                {{i18tem.value}}
+                        {{/if}}
+                    </span>
+                    <span class="eureka-i18n-lang label label-default">{{i18tem.lang}}</span>
+                </li>
+            {{/each}}
+        {{else}}
+            {{#each value in field.currentLangContent}}
+                <li class="eureka-i18n-item">
                     {{#if field.isSafeString}}
-                            {{{i18tem.value}}}
+                            {{{value}}}
                         {{else}}
-                            {{i18tem.value}}
+                            {{value}}
                     {{/if}}
-                </span>
-                <span class="eureka-i18n-lang label label-default">{{i18tem.lang}}</span>
-            </li>
-        {{/each}}
+                </li>
+            {{/each}}
+        {{/if}}
         </ul>
     {{else}}
         <ul class="eureka-multi-field-values">
@@ -44,20 +56,28 @@
         {{/link-to}}
     {{else}}
         {{#if field.isI18n}}
-            <ul class="list-unstyled eureka-i18n-field-values">
-            {{#each item in field.content}}
-                <li class="eureka-i18n-field-item">
-                    <span class="eureka-i18n-value">
-                    {{#if field.isSafeString}}
-                        {{{item.value}}}
-                    {{else}}
-                        {{item.value}}
-                    {{/if}}
-                    </span>
-                    <span class="eureka-i18n-lang label label-default">{{item.lang}}</span>
-                </li>
-            {{/each}}
-            </ul>
+            {{#if field.displayAllLanguages}}
+                <ul class="list-unstyled eureka-i18n-field-values">
+                {{#each item in field.content}}
+                    <li class="eureka-i18n-field-item">
+                        <span class="eureka-i18n-value">
+                        {{#if field.isSafeString}}
+                            {{{item.value}}}
+                        {{else}}
+                            {{item.value}}
+                        {{/if}}
+                        </span>
+                        <span class="eureka-i18n-lang label label-default">{{item.lang}}</span>
+                    </li>
+                {{/each}}
+                </ul>
+            {{else}}
+                {{#if field.isSafeString}}
+                    {{{field.currentLangContent}}}
+                {{else}}
+                    {{field.currentLangContent}}
+                {{/if}}
+            {{/if}}
         {{else}}
             {{#if field.isSafeString}}
                 {{{field.content}}}
