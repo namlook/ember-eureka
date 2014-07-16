@@ -36,7 +36,13 @@
         {{#each item in field.content}}
             {{#if field.isI18n}}
                 <div class="eureka-multi-field-input eureka-i18n-field-inputs">
-                    {{dynamic-input field=field value=item.value lang=item.lang}}
+                    {{#if displayAllLanguages}}
+                        {{dynamic-input field=field value=item.value lang=item.lang}}
+                    {{else}}
+                        {{#if item.matchSelectedLang}}
+                          {{dynamic-input field=field value=item.value lang=item.lang}}
+                        {{/if}}
+                    {{/if}}
                 </div>
             {{else}}
                 <div class="eureka-multi-field-input">
@@ -97,12 +103,19 @@
     {{else}}
         {{#if field.isI18n}}
             <div class="eureka-i18n-field-inputs">
-                {{#each item in field.content}}
+            {{#each item in field.content}}
+                {{#if field.displayAllLanguages}}
                     {{dynamic-input field=field value=item.value lang=item.lang}}
-                {{/each}}
+                {{else}}
+                    {{#if item.matchSelectedLang}}
+                        {{dynamic-input field=field value=item.value lang=item.lang}}
+                    {{/if}}
+                {{/if}}
+            {{/each}}
+            {{#if field.displayAllLanguages}}
+                <button class="btn btn-default eureka-i18n-field-add-input" {{action 'add'}}>add</button>
+            {{/if}}
             </div>
-            <button class="btn btn-default eureka-i18n-field-add-input" {{action 'add'}}>add</button>
-
         {{else}}
             {{dynamic-input field=field value=field.content}}
         {{/if}}

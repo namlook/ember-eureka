@@ -1,6 +1,7 @@
 
 {{#if isI18n}}
     <div class="input-group eureka-i18n-field-input">
+        {{#if field.displayAllLanguages}}
         <span class="input-group-addon">
             {{input type='text' value=lang
                     placeholder='lang'
@@ -8,6 +9,7 @@
                     autocomplete="off"
                     classNames="eureka-i18n-field-lang-input"}}
          </span>
+         {{/if}}
         {{input type='text' value=value
                 placeholder='value'
                 name=dasherizedFieldName

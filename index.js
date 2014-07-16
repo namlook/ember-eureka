@@ -50,11 +50,9 @@ Eurekapp = (function(clientConfig){
             var modelMeta = App.ModelMeta.create(this.config.schemas[modelType]);
             modelMeta.set('type', modelType);
             return modelMeta;
-        },
-
-        defaultLang: 'en',
-        currentLang: null
+        }
     });
+
 
     App.utils = {
         convertValue: function(fieldSchema, fieldName, value) {
@@ -589,9 +587,9 @@ Eurekapp = (function(clientConfig){
 
                     if (fieldName) {
                         if (_this.get(fieldName+'Field').get('isI18n')) {
-                            var value = _this.get('content.'+fieldName)[App.currentLang];
+                            var value = _this.get('content.'+fieldName)[App.get('config.currentLang')];
                             if (!value) {
-                                value = _this.get('content.'+fieldName)[App.defaultLang];
+                                value = _this.get('content.'+fieldName)[App.get('config.defaultLang')];
                             }
                             return value;
                         } else {
@@ -776,7 +774,7 @@ Eurekapp = (function(clientConfig){
                             for (var lang in value) {
                                 var _values = value[lang];
                                 _values.forEach(function(val) {
-                                    values.pushObject(Ember.Object.create({
+                                    values.pushObject(App.ModelFieldContent.create({
                                         value: val,
                                         lang: lang
                                     }));
@@ -798,21 +796,24 @@ Eurekapp = (function(clientConfig){
                                 value = [value];
                             }
                             value.forEach(function(val){
-                                values.pushObject(Ember.Object.create({value: val}));
+                                values.pushObject(App.ModelFieldContent.create({value: val}));
                             });
 
                             if (values.length) {
                                 value = values.sortBy('value');
+                                if (field.get('sortOrder') === 'desc') {
+                                    value = value.reverse();
+                                }
                             } else {
                                 value = null;
                             }
                         }
                     } else if (field.get('isI18n')) {
-                        for (var lang in value) {
-                            var _value = value[lang];
-                            values.pushObject(Ember.Object.create({
+                        for (var _lang in value) {
+                            var _value = value[_lang];
+                            values.pushObject(App.ModelFieldContent.create({
                                 value: _value,
-                                lang: lang
+                                lang: _lang
                             }));
                         }
                         if (values.length) {
@@ -936,9 +937,9 @@ Eurekapp = (function(clientConfig){
             else if (key.indexOf('Localized') > -1) {
                 if (Ember.endsWith(key, 'Localized')) {
                     fieldName = key.slice(0, key.length - "Localized".length);
-                    var value = this.get(fieldName)[App.currentLang];
+                    var value = this.get(fieldName)[App.get('config.currentLang')];
                     if (value === undefined) {
-                        value = this.get(fieldName)[App.defaultLang];
+                        value = this.get(fieldName)[App.get('config.defaultLang')];
                     }
                     return value;
                 } else {
@@ -1110,22 +1111,26 @@ Eurekapp = (function(clientConfig){
             return !!this.get('schema.displayAllLanguages');
         }.property('schema.displayAllLanguages'),
 
+        fallbackDefaultLang: function() {
+            return !!this.get('schema.fallbackDefaultLang');
+        }.property('schema.fallbackDefaultLang'),
+
         /*
          * return the content that match the current language
          * if no content is found and `fallbackDefaultLang` is true
          * then return the content that match the default language
          */
         currentLangContent: function() {
-            var content = this.get('content').filterBy('lang', App.currentLang);
+            var content;
+            content = this.get('content').filterBy('lang', App.get('config.currentLang'));
             if (content.length === 0 && this.get('schema').fallbackDefaultLang) {
-                content = this.get('content').filterBy('lang', App.defaultLang);
+                content = this.get('content').filterBy('lang', App.get('config.defaultLang'));
             }
-            content = content.mapBy('value');
             if (!this.get('isMulti')) {
-                return content[0];
+               content = content[0];
             }
             return content;
-        }.property('content', 'App.currentLang'),
+        }.property('content', 'App.config.currentLang'),
 
         isRelation: function() {
             return !!App.db[this.get('schema').get('type')];
@@ -1178,9 +1183,27 @@ Eurekapp = (function(clientConfig){
             this.set('content', Ember.A());
         },
 
+        sortOrder: function() {
+            return this.get('schema').sortOrder;
+        }.property('schema.sortOrder'),
+
         contentLength: function() {
             return this.get('content').length;
         }.property('content.@each.value')
+    });
+
+    /* This is where the values from the forms will be stored
+     * and displayed and extracted by _updateContent.
+     * Model.fieldsList are responsible of creating a `ModelFieldContent`
+     */
+    App.ModelFieldContent = Ember.Object.extend({
+        value: null,
+        lang: null,
+        isEditable: false,
+
+        matchSelectedLang: function() {
+            return this.get('lang') === App.get('config.selectedLang');
+        }.property('lang', 'App.config.selectedLang')
     });
 
     /*** Components ****/
@@ -1313,11 +1336,29 @@ Eurekapp = (function(clientConfig){
 
         fields: function() {
             var model = this.get('model');
+            var _fields;
             if (!model) {
-                return Ember.A();
+                _fields = Ember.A();
+            } else {
+                _fields = model.get('fieldsList');
             }
-            return model.get('fieldsList');
-        }.property('model.fieldsList'),
+
+            // create the empty field content for each i18n which are not
+            // `displayAllLanguages` and who doesn't have content
+            _fields.filter(function(field) {
+                if (field.get('isI18n') && !field.get('displayAllLanguages')){
+                    return field;
+                }
+            }).forEach(function(field) {
+                var currentLang = App.get('config.selectedLang');
+                var currentLangValues = field.get('content').filterBy('lang', currentLang);
+                if (currentLangValues.length === 0) {
+                    field.get('content').pushObject(App.ModelFieldContent.create({value: null, lang: currentLang}));
+                }
+            });
+
+            return _fields;
+        }.property('model.fieldsList', 'App.config.selectedLang')
     });
 
 
@@ -1387,7 +1428,7 @@ Eurekapp = (function(clientConfig){
                         } else {
                             value = null;
                         }
-                        item = Ember.Object.create({value: value, isEditable: true});
+                        item = App.ModelFieldContent.create({value: value, isEditable: true});
                         field.get('content').pushObject(item);
                     }
                     else {
@@ -1397,7 +1438,7 @@ Eurekapp = (function(clientConfig){
                             }));
                             field.set('isEditable', true);
                         } else if (field.get('isI18n')) {
-                            item = Ember.Object.create({value: null, lang: null});
+                            item = App.ModelFieldContent.create({value: null, lang: null});
                             field.get('content').pushObject(item);
                         }
                     }
@@ -1407,10 +1448,13 @@ Eurekapp = (function(clientConfig){
                         field.set('isEditable', false);
                     } else if (!field.get('isRelation')) {
                         if (field.get('isI18n')) {
-                            item = Ember.Object.create({value: null, lang: null});
+                            item = App.ModelFieldContent.create({value: null, lang: null});
+                            if (!field.get('displayAllLanguages')) {
+                                item.set('lang', App.get('config.selectedLang'));
+                            }
                         }
                         else {
-                            item = Ember.Object.create({value: null, isEditable: true});
+                            item = App.ModelFieldContent.create({value: null, isEditable: true});
                         }
                         field.get('content').pushObject(item);
                     }
@@ -1449,6 +1493,10 @@ Eurekapp = (function(clientConfig){
         isI18n: function() {
             return this.get('field.isI18n');
         }.property('field.isI18n'),
+
+        displayAllLanguages: function() {
+            return this.get('field.displayAllLanguages');
+        }.property('field.displayAllLanguages'),
 
         isText: function() {
             return this.get('type') === 'string';
@@ -1521,7 +1569,7 @@ Eurekapp = (function(clientConfig){
             if (item.object) {
                 var obj = item.object;
                 if (field.get('isMulti')) {
-                    var wrappedObj = Ember.Object.create({value: obj, isEditable: false});
+                    var wrappedObj = App.ModelFieldContent.create({value: obj, isEditable: false});
                     field.get('content').pushObject(wrappedObj);
                 } else {
                     field.set('content', obj);
@@ -1532,7 +1580,7 @@ Eurekapp = (function(clientConfig){
                     var emptyItem = field.get('relationModel').create({
                         content: {}
                     });
-                    content.pushObject(Ember.Object.create({value: emptyItem, isEditable: true}));
+                    content.pushObject(App.ModelFieldContent.create({value: emptyItem, isEditable: true}));
                     field.set('isEditable', true);
                     field.set('content', content);
                 } else {
@@ -1795,6 +1843,11 @@ Eurekapp = (function(clientConfig){
     App.ApplicationConfig = Ember.Object.extend({
         // application config used in App.config
         // add here some custom methods
+
+        defaultLang: 'en',
+        selectedLang: function() {
+            return this.get('currentLang') || this.get('defaultLang');
+        }.property('currentLang', 'defaultLang')
     });
 
 
