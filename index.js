@@ -1191,6 +1191,13 @@ Eurekapp = (function(clientConfig){
             return value || this.get('name').underscore().replace(/_/g, ' ');
         }.property('schema.title', 'name', 'App.config.selectedLang'),
 
+        hasContent: function() {
+            if (this.get('isMulti') || this.get('isI18n')) {
+                return !!this.get('content').length;
+            } else {
+                return this.get('content') !== null;
+            }
+        }.property('content'),
 
         cssClass: function() {
             return 'eureka-'+this.get('name').dasherize()+'-field';
@@ -1408,18 +1415,60 @@ Eurekapp = (function(clientConfig){
         fields: function() {
             var fields = Ember.A();
             this.get('model').get('fieldsList').forEach(function(field){
-                if (field.get('isMulti') || field.get('isI18n')) {
-                    if (field.get('content').length) {
-                        fields.pushObject(field);
-                    }
-                } else {
-                    if (field.get('content') !== null) {
-                        fields.pushObject(field);
-                    }
+                if (field.get('hasContent')) {
+                    fields.pushObject(field);
                 }
             });
             return fields;
-        }.property('model.fieldsList')
+        }.property('model.fieldsList'),
+
+        fieldsets: function() {
+            var _this = this;
+            var _fieldsets = Ember.A();
+            var metaFieldsets = this.get('model.__meta__.fieldsets');
+
+            if (!metaFieldsets) {
+                return _fieldsets;
+            }
+
+            var alreadyDone = [];
+            var field;
+            if (metaFieldsets.length) {
+                metaFieldsets.forEach(function(metaFieldset) {
+                    var fields = Ember.A();
+                    metaFieldset.fields.forEach(function(fieldName) {
+                        field = _this.get('model.'+fieldName+'Field');
+                        if (field.get('hasContent')) {
+                            fields.pushObject(field);
+                        }
+                        alreadyDone.push(fieldName);
+                    });
+                    if (fields.length) {
+                        var fieldset = Ember.Object.create({
+                            label: metaFieldset.label,
+                            fields: fields
+                        });
+                        _fieldsets.pushObject(fieldset);
+                    }
+                });
+            }
+
+            // add fields left
+            var _fieldsLeft = Ember.A();
+            for (var name in this.get('model.__meta__.schema')) {
+                if (alreadyDone.indexOf(name) === -1) {
+                    field = _this.get('model.'+name+'Field');
+                    if (field.get('hasContent')) {
+                        _fieldsLeft.pushObject(field);
+                    }
+                }
+            }
+            _fieldsets.unshiftObject(Ember.Object.create({
+                label: '',
+                fields: _fieldsLeft
+            }));
+            return _fieldsets;
+        }.property('model.__meta__.fieldsets')
     });
 
 
@@ -1464,7 +1513,46 @@ Eurekapp = (function(clientConfig){
             });
 
             return _fields;
-        }.property('model.fieldsList', 'App.config.selectedLang')
+        }.property('model.fieldsList', 'App.config.selectedLang'),
+
+        fieldsets: function() {
+            var _this = this;
+            var _fieldsets = Ember.A();
+            var metaFieldsets = this.get('model.__meta__.fieldsets');
+
+            if (!metaFieldsets) {
+                return _fieldsets;
+            }
+
+            var alreadyDone = [];
+            if (metaFieldsets.length) {
+                metaFieldsets.forEach(function(metaFieldset) {
+                    var fields = Ember.A();
+                    metaFieldset.fields.forEach(function(fieldName) {
+                        fields.pushObject(_this.get('model.'+fieldName+'Field'));
+                        alreadyDone.push(fieldName);
+                    });
+                    var fieldset = Ember.Object.create({
+                        label: metaFieldset.label,
+                        fields: fields
+                    });
+                    _fieldsets.pushObject(fieldset);
+                });
+            }
+
+            // add fields left
+            var _fieldsLeft = Ember.A();
+            for (var name in this.get('model.__meta__.schema')) {
+                if (alreadyDone.indexOf(name) === -1) {
+                    _fieldsLeft.pushObject(_this.get('model.'+name+'Field'));
+                }
+            }
+            _fieldsets.unshiftObject(Ember.Object.create({
+                label: '',
+                fields: _fieldsLeft
+            }));
+            return _fieldsets;
+        }.property('model.__meta__.fieldsets')
     });
 
 

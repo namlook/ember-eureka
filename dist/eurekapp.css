@@ -108,6 +108,24 @@ html,
 }
 
 /*** display ***/
+.eureka-document {
+  margin-bottom: 20px;
+}
+
+
+.eureka-field .eureka-field-name {
+  font-weight: bold;
+}
+
+.eureka-fieldset {
+  margin-top: 20px;
+}
+
+@media screen and (min-width: 768px) {
+  .eureka-field .eureka-field-name {
+    text-align: right;
+  }
+}
 
 .eureka-i18n-lang.label {
   font-weight: normal;

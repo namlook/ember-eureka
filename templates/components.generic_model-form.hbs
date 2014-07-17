@@ -1,9 +1,25 @@
 
-{{#each field in fields}}
-    <div {{bind-attr class=":form-group :eureka-field field.cssClass"}}>
-        <label {{bind-attr for="field.name"}} class="col-sm-4 control-label eureka-field-name">{{field.title}}</label>
-        <div class="col-sm-8">
-            {{model-field-form field=field}}
+{{#if fieldsets.length}}
+    {{#each fieldset in fieldsets}}
+        <fieldset>
+            {{#if fieldset.label}}<legend>{{fieldset.label}}</legend>{{/if}}
+            {{#each field in fieldset.fields}}
+                <div {{bind-attr class=":form-group :eureka-field field.cssClass"}}>
+                    <label {{bind-attr for="field.name"}} class="col-sm-4 control-label eureka-field-name">{{field.title}}</label>
+                    <div class="col-sm-8">
+                        {{model-field-form field=field}}
+                    </div>
+                </div>
+            {{/each}}
+        </fieldset>
+    {{/each}}
+{{else}}
+    {{#each field in fields}}
+        <div {{bind-attr class=":form-group :eureka-field field.cssClass"}}>
+            <label {{bind-attr for="field.name"}} class="col-sm-4 control-label eureka-field-name">{{field.title}}</label>
+            <div class="col-sm-8">
+                {{model-field-form field=field}}
+            </div>
         </div>
-    </div>
-{{/each}}
+    {{/each}}
+{{/if}}
