@@ -8,9 +8,10 @@
      <div class="form-group">
         <div class="col-sm-offset-4 col-sm-8">
             {{#link-to model.__meta__.displayRouteName model._id
-                classNames="btn btn-default cancel eureka-link-to-display"
+                classNames="btn btn-default eureka-cancel-action eureka-link-to-display"
                 classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}cancel{{/link-to}}
-            <button class="btn btn-primary save" {{action 'save'}}>save</button>
+            <button {{bind-attr class=":btn :btn-primary :eureka-save-action model.__meta__.EurekaGenericModelModelCSS"}}
+                    {{action 'save'}}>save</button>
         </div>
     </div>
 </form>
