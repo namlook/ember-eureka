@@ -42,12 +42,13 @@ Eurekapp = (function(clientConfig){
         // LOG_ACTIVE_GENERATION         : true,
 
         ready: function() {
+            this.set('config.currentLang', this.get('config.defaultLang'));
             Ember.$('title').text(this.get('config').name);
             console.log(this.get('config').name, 'is ready !');
         },
 
         getModelMeta: function(modelType) {
-            var modelMeta = App.ModelMeta.create(this.config.schemas[modelType]);
+            var modelMeta = App.ModelMeta.create({content: this.config.schemas[modelType]});
             modelMeta.set('type', modelType);
             return modelMeta;
         }
@@ -425,7 +426,7 @@ Eurekapp = (function(clientConfig){
     /* ModelMeta
      * this object contains all the information about the model written in schemas.js
      */
-    App.ModelMeta = Ember.Object.extend({
+    App.ModelMeta = Ember.ObjectProxy.extend({
         type: null,
 
         dasherizedType: function() {
@@ -436,11 +437,19 @@ Eurekapp = (function(clientConfig){
             return this.get('type').underscore();
         }.property('type').readOnly(),
 
+        title: function() {
+            var value = this.get('content.title');
+            if (typeof(value) === 'object') {
+                value = value[App.get('config.selectedLang')];
+            }
+            return value || this.get('type').underscore().replace(/_/g, ' ').capitalize();
+        }.property('content.title', 'type', 'App.config.selectedLang'),
+
         searchFieldName: function() {
             var lookupFieldName = this.get('search.field');
             if (!lookupFieldName) {
-                if (this.get('__title__') && this.get('__title__').bindTo) {
-                    lookupFieldName = this.get('__title__').bindTo;
+                if (this.get('content.__title__') && this.get('content.__title__').bindTo) {
+                    lookupFieldName = this.get('content.__title__').bindTo;
                 }
                 else if (this.get('properties.title')) {
                     lookupFieldName = 'title';
@@ -450,27 +459,23 @@ Eurekapp = (function(clientConfig){
                 }
             }
             return lookupFieldName;
-        }.property('search.field', '__title__', 'properties.title'),
+        }.property('content.search.field', 'content.__title__', 'properties.title'),
 
         searchPlaceholder: function() {
-            var placeholder = this.get('search.placeholder');
+            var placeholder = this.get('content.search.placeholder');
             if (!placeholder) {
                 placeholder = "search a "+this.get('title')+"...";
             }
             return placeholder;
-        }.property('search.placeholder', 'title'),
+        }.property('content.search.placeholder', 'title'),
 
         populate: function() {
             return this.get('content.populate') || {};
-        }.property('populate'),
-
-        title: function() {
-            return this.get('content.title') || this.get('type').underscore().replace(/_/g, ' ');
-        }.property('content.title'),
+        }.property('content.populate'),
 
         properties: function() {
-            return this.get('schema');
-        }.property('schema'),
+            return this.get('content.schema');
+        }.property('content.schema'),
 
         unknownProperty: function(key) {
             /*
@@ -493,6 +498,7 @@ Eurekapp = (function(clientConfig){
                 }
                 return cssClass.dasherize();
             }
+            return this.get('content.'+key);
         }
     });
 
@@ -591,7 +597,7 @@ Eurekapp = (function(clientConfig){
         __buildDescriptors: function() {
             var _this = this;
             ['title', 'description', 'thumb'].forEach(function(descriptor){
-                var config = _this.get('__meta__')['__'+descriptor+'__'];
+                var config = _this.get('__meta__').get('__'+descriptor+'__');
 
                 // var templateName = _this.get('__meta__.decamelizedType')+'/__'+descriptor+'__';
                 // if (config && config.template && !Ember.TEMPLATES[templateName]) {
@@ -1093,7 +1099,7 @@ Eurekapp = (function(clientConfig){
         }.property('type'),
 
         properties: function() {
-            return this.get('__meta__').schema;
+            return this.get('__meta__.schema');
         }.property('__meta__.schema'),
 
         endpoint: function() {
@@ -1176,6 +1182,15 @@ Eurekapp = (function(clientConfig){
         name: null,
         schema: null,
         content: null,
+
+        title: function() {
+            var value = this.get('schema.title');
+            if (typeof(value) === 'object') {
+                value = value[App.get('config.selectedLang')];
+            }
+            return value || this.get('name').underscore().replace(/_/g, ' ');
+        }.property('schema.title', 'name', 'App.config.selectedLang'),
+
 
         cssClass: function() {
             return 'eureka-'+this.get('name').dasherize()+'-field';
@@ -1307,10 +1322,12 @@ Eurekapp = (function(clientConfig){
 
         modelMetas: function() {
             var currentType = this.get('currentType');
-            return Ember.keys(this.get('model').schemas).map(function(modelName){
+            return Ember.keys(this.get('model.schemas')).map(function(modelName){
                 var modelMeta = App.getModelMeta(modelName);
                 if (currentType === modelName) {
                     modelMeta.set('isActive', true);
+                } else {
+                    modelMeta.set('isActive', false);
                 }
                 return modelMeta;
             });
