@@ -322,7 +322,7 @@ Eurekapp = (function(clientConfig){
 
         sorting: function() {
             var _filters = [];
-            var sortBy = this.get('__modelMeta__').sortBy;
+            var sortBy = this.get('__modelMeta__.sortBy');
             if (typeof(sortBy) === 'object') {
                 _filters = sortBy;
             }
