@@ -148,10 +148,33 @@ Eurekapp = (function(clientConfig){
 
         model: function(params) {
             var _type = this.get('modelType');
+
+            // build query from model's meta
+            var meta = App.getModelMeta(_type);
             var query = params.query || {};
+
+            if (meta.get('limit')) {
+                query._limit = meta.get('limit');
+            }
+
+            query._populate = meta.get('populate').index || false;
+
             var filter = this.controllerFor(_type+'Index').get('currentSorting');
             if (filter) {
                 query._sortBy = filter;
+            } else {
+                var metaSortBy = meta.get('sortBy');
+                if (query._sortBy === undefined && metaSortBy) {
+                    var order;
+                    if (typeof(metaSortBy) === 'string') {
+                        order = metaSortBy;
+                    } else if (metaSortBy.filterBy('default').length) {
+                        order = metaSortBy.filterBy('default')[0].order;
+                    } else {
+                        order = metaSortBy[0].order;
+                    }
+                    query._sortBy = order;
+                }
             }
             return this.get('db')[_type].find(query);
         }
@@ -165,7 +188,13 @@ Eurekapp = (function(clientConfig){
         model: function(params) {
             var _type = this.get('modelType');
             var _id = params.id;
-            return this.get('db')[_type].first({_id: _id, _type: _type});
+            var query = {
+                _id: _id,
+                _type: _type
+            };
+            var populate = App.getModelMeta(_type).get('populate').display;
+            query._populate = populate || true;
+            return this.get('db')[_type].first(query);
         }
     });
 
@@ -431,6 +460,10 @@ Eurekapp = (function(clientConfig){
             return placeholder;
         }.property('search.placeholder', 'title'),
 
+        populate: function() {
+            return this.get('content.populate') || {};
+        }.property('populate'),
+
         title: function() {
             return this.get('content.title') || this.get('type').underscore().replace(/_/g, ' ');
         }.property('content.title'),
@@ -572,7 +605,7 @@ Eurekapp = (function(clientConfig){
                 }
 
                 // define the computed properties
-                Ember.defineProperty(_this, '__'+descriptor+'__', Ember.computed(function(key) {
+                Ember.defineProperty(_this, '__'+descriptor+'__', Ember.computed('_contentChanged', function(key) {
                     if (config && config.template) {
                         // return Ember.TEMPLATES[templateName](_this.get('content'));
                         return _this.get('_'+descriptor+'CompiledTemplate')(_this.get('content'));
@@ -602,7 +635,7 @@ Eurekapp = (function(clientConfig){
                     } else {
                         return '';
                     }
-                }).property('_contentChanged'));
+                }));
             });
         },
 
@@ -615,7 +648,8 @@ Eurekapp = (function(clientConfig){
             var content = this.get('content');
             for (var fieldName in content) {
                 var field = this.get(fieldName+'Field');
-                if (!field) { // handle fields like _ref...
+                if (!field) { // don't process special fields like _type, _id or _ref
+                    pojo[fieldName] = content[fieldName];
                     continue;
                 }
                 var isRelation = App.db[this.get('type')].isRelation(fieldName);
@@ -1096,22 +1130,6 @@ Eurekapp = (function(clientConfig){
             var that = this;
             var modelType = this.get('type');
 
-            // build query from model's meta
-            var meta = this.get('__meta__');
-            if (query._sortBy === undefined && meta.sortBy) {
-                var order;
-                if (typeof(meta.sortBy) === 'string') {
-                    order = meta.sortBy;
-                } else if (meta.sortBy.filterBy('default').length) {
-                    order = meta.sortBy.filterBy('default')[0].order;
-                } else {
-                    order = meta.sortBy[0].order;
-                }
-                query._sortBy = order;
-            }
-
-            query._populate = meta.populate || false;
-            query._limit = meta.limit;
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint'), query).done(function(data){
                     var results = Ember.A();
@@ -1136,7 +1154,6 @@ Eurekapp = (function(clientConfig){
         first: function(query) {
             var that = this;
             var modelType = this.get('type');
-            query._populate = true;
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint'), query, function(data){
                     var obj;
