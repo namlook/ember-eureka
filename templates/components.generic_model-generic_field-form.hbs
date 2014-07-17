@@ -36,7 +36,7 @@
         {{#each item in field.content}}
             {{#if field.isI18n}}
                 <div class="eureka-multi-field-input eureka-i18n-field-inputs">
-                    {{#if displayAllLanguages}}
+                    {{#if field.displayAllLanguages}}
                         {{dynamic-input field=field value=item.value lang=item.lang}}
                     {{else}}
                         {{#if item.matchSelectedLang}}

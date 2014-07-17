@@ -614,8 +614,12 @@ Eurekapp = (function(clientConfig){
             var pojo = {};
             var content = this.get('content');
             for (var fieldName in content) {
+                var field = this.get(fieldName+'Field');
+                if (!field) { // handle fields like _ref...
+                    continue;
+                }
                 var isRelation = App.db[this.get('type')].isRelation(fieldName);
-                if (content[fieldName] && isRelation) {
+                if (isRelation && content[fieldName]) {
                     var modelSchema = this.get('__meta__.properties');
                     var relations = content[fieldName];
                     if (!Ember.isArray(relations)) {
@@ -644,9 +648,64 @@ Eurekapp = (function(clientConfig){
                     } else {
                         pojo[fieldName] = null;
                     }
-
                 } else {
-                    pojo[fieldName] = content[fieldName];
+                    // remove empty values
+                    var value = content[fieldName];
+                    if (value !== null) {
+                        // i18n values
+                        if (field.get('isI18n')) {
+                            var values = {};
+                            for (var _lang in value) {
+                                // multi i18n values
+                                if (field.get('isMulti')) {
+                                    var items = [];
+                                    value[_lang].forEach(function(item) {
+                                        if(item) {
+                                            items.push(item);
+                                        }
+                                    });
+                                    if (items.length) {
+                                        values[_lang] = items;
+                                    } else {
+                                        values[_lang] = null;
+                                    }
+                                // regular i18n values
+                                } else {
+                                    if (value[_lang]) {
+                                        values[_lang] = value[_lang];
+                                    }
+                                }
+                            }
+
+                            if (Ember.isEmpty(values)) {
+                                value = null;
+                            } else {
+                                value = values;
+                            }
+
+                        // multi values
+                        } else if (field.get('isMulti')) {
+
+                            var values = [];
+                            value.forEach(function(item) {
+                                if (item !== '') {
+                                    values.push(item);
+                                }
+                            });
+                            if (!values.length) {
+                                value = null;
+                            } else {
+                                value = values;
+                            }
+
+                        // regular values
+                        } else {
+                            if (value === '') {
+                                value = null;
+                            }
+                        }
+                    }
+                    pojo[fieldName] = value;
                 }
             }
             return pojo;
@@ -776,7 +835,8 @@ Eurekapp = (function(clientConfig){
                                 _values.forEach(function(val) {
                                     values.pushObject(App.ModelFieldContent.create({
                                         value: val,
-                                        lang: lang
+                                        lang: lang,
+                                        field: field
                                     }));
                                 });
                             }
@@ -796,7 +856,7 @@ Eurekapp = (function(clientConfig){
                                 value = [value];
                             }
                             value.forEach(function(val){
-                                values.pushObject(App.ModelFieldContent.create({value: val}));
+                                values.pushObject(App.ModelFieldContent.create({value: val, field: field}));
                             });
 
                             if (values.length) {
@@ -813,7 +873,8 @@ Eurekapp = (function(clientConfig){
                             var _value = value[_lang];
                             values.pushObject(App.ModelFieldContent.create({
                                 value: _value,
-                                lang: _lang
+                                lang: _lang,
+                                field: field
                             }));
                         }
                         if (values.length) {
@@ -1115,22 +1176,22 @@ Eurekapp = (function(clientConfig){
             return !!this.get('schema.fallbackDefaultLang');
         }.property('schema.fallbackDefaultLang'),
 
-        /*
-         * return the content that match the current language
-         * if no content is found and `fallbackDefaultLang` is true
-         * then return the content that match the default language
-         */
-        currentLangContent: function() {
-            var content;
-            content = this.get('content').filterBy('lang', App.get('config.currentLang'));
-            if (content.length === 0 && this.get('schema').fallbackDefaultLang) {
-                content = this.get('content').filterBy('lang', App.get('config.defaultLang'));
-            }
-            if (!this.get('isMulti')) {
-               content = content[0];
-            }
-            return content;
-        }.property('content', 'App.config.currentLang'),
+        // /*
+        //  * return the content that match the current language
+        //  * if no content is found and `fallbackDefaultLang` is true
+        //  * then return the content that match the default language
+        //  */
+        // currentLangContent: function() {
+        //     var content;
+        //     content = this.get('content').filterBy('lang', App.get('config.currentLang'));
+        //     if (content.length === 0 && this.get('schema').fallbackDefaultLang) {
+        //         content = this.get('content').filterBy('lang', App.get('config.defaultLang'));
+        //     }
+        //     if (!this.get('isMulti')) {
+        //        content = content[0];
+        //     }
+        //     return content;
+        // }.property('content', 'App.config.currentLang'),
 
         isRelation: function() {
             return !!App.db[this.get('schema').get('type')];
@@ -1197,13 +1258,24 @@ Eurekapp = (function(clientConfig){
      * Model.fieldsList are responsible of creating a `ModelFieldContent`
      */
     App.ModelFieldContent = Ember.Object.extend({
+        field: null,
         value: null,
         lang: null,
         isEditable: false,
 
         matchSelectedLang: function() {
             return this.get('lang') === App.get('config.selectedLang');
-        }.property('lang', 'App.config.selectedLang')
+        }.property('lang', 'App.config.selectedLang'),
+
+        matchSelectedOrFallbackLang: function() {
+            var matches = this.get('lang') === App.get('config.selectedLang');
+            var contentLength = this.get('field.content').filterBy('lang', App.get('config.selectedLang')).length;
+            if (matches) {
+                return true;
+            } else if (!contentLength && this.get('field.fallbackDefaultLang')) {
+                return this.get('lang') === App.get('config.defaultLang');
+            }
+        }.property('lang', 'App.config.selectedLang', 'App.config.defaultLang')
     });
 
     /*** Components ****/
@@ -1352,8 +1424,8 @@ Eurekapp = (function(clientConfig){
             }).forEach(function(field) {
                 var currentLang = App.get('config.selectedLang');
                 var currentLangValues = field.get('content').filterBy('lang', currentLang);
-                if (currentLangValues.length === 0) {
-                    field.get('content').pushObject(App.ModelFieldContent.create({value: null, lang: currentLang}));
+                if (currentLangValues.length === 0 && !field.get('isMulti')) {
+                    field.get('content').pushObject(App.ModelFieldContent.create({value: null, lang: currentLang, field: field}));
                 }
             });
 
@@ -1428,7 +1500,15 @@ Eurekapp = (function(clientConfig){
                         } else {
                             value = null;
                         }
-                        item = App.ModelFieldContent.create({value: value, isEditable: true});
+
+                        item = App.ModelFieldContent.create({value: value, field: field});
+                        if (field.get('isI18n')) {
+                            if (!field.get('displayAllLanguages')) {
+                                item.set('lang', App.get('config.selectedLang'));
+                            }
+                        } else {
+                            item.set('isEditable', true);
+                        }
                         field.get('content').pushObject(item);
                     }
                     else {
@@ -1438,23 +1518,25 @@ Eurekapp = (function(clientConfig){
                             }));
                             field.set('isEditable', true);
                         } else if (field.get('isI18n')) {
-                            item = App.ModelFieldContent.create({value: null, lang: null});
+                            item = App.ModelFieldContent.create({value: null, lang: null, field: field});
+                            if (!field.get('displayAllLanguages')) {
+                                item.set('lang', App.get('config.selectedLang'));
+                            }
                             field.get('content').pushObject(item);
                         }
                     }
                 } else {
-
                     if (!field.get('isMulti') && !field.get('isI18n')) {
                         field.set('isEditable', false);
                     } else if (!field.get('isRelation')) {
                         if (field.get('isI18n')) {
-                            item = App.ModelFieldContent.create({value: null, lang: null});
+                            item = App.ModelFieldContent.create({value: null, lang: null, field: field});
                             if (!field.get('displayAllLanguages')) {
                                 item.set('lang', App.get('config.selectedLang'));
                             }
                         }
                         else {
-                            item = App.ModelFieldContent.create({value: null, isEditable: true});
+                            item = App.ModelFieldContent.create({value: null, isEditable: true, field: field});
                         }
                         field.get('content').pushObject(item);
                     }
@@ -1569,7 +1651,7 @@ Eurekapp = (function(clientConfig){
             if (item.object) {
                 var obj = item.object;
                 if (field.get('isMulti')) {
-                    var wrappedObj = App.ModelFieldContent.create({value: obj, isEditable: false});
+                    var wrappedObj = App.ModelFieldContent.create({value: obj, isEditable: false, field: field});
                     field.get('content').pushObject(wrappedObj);
                 } else {
                     field.set('content', obj);
@@ -1580,7 +1662,7 @@ Eurekapp = (function(clientConfig){
                     var emptyItem = field.get('relationModel').create({
                         content: {}
                     });
-                    content.pushObject(App.ModelFieldContent.create({value: emptyItem, isEditable: true}));
+                    content.pushObject(App.ModelFieldContent.create({value: emptyItem, isEditable: true, field: field}));
                     field.set('isEditable', true);
                     field.set('content', content);
                 } else {

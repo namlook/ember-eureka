@@ -16,7 +16,7 @@
             {{/each}}
         {{else}}
             {{#each i18tem in field.content}}
-                {{#if i18tem.matchSelectedLang}}
+                {{#if i18tem.matchSelectedOrFallbackLang}}
                     <li class="eureka-i18n-item">
                         {{#if field.isSafeString}}
                                 {{{i18tem.value}}}
@@ -74,11 +74,15 @@
                 {{/each}}
                 </ul>
             {{else}}
-                {{#if field.isSafeString}}
-                    {{{field.currentLangContent.value}}}
-                {{else}}
-                    {{field.currentLangContent.value}}
-                {{/if}}
+                {{#each i18tem in field.content}}
+                    {{#if i18tem.matchSelectedOrFallbackLang}}
+                        {{#if field.isSafeString}}
+                            {{{i18tem.value}}}
+                        {{else}}
+                            {{i18tem.value}}
+                        {{/if}}
+                    {{/if}}
+                {{/each}}
             {{/if}}
         {{else}}
             {{#if field.isSafeString}}
