@@ -86,16 +86,6 @@ Eurekapp = (function(clientConfig){
 
     /***** Routes ******/
 
-
-    // App.Router.map(function() {
-    //     this.resource('generic_model', { path: '/' }, function() {
-    //         this.route('display', {path: '/:modelType/:id'});
-    //         this.route('edit', {path: '/:modelType/:id/edit'});
-    //         this.route('new', {path: '/:modelType/new'});
-    //         this.route('list', {path: '/:modelType'});
-    //     });
-    // });
-
     App.ApplicationRoute = Ember.Route.extend({
         model: function() {
             return App.config;
@@ -1118,7 +1108,7 @@ Eurekapp = (function(clientConfig){
      * Usage example:
      *    App.db.BlogPost.find()
      */
-    App.DatabaseModel = Ember.Object.extend({
+    App.DatabaseModel = Ember.Object.extend({ // TODO use App.Model.reopenClass({}) instead
         type: null,
         model: null,
 
@@ -1427,7 +1417,6 @@ Eurekapp = (function(clientConfig){
         }.property('modelType', 'fieldName').volatile(),
 
         rerenderLayout: function() {
-            // console.log(this.get('layoutName'));
             this.set('layout', Ember.TEMPLATES[this.get('layoutName')]);
             this.rerender();
         }.observes('templateType')
@@ -2088,8 +2077,62 @@ Eurekapp = (function(clientConfig){
     // attach the config to the application
     App.initializer({
         name: "eureka-config",
+        before: 'eureka-models-routes-controllers-generation',
 
         initialize: function(container, application) {
+            application.register('eureka:config', App.ApplicationConfig.create(clientConfig), {instantiate: false});
+            application.inject('route', 'config', 'eureka:config');
+            application.set('config', App.ApplicationConfig.create(clientConfig));
+        }
+    });
+
+    // generate models, routes and controllers from the schema
+    App.initializer({
+        name: 'eureka-models-routes-controllers-generation',
+        before: 'eureka-db',
+
+        initialize: function(container, application) {
+            for (var _type in clientConfig.schemas) {
+
+                if (_type === 'Basic') {
+                    throw new Ember.Error("'Basic' is a reserved word and can not be used as model name");
+                }
+
+                var underscoredType = _type.underscore();
+                // router
+                application.Router.map(function() {
+                    this.resource(underscoredType, function(){
+                        this.route('new', {path: '/new'});
+                        this.route('display', {path: '/:id'});
+                        this.route('edit', {path: '/:id/edit'});
+                    });
+                });
+
+                // model
+                var modelName = _type+'Model';
+                if (!application[modelName]) {
+                    application[modelName] = application.Model.extend({'__type__': _type});
+                } else {
+                    application[modelName].reopen({__type__: _type});
+                }
+
+                // routes
+                ['IndexRoute', 'NewRoute', 'DisplayRoute', 'EditRoute'].forEach(function(routeName) {
+                    if (!application[_type+routeName]) {
+                        application[_type+routeName] = application['GenericModel'+routeName].extend();
+                    }
+                });
+
+                // controllers
+                var content = {__modelMeta__: application.getModelMeta(_type)};
+                ['IndexController', 'NewController', 'DisplayController', 'EditController'].forEach(function(ctrlName) {
+                    if (!application[_type+ctrlName]) {
+                        application[_type+ctrlName] = application['GenericModel'+ctrlName].extend(content);
+                    } else {
+                        application[_type+ctrlName].reopen(content);
+                    }
+                });
+            }
         }
     });
 
@@ -2098,22 +2141,13 @@ Eurekapp = (function(clientConfig){
         name: "eureka-db",
 
         initialize: function(container, application) {
-            application.register('eureka:config', App.ApplicationConfig.create(clientConfig), {instantiate: false});
-            application.inject('route', 'config', 'eureka:config');
-            application.set('config', App.ApplicationConfig.create(clientConfig));
             var database = (function() {
                 var db = Ember.Object.create();
                 for (var _type in clientConfig.schemas) {
                     var dbTypeObject = App.DatabaseModel.create({
                         type: _type
                     });
-                    var Model;
-                    if (App[_type+'Model']) {
-                        Model = App[_type+'Model'];
-                    } else {
-                        Model = App.Model;
-                    }
-                    Model = Model.extend({__type__: _type});
+                    var Model = application[_type+'Model'];
                     dbTypeObject.set('model', Model);
                     db.set(_type, dbTypeObject);
                 }
@@ -2126,42 +2160,5 @@ Eurekapp = (function(clientConfig){
 
     });
 
-    // generate routes and controllers from the schema
-    App.initializer({
-        name: 'routes-n-controllers-generation',
-
-        initialize: function(container, application) {
-            for (var _type in clientConfig.schemas) {
-
-                if (_type === 'Basic') {
-                    throw new Ember.Error("'Basic' is a reserved word and can not be used as model name");
-                }
-
-
-                var underscoredType = _type.underscore();
-                // router
-                application.Router.map(function() {
-                    this.resource(underscoredType, function(){
-                        this.route('new', {path: '/new'});
-                        this.route('display', {path: '/:id'});
-                        this.route('edit', {path: '/:id/edit'});
-                    });
-                });
-
-                // routes
-                application[_type+'IndexRoute'] = application.GenericModelIndexRoute.extend();
-                application[_type+'NewRoute'] = application.GenericModelNewRoute.extend();
-                application[_type+'DisplayRoute'] = application.GenericModelDisplayRoute.extend();
-                application[_type+'EditRoute'] = application.GenericModelEditRoute.extend();
-
-                // controllers
-                var content = {__modelMeta__: application.getModelMeta(_type)};
-                application[_type+'IndexController'] = application.GenericModelIndexController.extend(content);
-                application[_type+'DisplayController'] = application.GenericModelDisplayController.extend(content);
-                application[_type+'NewController'] = application.GenericModelNewController.extend(content);
-                application[_type+'EditController'] = application.GenericModelEditController.extend(content);
-            }
-        }
-    });
     return App;
 });
