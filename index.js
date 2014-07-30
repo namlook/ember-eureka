@@ -189,12 +189,12 @@ Eurekapp = (function(clientConfig){
         model: function(params) {
             var _type = this.get('modelType');
             var _id = params.id;
+            var populate = App.getModelMeta(_type).get('populate').display;
             var query = {
                 _id: _id,
-                _type: _type
+                _type: _type,
+                _populate: populate || true
             };
-            var populate = App.getModelMeta(_type).get('populate').display;
-            query._populate = populate || true;
             return this.get('db')[_type].first(query);
         }
     });
@@ -216,7 +216,13 @@ Eurekapp = (function(clientConfig){
         model: function(params) {
             var _type = this.get('modelType');
             var _id = params.id;
-            return this.get('db')[_type].first({_id: _id, _type: _type});
+            var populate = App.getModelMeta(_type).get('populate').edit;
+            var query = {
+                _id: _id,
+                _type: _type,
+                _populate: populate || true
+            };
+            return this.get('db')[_type].first(query);
         }
     });
 
@@ -441,9 +447,28 @@ Eurekapp = (function(clientConfig){
             var value = this.get('content.title');
             if (typeof(value) === 'object') {
                 value = value[App.get('config.selectedLang')];
+                if (typeof(value) === 'object') {
+                    value = value.single;
+                }
             }
             return value || this.get('type').underscore().replace(/_/g, ' ').capitalize();
         }.property('content.title', 'type', 'App.config.selectedLang'),
+
+        pluralizedTitle: function() {
+            var value = this.get('content.title');
+            var pluralFound = false;
+            if (typeof(value) === 'object') {
+                value = value[App.get('config.selectedLang')];
+                if (typeof(value) === 'object') {
+                    value = value.plural;
+                    pluralFound = true;
+                }
+            }
+            if (!pluralFound) {
+                value = this.get('title') + 's';
+            }
+            return value;
+        }.property('content.title', 'App.config.selectedLang', 'title'),
 
         searchFieldName: function() {
             var lookupFieldName = this.get('search.field');
@@ -612,6 +637,9 @@ Eurekapp = (function(clientConfig){
 
                 // define the computed properties
                 Ember.defineProperty(_this, '__'+descriptor+'__', Ember.computed('_contentChanged', function(key) {
+                    if (_this.get(descriptor)) {
+                        return _this.get(descriptor);
+                    }
                     if (config && config.template) {
                         // return Ember.TEMPLATES[templateName](_this.get('content'));
                         return _this.get('_'+descriptor+'CompiledTemplate')(_this.get('content'));
