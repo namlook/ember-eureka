@@ -148,7 +148,7 @@ Eurekapp = (function(clientConfig){
                 query._limit = meta.get('limit');
             }
 
-            query._populate = meta.get('populate').index || false;
+            query._populate = meta.get('indexViewPopulate');
 
             var filter = this.controllerFor(_type+'Index').get('currentSorting');
             if (filter) {
@@ -179,11 +179,11 @@ Eurekapp = (function(clientConfig){
         model: function(params) {
             var _type = this.get('modelType');
             var _id = params.id;
-            var populate = App.getModelMeta(_type).get('populate').display;
+            var populate = App.getModelMeta(_type).get('displayViewPopulate');
             var query = {
                 _id: _id,
                 _type: _type,
-                _populate: populate || true
+                _populate: populate
             };
             return this.get('db')[_type].first(query);
         }
@@ -206,11 +206,11 @@ Eurekapp = (function(clientConfig){
         model: function(params) {
             var _type = this.get('modelType');
             var _id = params.id;
-            var populate = App.getModelMeta(_type).get('populate').edit;
+            var populate = App.getModelMeta(_type).get('editViewPopulate');
             var query = {
                 _id: _id,
                 _type: _type,
-                _populate: populate || true
+                _populate: populate
             };
             return this.get('db')[_type].first(query);
         }
@@ -484,8 +484,26 @@ Eurekapp = (function(clientConfig){
             return placeholder;
         }.property('content.search.placeholder', 'title'),
 
-        populate: function() {
-            return this.get('content.populate') || {};
+        // populate: function() {
+        //     return this.get('content.populate') || {};
+        // }.property('content.populate'),
+
+        indexViewPopulate: function() {
+            var populate = this.get('content.populate') || {};
+            populate = populate.index || false;
+            return populate;
+        }.property('content.populate'),
+
+        displayViewPopulate: function() {
+            var populate = this.get('content.populate') || {};
+            populate = populate.display || true;
+            return populate;
+        }.property('content.populate'),
+
+        editViewPopulate: function() {
+            var populate = this.get('content.populate') || {};
+            populate = populate.edit || true;
+            return populate;
         }.property('content.populate'),
 
         properties: function() {
@@ -1987,6 +2005,7 @@ Eurekapp = (function(clientConfig){
                     query[searchFieldName] = {'$iregex': '^'+value};
                 }
             });
+            query._populate = this.get('model.__meta__.indexViewPopulate');
             return query;
         },
 
