@@ -438,7 +438,7 @@ Eurekapp = (function(clientConfig){
             if (typeof(value) === 'object') {
                 value = value[App.get('config.selectedLang')];
                 if (typeof(value) === 'object') {
-                    value = value.single;
+                    value = value.singular;
                 }
             }
             return value || this.get('type').underscore().replace(/_/g, ' ').capitalize();
