@@ -1264,6 +1264,10 @@ Eurekapp = (function(clientConfig){
             }
         }.property('isRelation'),
 
+        isHidden: function() {
+            return !!this.get('schema.hidden');
+        }.property('schema.hidden'),
+
         /* _triggerModelChanged
          * Tells the model that its content has changed.
          *

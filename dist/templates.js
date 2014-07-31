@@ -430,15 +430,26 @@ function program3(depth0,data) {
 
 function program5(depth0,data) {
   
+  var buffer = '', stack1, hashTypes, hashContexts;
+  data.buffer.push("\n                ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers.unless.call(depth0, "field.isHidden", {hash:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n            ");
+  return buffer;
+  }
+function program6(depth0,data) {
+  
   var buffer = '', stack1, hashContexts, hashTypes, options;
-  data.buffer.push("\n                <div ");
+  data.buffer.push("\n                    <div ");
   hashContexts = {'class': depth0};
   hashTypes = {'class': "STRING"};
   options = {hash:{
     'class': (":form-group :eureka-field field.cssClass")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
-  data.buffer.push(">\n                    <label ");
+  data.buffer.push(">\n                        <label ");
   hashContexts = {'for': depth0};
   hashTypes = {'for': "STRING"};
   options = {hash:{
@@ -449,39 +460,50 @@ function program5(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</label>\n                    <div class=\"col-sm-8\">\n                        ");
+  data.buffer.push("</label>\n                        <div class=\"col-sm-8\">\n                            ");
   hashContexts = {'field': depth0};
   hashTypes = {'field': "ID"};
   options = {hash:{
     'field': ("field")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['model-field-form'] || (depth0 && depth0['model-field-form'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-field-form", options))));
-  data.buffer.push("\n                    </div>\n                </div>\n            ");
+  data.buffer.push("\n                        </div>\n                    </div>\n                ");
   return buffer;
   }
 
-function program7(depth0,data) {
+function program8(depth0,data) {
   
   var buffer = '', stack1, hashTypes, hashContexts;
   data.buffer.push("\n    ");
   hashTypes = {};
   hashContexts = {};
-  stack1 = helpers.each.call(depth0, "field", "in", "fields", {hash:{},inverse:self.noop,fn:self.program(8, program8, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack1 = helpers.each.call(depth0, "field", "in", "fields", {hash:{},inverse:self.noop,fn:self.program(9, program9, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n");
   return buffer;
   }
-function program8(depth0,data) {
+function program9(depth0,data) {
+  
+  var buffer = '', stack1, hashTypes, hashContexts;
+  data.buffer.push("\n        ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers.unless.call(depth0, "field.isHidden", {hash:{},inverse:self.noop,fn:self.program(10, program10, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n    ");
+  return buffer;
+  }
+function program10(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
-  data.buffer.push("\n        <div ");
+  data.buffer.push("\n            <div ");
   hashContexts = {'class': depth0};
   hashTypes = {'class': "STRING"};
   options = {hash:{
     'class': (":form-group :eureka-field field.cssClass")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
-  data.buffer.push(">\n            <label ");
+  data.buffer.push(">\n                <label ");
   hashContexts = {'for': depth0};
   hashTypes = {'for': "STRING"};
   options = {hash:{
@@ -492,21 +514,21 @@ function program8(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</label>\n            <div class=\"col-sm-8\">\n                ");
+  data.buffer.push("</label>\n                <div class=\"col-sm-8\">\n                    ");
   hashContexts = {'field': depth0};
   hashTypes = {'field': "ID"};
   options = {hash:{
     'field': ("field")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['model-field-form'] || (depth0 && depth0['model-field-form'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-field-form", options))));
-  data.buffer.push("\n            </div>\n        </div>\n    ");
+  data.buffer.push("\n                </div>\n            </div>\n        ");
   return buffer;
   }
 
   data.buffer.push("\n");
   hashTypes = {};
   hashContexts = {};
-  stack1 = helpers['if'].call(depth0, "fieldsets.length", {hash:{},inverse:self.program(7, program7, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack1 = helpers['if'].call(depth0, "fieldsets.length", {hash:{},inverse:self.program(8, program8, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   return buffer;
   
