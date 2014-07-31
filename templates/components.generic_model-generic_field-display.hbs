@@ -36,7 +36,7 @@
                     {{#link-to item.value.__meta__.displayRouteName item.value._id
                         classNames="eureka-link-to-display"
                         classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
-                            {{item.value.__title__}}
+                            {{item.value.title}}
                     {{/link-to}}
                 {{else}}
                     {{#if field.isSafeString}}
@@ -54,7 +54,7 @@
         {{#link-to field.content.__meta__.displayRouteName field.content._id
             classNames="eureka-link-to-display"
             classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
-                {{field.content.__title__}}
+                {{field.content.title}}
         {{/link-to}}
     {{else}}
         {{#if field.isI18n}}

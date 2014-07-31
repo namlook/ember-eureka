@@ -1,23 +1,21 @@
 <div {{bind-attr class=":eureka-document model.__meta__.EurekaGenericModelModelCSS"}}>
 
     <div class="eureka-head row">
-        {{#if model.__thumb__}}
+        {{#if model.thumbUrl}}
             <div class="col-xs-4">
                 {{#cropped-thumb model=model class="eureka-document-thumb"}}{{/cropped-thumb}}
             </div>
         {{/if}}
 
-        <div {{bind-attr class="model.__thumb__:col-xs-8"}}>
+        <div {{bind-attr class="model.thumbUrl:col-xs-8"}}>
             <div class="eureka-document-head-title">
                 <p>{{#link-to model.__meta__.indexRouteName}}<span class="label label-default">{{model.__meta__.title}}</span>{{/link-to}}</p>
                 <h1 {{bind-attr class=":eureka-document-title model.__meta__.EurekaGenericModelModelCSS"}}>
-                    {{{model.__title__}}}
+                    {{renderTitle model}}
                 </h1>
             </div>
             <div class="eureka-document-description">
-                {{#if model.__description__}}
-                    <p>{{{model.__description__}}}</p>
-                {{/if}}
+                <p>{{renderDescription model}}</p>
             </div>
         </div>
     </div>

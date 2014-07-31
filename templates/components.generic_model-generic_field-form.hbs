@@ -13,11 +13,11 @@
             {{else}}
                 {{#if item.value._id}}
                     <button {{bind-attr class=":btn :btn-primary :eureka-selected-relation field.name"}} {{action 'editRelation' item}}>
-                        {{item.value.__title__}} &times;
+                        {{item.value.title}} &times;
                     </button>
                 {{else}}
                     <button {{bind-attr class=":btn :btn-danger :eureka-selected-relation :eureka-new-relation field.name"}} {{action 'editRelation' item}}>
-                        {{item.value.__title__}}
+                        {{item.value.title}}
                     </button>
                 {{/if}}
             {{/if}}
@@ -81,11 +81,11 @@
             {{else}}
                 {{#if field.content._id}}
                     <button {{bind-attr class=":btn :btn-primary :eureka-selected-relation field.name"}} {{action 'editRelation' field}}>
-                        {{{field.content.__title__}}} &times;
+                        {{{field.content.title}}} &times;
                     </button>
                 {{else}}
                     <button {{bind-attr class=":btn :btn-danger eureka-selected-relation eureka-new-relation field.name"}} {{action 'editRelation' field}}>
-                        {{{field.content.__title__}}}
+                        {{{field.content.title}}}
                     </button>
                 {{/if}}
             {{/if}}

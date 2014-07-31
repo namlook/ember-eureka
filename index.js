@@ -463,10 +463,9 @@ Eurekapp = (function(clientConfig){
         searchFieldName: function() {
             var lookupFieldName = this.get('search.field');
             if (!lookupFieldName) {
-                if (this.get('content.__title__') && this.get('content.__title__').bindTo) {
-                    lookupFieldName = this.get('content.__title__').bindTo;
-                }
-                else if (this.get('properties.title')) {
+                if (this.get('content.aliases') && this.get('content.aliases').title) {
+                    lookupFieldName = this.get('content.aliases').title;
+                } else if (this.get('properties.title')) {
                     lookupFieldName = 'title';
                 } else {
                     // TODO check this when starting server
@@ -474,7 +473,7 @@ Eurekapp = (function(clientConfig){
                 }
             }
             return lookupFieldName;
-        }.property('content.search.field', 'content.__title__', 'properties.title'),
+        }.property('content.search.field', 'properties.title', 'content.aliases.title'),
 
         searchPlaceholder: function() {
             var placeholder = this.get('content.search.placeholder');
@@ -483,10 +482,6 @@ Eurekapp = (function(clientConfig){
             }
             return placeholder;
         }.property('content.search.placeholder', 'title'),
-
-        // populate: function() {
-        //     return this.get('content.populate') || {};
-        // }.property('content.populate'),
 
         indexViewPopulate: function() {
             var populate = this.get('content.populate') || {};
@@ -576,20 +571,12 @@ Eurekapp = (function(clientConfig){
                         });
 
                         this.set('content.'+key, values);
-                        // TODO XXX you better handle the following...
-                        this.set('content.'+key+'.__title__', values.get('__title__'));
-                        this.set('content.'+key+'.__description__', values.get('__description__'));
-                        this.set('content.'+key+'.__thumb__', values.get('__thumb__'));
                     }
                     else {
                         var rel = App.db[relationType].get('model').create({
                             content: value
                         });
                         this.set('content.'+key, rel);
-                        // TODO XXX you better handle the following...
-                        this.set('content.'+key+'.__title__', rel.get('__title__'));
-                        this.set('content.'+key+'.__description__', rel.get('__description__'));
-                        this.set('content.'+key+'.thumb', rel.get('thumb'));
                     }
                 } else {
                     value = App.utils.convertValue(fieldSchema, key, value);
@@ -597,9 +584,49 @@ Eurekapp = (function(clientConfig){
                 }
             }
 
-            this.__buildDescriptors();
+            this.__buildI18nProperties();
+            this.__buildAliases();
         },
 
+        /* Build the i18n properties.
+         * Basically, this method detect i18n fields of the model
+         * and wrap their content into a `I18nProperty` object
+         * which all to have access to specified properties:
+         *
+         *  blogPost.title -> I18nProperty
+         *  blogPost.title.localValue -> the value of the current lang
+         *  blogPost.title.en -> the engligh version of the value
+         */
+        __buildI18nProperties: function() {
+            var content = this.get('content');
+            for (var key in content) {
+
+                var value = content[key];
+                var field = this.get(key+'Field');
+                if (!field) {
+                    continue;
+                }
+                if (field.get('isI18n')) {
+                    Ember.defineProperty(this, key, Ember.computed('content.key', function(fieldName) {
+                        return App.I18nProperty.create({
+                            field: field,
+                            content: this.get('content.'+fieldName)
+                        });
+                    }));
+                }
+            }
+        },
+
+        /*
+         * Build computed aliases (infos are taken from ModelMeta)
+         */
+        __buildAliases: function() {
+            var aliases = this.get('__meta__.aliases');
+            for (var alias in aliases) {
+                var fieldName = aliases[alias];
+                Ember.defineProperty(this, alias, Ember.computed.alias(fieldName));
+            }
+        },
 
         /* incremented each time the content is changed in
          * one of its field */
@@ -612,75 +639,25 @@ Eurekapp = (function(clientConfig){
             return App.getModelMeta(this.get('__type__'));
         }.property('__type__'),
 
-        /* build the descriptors (__title__, __description__, __thumb__)
-        * Descriptors are used to represent a model in generic templates.
-        * It is also used as an helper.
-        * There are currently 3 descriptors:
-        *   * `__title__`
-        *   * `__description__`
-        *   * `__thumb__`
-        *
-        * To use them add into the model config the descriptors:
-        * {
-        *      __title__: {template: "The {{_id}} !!"},
-        *      __description__: {bindTo: 'remark'},
-        *      __thumb__: 'http://placehold.it/40x40'
-        * }
-        */
-        __buildDescriptors: function() {
-            var _this = this;
-            ['title', 'description', 'thumb'].forEach(function(descriptor){
-                var config = _this.get('__meta__').get('__'+descriptor+'__');
+        title: function() {
+            var _title;
+            var contentTitle = this.get('content.title');
+            if (contentTitle) {
+                _title = contentTitle;
+            } else {
+                _title = this.get('content._id');
+            }
+            return _title;
+        }.property('content.title', 'content._id'),
 
-                // var templateName = _this.get('__meta__.decamelizedType')+'/__'+descriptor+'__';
-                // if (config && config.template && !Ember.TEMPLATES[templateName]) {
-                //     Ember.TEMPLATES[templateName] = Handlebars.compile(config.template);
-                // }
-
-                // precompile descriptor's templates if needed
-                if (config && config.template) {
-                    var compiledTemplate = Handlebars.compile(config.template);
-                    _this.set('_'+descriptor+'CompiledTemplate', compiledTemplate);
-                }
-
-                // define the computed properties
-                Ember.defineProperty(_this, '__'+descriptor+'__', Ember.computed('_contentChanged', function(key) {
-                    if (_this.get(descriptor)) {
-                        return _this.get(descriptor);
-                    }
-                    if (config && config.template) {
-                        // return Ember.TEMPLATES[templateName](_this.get('content'));
-                        return _this.get('_'+descriptor+'CompiledTemplate')(_this.get('content'));
-                    }
-
-                    var fieldName = null;
-                    if (config && config.bindTo) {
-                        fieldName = config.bindTo;
-                    } else if (_this.get('content.'+descriptor)) {
-                        fieldName = descriptor;
-                    }
-
-                    if (fieldName) {
-                        if (_this.get(fieldName+'Field').get('isI18n')) {
-                            var value = _this.get('content.'+fieldName)[App.get('config.currentLang')];
-                            if (!value) {
-                                value = _this.get('content.'+fieldName)[App.get('config.defaultLang')];
-                            }
-                            return value;
-                        } else {
-                            return _this.get('content.'+fieldName);
-                        }
-                    } else if (descriptor === 'title') {
-                        // if there is no __title__ and there is not title in content
-                        // then we display the _id
-                        return _this.get('_id');
-                    } else {
-                        return '';
-                    }
-                }));
-            });
-        },
-
+        description: function() {
+            var _description;
+            var contentDescription = this.get('content.description');
+            if (contentDescription) {
+                _description = contentDescription;
+            }
+            return _description;
+        }.property('content.description'),
 
         /* _toJSONObject
          * Convert the model into a pojo ready to be serialized as JSON
@@ -1062,33 +1039,57 @@ Eurekapp = (function(clientConfig){
                     return field;
                 }
             }
-            /*
-             * If the property name ends with 'Localized', then the
-             * i18n value corresponding to the current language is returned.
-             * If the value of the current language is undefined, then the value
-             * of the default language is returned
-             * If the property name ends with 'Localized<lang>' (ex: 'titleLocalizedFr')
-             * then the value corresponding to the lang is returned (in our
-             * example, the french version of the title)
-             */
-            else if (key.indexOf('Localized') > -1) {
-                if (Ember.endsWith(key, 'Localized')) {
-                    fieldName = key.slice(0, key.length - "Localized".length);
-                    var value = this.get(fieldName)[App.get('config.currentLang')];
-                    if (value === undefined) {
-                        value = this.get(fieldName)[App.get('config.defaultLang')];
-                    }
-                    return value;
-                } else {
-                    var splitedKey = key.split('Localized');
-                    fieldName = splitedKey[0];
-                    var lang = splitedKey[1].decamelize();
-                    return this.get(fieldName)[lang];
-                }
-            }
+            // /*
+            //  * If the property name ends with 'Localized', then the
+            //  * i18n value corresponding to the current language is returned.
+            //  * If the value of the current language is undefined, then the value
+            //  * of the default language is returned
+            //  * If the property name ends with 'Localized<lang>' (ex: 'titleLocalizedFr')
+            //  * then the value corresponding to the lang is returned (in our
+            //  * example, the french version of the title)
+            //  */
+            // else if (key.indexOf('Localized') > -1) {
+            //     if (Ember.endsWith(key, 'Localized')) {
+            //         fieldName = key.slice(0, key.length - "Localized".length);
+            //         var value = this.get(fieldName)[App.get('config.currentLang')];
+            //         if (value === undefined) {
+            //             value = this.get(fieldName)[App.get('config.defaultLang')];
+            //         }
+            //         return value;
+            //     } else {
+            //         var splitedKey = key.split('Localized');
+            //         fieldName = splitedKey[0];
+            //         var lang = splitedKey[1].decamelize();
+            //         return this.get(fieldName)[lang];
+            //     }
+            // }
             return this.get('content.'+key);
         }
 
+    });
+
+    /*
+     * I18nProperty
+     * This is the object return when we access to an i18n field
+     * throw the model. For instance, a BlogPost with an i18n title
+     *
+     *  blogPost.title -> return an I18nProperty
+     *  blogPost.title.en -> return the english value of the title
+     *  blogPost.localValue -> return the value of the current lang
+     *  blogPost.defaultValue -> return the value of the default lang
+     */
+    App.I18nProperty = Ember.ObjectProxy.extend({
+        content: null,
+        field: null,
+        isI18n: true,
+
+        localValue: function() {
+            return this.get('content')[App.get('config.selectedLang')] || this.get('defaultValue');
+        }.property('App.config.selectedLang', 'defaultValue'),
+
+        defaultValue: function() {
+            return this.get('content')[App.get('config.defaultLang')];
+        }.property('App.config.defaultLang')
     });
 
     /* ResultSet
@@ -1188,7 +1189,8 @@ Eurekapp = (function(clientConfig){
                     });
                     return resolve(resultSet);
                 }).fail(function(e) {
-                    return reject(JSON.parse(e.responseText));
+                    console.log('----xxxx', e.responseJSON.error);
+                    return reject(e.responseJSON);
                 });
             });
         },
@@ -1327,6 +1329,7 @@ Eurekapp = (function(clientConfig){
             return this.get('content').length;
         }.property('content.@each.value')
     });
+
 
     /* This is where the values from the forms will be stored
      * and displayed and extracted by _updateContent.
@@ -1840,7 +1843,7 @@ Eurekapp = (function(clientConfig){
             if (!searchFieldName) {
                 searchFieldName = App.getModelMeta(relationType).get('searchFieldName');
             }
-            var displayFieldName = this.get('displayFieldName') || '__title__';
+            var displayFieldName = this.get('displayFieldName') || 'title';
             var field = this.get('field');
 
             var source = new Bloodhound({
@@ -2025,8 +2028,8 @@ Eurekapp = (function(clientConfig){
         height: 150,
 
         src: function() {
-            return this.get('model.__thumb__');
-        }.property('model.__thumb__'),
+            return this.get('model.thumbUrl');
+        }.property('model.thumbUrl'),
 
         didInsertElement: function() {
             this.$().fakecrop({wrapperWidth: this.get('width'), wrapperHeight: this.get('height')});
@@ -2070,15 +2073,41 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-    // /* title helper
-    //  * will return the title of a model
-    //  */
-    // Ember.Handlebars.registerHelper('description', function(contextModel, options) {
-    //     console.log('---', contextModel, options);
-    //     var model = Ember.Handlebars.get(this, contextModel, options);
-    //     var templateName = model.get('__meta__.decamelizedType')+".__description__";
-    //     return Ember.Handlebars.helpers.render.call(this, templateName, contextModel, options);
-    // });
+    /* renderTitle helper
+     * will generate the 'generic_model.__title__' template.
+     * To overwrite the title display of a model, just add the corresponding
+     * template. For instance, to make a custom display of a blog post title,
+     * create the template `blog_post.__title__.hbs`
+     */
+    Ember.Handlebars.registerHelper('renderTitle', function(contextModel, options) {
+        var model = Ember.Handlebars.get(this, contextModel, options);
+        var templateName = model.get('__meta__.decamelizedType')+"/__title__";
+        if (!Ember.TEMPLATES[templateName]) {
+            templateName = "generic_model/__title__";
+        }
+        options.types[0] = "STRING";
+        options.types.push("STRING");
+        options.contexts.unshift(templateName);
+        return Ember.Handlebars.helpers.render.call(this, templateName, contextModel, options);
+    });
+
+    /* renderDescription helper
+     * will generate the 'generic_model.__description__' template.
+     * To overwrite the description display of a model, just add the corresponding
+     * template. For instance, to make a custom display of a blog post description,
+     * create the template `blog_post.__description__.hbs`
+     */
+    Ember.Handlebars.registerHelper('renderDescription', function(contextModel, options) {
+        var model = Ember.Handlebars.get(this, contextModel, options);
+        var templateName = model.get('__meta__.decamelizedType')+"/__description__";
+        if (!Ember.TEMPLATES[templateName]) {
+            templateName = "generic_model/__description__";
+        }
+        options.types[0] = "STRING";
+        options.types.push("STRING");
+        options.contexts.unshift(templateName);
+        return Ember.Handlebars.helpers.render.call(this, templateName, contextModel, options);
+    });
 
     App.ApplicationConfig = Ember.Object.extend({
         // application config used in App.config
