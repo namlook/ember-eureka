@@ -433,8 +433,8 @@ Eurekapp = (function(clientConfig){
             return this.get('type').underscore();
         }.property('type').readOnly(),
 
-        title: function() {
-            var value = this.get('content.title');
+        label: function() {
+            var value = this.get('content.label');
             if (typeof(value) === 'object') {
                 value = value[App.get('config.selectedLang')];
                 if (typeof(value) === 'object') {
@@ -442,10 +442,10 @@ Eurekapp = (function(clientConfig){
                 }
             }
             return value || this.get('type').underscore().replace(/_/g, ' ').capitalize();
-        }.property('content.title', 'type', 'App.config.selectedLang'),
+        }.property('content.label', 'type', 'App.config.selectedLang'),
 
-        pluralizedTitle: function() {
-            var value = this.get('content.title');
+        pluralizedLabel: function() {
+            var value = this.get('content.label');
             var pluralFound = false;
             if (typeof(value) === 'object') {
                 value = value[App.get('config.selectedLang')];
@@ -455,10 +455,10 @@ Eurekapp = (function(clientConfig){
                 }
             }
             if (!pluralFound) {
-                value = this.get('title') + 's';
+                value = this.get('label') + 's';
             }
             return value;
-        }.property('content.title', 'App.config.selectedLang', 'title'),
+        }.property('content.label', 'App.config.selectedLang', 'label'),
 
         searchFieldName: function() {
             var lookupFieldName = this.get('search.field');
@@ -478,10 +478,10 @@ Eurekapp = (function(clientConfig){
         searchPlaceholder: function() {
             var placeholder = this.get('content.search.placeholder');
             if (!placeholder) {
-                placeholder = "search a "+this.get('title')+"...";
+                placeholder = "search a "+this.get('label')+"...";
             }
             return placeholder;
-        }.property('content.search.placeholder', 'title'),
+        }.property('content.search.placeholder', 'label'),
 
         indexViewPopulate: function() {
             var populate = this.get('content.populate') || {};
@@ -1039,30 +1039,6 @@ Eurekapp = (function(clientConfig){
                     return field;
                 }
             }
-            // /*
-            //  * If the property name ends with 'Localized', then the
-            //  * i18n value corresponding to the current language is returned.
-            //  * If the value of the current language is undefined, then the value
-            //  * of the default language is returned
-            //  * If the property name ends with 'Localized<lang>' (ex: 'titleLocalizedFr')
-            //  * then the value corresponding to the lang is returned (in our
-            //  * example, the french version of the title)
-            //  */
-            // else if (key.indexOf('Localized') > -1) {
-            //     if (Ember.endsWith(key, 'Localized')) {
-            //         fieldName = key.slice(0, key.length - "Localized".length);
-            //         var value = this.get(fieldName)[App.get('config.currentLang')];
-            //         if (value === undefined) {
-            //             value = this.get(fieldName)[App.get('config.defaultLang')];
-            //         }
-            //         return value;
-            //     } else {
-            //         var splitedKey = key.split('Localized');
-            //         fieldName = splitedKey[0];
-            //         var lang = splitedKey[1].decamelize();
-            //         return this.get(fieldName)[lang];
-            //     }
-            // }
             return this.get('content.'+key);
         }
 
@@ -1221,13 +1197,13 @@ Eurekapp = (function(clientConfig){
         schema: null,
         content: null,
 
-        title: function() {
-            var value = this.get('schema.title');
+        label: function() {
+            var value = this.get('schema.label');
             if (typeof(value) === 'object') {
                 value = value[App.get('config.selectedLang')];
             }
             return value || this.get('name').underscore().replace(/_/g, ' ');
-        }.property('schema.title', 'name', 'App.config.selectedLang'),
+        }.property('schema.label', 'name', 'App.config.selectedLang'),
 
         hasContent: function() {
             if (this.get('isMulti') || this.get('isI18n')) {
@@ -1840,8 +1816,9 @@ Eurekapp = (function(clientConfig){
         getSource: function() {
             var relationType = this.get('field.schema.type');
             var searchFieldName = this.get('searchFieldName');
+            var typeMeta = App.getModelMeta(relationType);
             if (!searchFieldName) {
-                searchFieldName = App.getModelMeta(relationType).get('searchFieldName');
+                searchFieldName = typeMeta.get('searchFieldName');
             }
             var displayFieldName = this.get('displayFieldName') || 'title';
             var field = this.get('field');
@@ -1869,7 +1846,7 @@ Eurekapp = (function(clientConfig){
                             });
                         });
                         results = results.sortBy('value');
-                        results.push({value: '--create new '+relationType+'--'});
+                        results.push({value: '-- create new '+typeMeta.get('label').toLowerCase()+' --'});
                         return results;
                     }
                 }

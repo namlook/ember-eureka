@@ -5,7 +5,7 @@
             {{#if fieldset.label}}<legend>{{fieldset.label}}</legend>{{/if}}
             {{#each field in fieldset.fields}}
                 <div {{bind-attr class=":eureka-field :row field.cssClass"}}>
-                    <div class="eureka-field-name col-xs-4">{{field.title}}</div>
+                    <div class="eureka-field-name col-xs-4">{{field.label}}</div>
                     <div class="eureka-field-value col-xs-8">{{model-field-display field=field}}</div>
                 </div>
             {{/each}}
@@ -15,7 +15,7 @@
     <dl class="eureka-document-fields dl-horizontal">
     {{#each field in fields}}
         <div {{bind-attr class=":eureka-field field.cssClass"}}>
-            <dt class="eureka-field-name">{{field.title}}</dt>
+            <dt class="eureka-field-name">{{field.label}}</dt>
             <dd class="eureka-field-value">{{model-field-display field=field}}</dd>
         </div>
     {{/each}}

@@ -9,7 +9,7 @@
 
         <div {{bind-attr class="model.thumbUrl:col-xs-8"}}>
             <div class="eureka-document-head-title">
-                <p>{{#link-to model.__meta__.indexRouteName}}<span class="label label-default">{{model.__meta__.title}}</span>{{/link-to}}</p>
+                <p>{{#link-to model.__meta__.indexRouteName}}<span class="label label-default">{{model.__meta__.label}}</span>{{/link-to}}</p>
                 <h1 {{bind-attr class=":eureka-document-title model.__meta__.EurekaGenericModelModelCSS"}}>
                     {{renderTitle model}}
                 </h1>

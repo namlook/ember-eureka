@@ -1,7 +1,7 @@
 
 <div class="eureka-title-section">
     <div class="col-xs-7 col-sm-7">
-        <h1> {{model.__meta__.pluralizedTitle}} </h1>
+        <h1> {{model.__meta__.pluralizedLabel}} </h1>
 
 {{!--         <ul class="nav nav-pills">
             <li class="dropdown active">
@@ -39,7 +39,7 @@
         {{#link-to model.__meta__.newRouteName
             classNames="btn btn-default eureka-link-to-new"
             classNameBindings="model.__meta__.EurekaGenericModelModelCSS"}}
-                + Create {{model.__meta__.title}}
+                + Create {{model.__meta__.label}}
         {{/link-to}}
     </div>
 </div>

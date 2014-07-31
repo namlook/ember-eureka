@@ -63,7 +63,7 @@ function program3(depth0,data) {
   data.buffer.push("\n                <a href=\"#\">");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "modelMeta.pluralizedTitle", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "modelMeta.pluralizedLabel", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</a>\n        ");
   return buffer;
   }
@@ -328,7 +328,7 @@ function program5(depth0,data) {
   data.buffer.push(">\n                    <div class=\"eureka-field-name col-xs-4\">");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</div>\n                    <div class=\"eureka-field-value col-xs-8\">");
   hashContexts = {'field': depth0};
   hashTypes = {'field': "ID"};
@@ -364,7 +364,7 @@ function program8(depth0,data) {
   data.buffer.push(">\n            <dt class=\"eureka-field-name\">");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</dt>\n            <dd class=\"eureka-field-value\">");
   hashContexts = {'field': depth0};
   hashTypes = {'field': "ID"};
@@ -448,7 +448,7 @@ function program5(depth0,data) {
   data.buffer.push(" class=\"col-sm-4 control-label eureka-field-name\">");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</label>\n                    <div class=\"col-sm-8\">\n                        ");
   hashContexts = {'field': depth0};
   hashTypes = {'field': "ID"};
@@ -491,7 +491,7 @@ function program8(depth0,data) {
   data.buffer.push(" class=\"col-sm-4 control-label eureka-field-name\">");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</label>\n            <div class=\"col-sm-8\">\n                ");
   hashContexts = {'field': depth0};
   hashTypes = {'field': "ID"};
@@ -1559,7 +1559,7 @@ function program4(depth0,data) {
   data.buffer.push("<span class=\"label label-default\">");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</span>");
   return buffer;
   }
@@ -1776,7 +1776,7 @@ function program1(depth0,data) {
   data.buffer.push("\n                + Create ");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\n        ");
   return buffer;
   }
@@ -1929,7 +1929,7 @@ function program16(depth0,data) {
   data.buffer.push("\n<div class=\"eureka-title-section\">\n    <div class=\"col-xs-7 col-sm-7\">\n        <h1> ");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.pluralizedTitle", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.pluralizedLabel", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push(" </h1>\n\n\n    </div>\n    <div class=\"col-xs-5 col-sm-5 text-right eureka-link-to-new-section\">\n        ");
   hashContexts = {'classNames': depth0,'classNameBindings': depth0};
   hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
@@ -1988,7 +1988,7 @@ function program1(depth0,data) {
   data.buffer.push("\n<h1 class=\"eureka-new-document-title\">New ");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.__meta__.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</h1>\n\n<form class=\"form-horizontal eureka-new-document-form\" role=\"form\">\n    ");
   hashContexts = {'model': depth0};
   hashTypes = {'model': "ID"};
