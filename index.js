@@ -154,7 +154,7 @@ Eurekapp = (function(clientConfig){
             if (filter) {
                 query._sortBy = filter;
             } else {
-                var metaSortBy = meta.get('sortBy');
+                var metaSortBy = meta.get('views.index.sortBy');
                 if (query._sortBy === undefined && metaSortBy) {
                     var order;
                     if (typeof(metaSortBy) === 'string') {
@@ -237,16 +237,21 @@ Eurekapp = (function(clientConfig){
      *  - edit
      */
 
-    /* This mixin is used to make the controller aware of the different actions available */
+    /* This mixin is used to make the controller aware of the different actions available. */
     App.ActionControllerMixin = Ember.Mixin.create(Ember.TargetActionSupport, {
+        actionSettings: function() {
+            return this.get('__modelMeta__.views.'+this.get('viewName')+'.actions');
+        }.property('viewName'),
+
         modelActions: function() {
-            var actions = this.get('model.__meta__.actions');
+            var actionSettings = this.get('actionSettings');
             var model = this.get('model');
-            if (actions === undefined) {
-                actions = [];
+            if (actionSettings === undefined) {
+                actionSettings = [];
             }
-            return actions.map(function(action){
-                if (action.toggle !== undefined) {
+            return actionSettings.map(function(action){
+                // if the action is a toggled action, process it
+                if (action.toggle) {
                     if (!action.field) {
                         alertify.error('WARNING ! action.field unknown. Please contact your administrator.', 0);
                     }
@@ -263,7 +268,7 @@ Eurekapp = (function(clientConfig){
                     cssClass: 'eureka-'+action.name.dasherize()+'-action'
                 };
             });
-        }.property('model.__meta__.actions'),
+        }.property('actionSettings', 'model._contentChanged'),
 
         mainModelActions: function() {
             return this.get('modelActions').filter(function(item) {
@@ -312,18 +317,20 @@ Eurekapp = (function(clientConfig){
      * searching, and sorting the results.
      */
     App.GenericModelIndexController = Ember.ArrayController.extend({
+        viewName: 'index',
+
         filters: function() {
-            return this.get('__modelMeta__.filters') || [];
-        }.property('__modelMeta__.filters'),
+            return this.get('__modelMeta__.views.index.filters') || [];
+        }.property('__modelMeta__.views.index.filters'),
 
         sorting: function() {
             var _filters = [];
-            var sortBy = this.get('__modelMeta__.sortBy');
+            var sortBy = this.get('__modelMeta__.views.index.sortBy');
             if (typeof(sortBy) === 'object') {
                 _filters = sortBy;
             }
             return _filters;
-        }.property('__modelMeta__.sortBy'),
+        }.property('__modelMeta__.views.index.sortBy'),
 
         defaultSorting: function() {
             return this.get('sorting').filterBy('default', true).objectAt(0);
@@ -352,9 +359,9 @@ Eurekapp = (function(clientConfig){
         }
     });
 
-
     /* Display a document */
     App.GenericModelDisplayController = Ember.ObjectController.extend(App.ActionControllerMixin, {
+        viewName: 'display',
         actions: {
             "delete": function() {
                 var _this = this;
@@ -383,6 +390,7 @@ Eurekapp = (function(clientConfig){
 
     /* Display a form to create a new document */
     App.GenericModelNewController = Ember.ObjectController.extend(App.ActionControllerMixin, {
+        viewName: 'new',
         actions: {
             save: function() {
                 var _this = this;
@@ -397,8 +405,10 @@ Eurekapp = (function(clientConfig){
         }
     });
 
+
     /* Display a form to edit an existing document */
     App.GenericModelEditController = Ember.ObjectController.extend(App.ActionControllerMixin, {
+        viewName: 'edit',
         actions: {
             save: function() {
                 var _this = this;
@@ -461,7 +471,7 @@ Eurekapp = (function(clientConfig){
         }.property('content.label', 'App.config.selectedLang', 'label'),
 
         searchFieldName: function() {
-            var lookupFieldName = this.get('search.field');
+            var lookupFieldName = this.get('content.views.index.search.field');
             if (!lookupFieldName) {
                 if (this.get('content.aliases') && this.get('content.aliases').title) {
                     lookupFieldName = this.get('content.aliases').title;
@@ -473,32 +483,26 @@ Eurekapp = (function(clientConfig){
                 }
             }
             return lookupFieldName;
-        }.property('content.search.field', 'properties.title', 'content.aliases.title'),
+        }.property('content.views.index.search.field', 'properties.title', 'content.aliases.title'),
 
         searchPlaceholder: function() {
-            var placeholder = this.get('content.search.placeholder');
+            var placeholder = this.get('content.views.index.search.placeholder');
             if (!placeholder) {
                 placeholder = "search a "+this.get('label')+"...";
             }
             return placeholder;
-        }.property('content.search.placeholder', 'label'),
+        }.property('content.views.index.search.placeholder', 'label'),
 
         indexViewPopulate: function() {
-            var populate = this.get('content.populate') || {};
-            populate = populate.index || false;
-            return populate;
-        }.property('content.populate'),
+            return this.get('content.views.index.populate') || false;
+        }.property('content.views.index.populate'),
 
         displayViewPopulate: function() {
-            var populate = this.get('content.populate') || {};
-            populate = populate.display || true;
-            return populate;
-        }.property('content.populate'),
+            return this.get('content.views.display.populate') || true;
+        }.property('content.views.display.populate'),
 
         editViewPopulate: function() {
-            var populate = this.get('content.populate') || {};
-            populate = populate.edit || true;
-            return populate;
+            return this.get('content.views.edit.populate') || true;
         }.property('content.populate'),
 
         properties: function() {
