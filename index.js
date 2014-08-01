@@ -280,26 +280,6 @@ Eurekapp = (function(clientConfig){
             return this.get('modelActions').filterBy('isSecondary');
         }.property('modelActions.[]'),
 
-        transitionToPage: function(page, type, _id) {
-            var args = Array.prototype.slice.call(arguments, 2);
-            var routeName;
-
-            var modelType = this.get('model.type');
-            type = modelType.underscore();
-            var customRouteName = modelType+page.camelize().capitalize()+'Route';
-
-            if (App[customRouteName]) {
-                routeName = modelType.underscore()+'.'+page;
-                args.unshift(routeName);
-                Ember.Controller.prototype.transitionToRoute.apply(this, args);
-            } else {
-                routeName = 'generic_model.'+page;
-                args.unshift(type);
-                args.unshift(routeName);
-                Ember.Controller.prototype.transitionToRoute.apply(this, args);
-            }
-        },
-
         actions: {
             trigger: function(actionName) {
                this.triggerAction({
@@ -368,9 +348,9 @@ Eurekapp = (function(clientConfig){
                 alertify.confirm("Are you sure you want to delete this document ?", function (e) {
                     if (e) {
                         var model = _this.get('model');
-                        var type = model.get('__type__').underscore();
+                        var type = model.get('__meta__.decamelizedType');
                         model.delete().then(function(data) {
-                            _this.transitionToPage('index', type);
+                            _this.transitionToRoute(type+'.index');
                         }, function(jqXHR) {
                             console.log('error !!!', jqXHR);
                             alertify.error(jqXHR);
@@ -380,9 +360,9 @@ Eurekapp = (function(clientConfig){
             },
             edit: function() {
                 var model = this.get('model');
-                var type = model.get('__type__');
+                var type = model.get('__meta__.decamelizedType');
                 var _id = model.get('_id');
-                this.transitionToPage('edit', type, _id);
+                this.transitionToRoute(type+'.edit', _id);
             }
         }
     });
@@ -395,8 +375,8 @@ Eurekapp = (function(clientConfig){
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
-                    var type = model.get('type').underscore();
-                    _this.transitionToPage('index', type);
+                    var type = model.get('__meta__.decamelizedType');
+                    _this.transitionToRoute(type+'.index');
                 }, function(err){
                     alertify.error(err);
                     return console.log('err', err);
@@ -413,9 +393,9 @@ Eurekapp = (function(clientConfig){
             save: function() {
                 var _this = this;
                 this.get('model').save().then(function(model) {
-                    var type = model.get('type').underscore();
+                    var type = model.get('__meta__.decamelizedType');
                     var _id = model.get('_id');
-                    _this.transitionToPage('display', type, _id);
+                    _this.transitionToRoute(type+'.display', _id);
                 }, function(err){
                     alertify.error(err);
                     return console.log('err', err);
