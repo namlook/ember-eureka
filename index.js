@@ -444,7 +444,6 @@ Eurekapp = (function(clientConfig){
         fieldNames: function() {
             var names = [];
             for (var fieldName in this.get('properties')) {
-                console.log('--', fieldName);
                 names.push(fieldName);
             }
             return names;
