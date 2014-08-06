@@ -29,8 +29,5 @@
     "alertify.js": "~0.3.11",
     "jQuery-Fakecrop": "VuongN/jQuery-Fakecrop",
     "jquery-textcomplete": "~0.2.3"
-  },
-  "resolutions": {
-    "jquery": ">= 1.7.0 <= 2.1.0"
   }
 }
