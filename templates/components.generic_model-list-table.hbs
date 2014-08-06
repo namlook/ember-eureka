@@ -1,0 +1,22 @@
+<table class="eureka-document-fields table table-hover">
+    <thead>
+        <tr>
+        {{#each name in header}}
+            <td>{{name}}</td>
+        {{/each}}
+        </tr>
+    </thead>
+    <tbody>
+    {{#each row in rows}}
+        <tr class="eureka-item" {{action 'itemClicked' row.model}}>
+            {{#each field in row.fields}}
+                <td>
+                {{#if field.hasContent}}
+                    {{model-field-display field=field}}
+                {{/if}}
+                 </td>
+            {{/each}}
+        </tr>
+    {{/each}}
+    </tbody>
+</table>

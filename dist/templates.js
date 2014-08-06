@@ -683,11 +683,12 @@ function program15(depth0,data) {
   }
 function program16(depth0,data) {
   
-  var buffer = '', hashTypes, hashContexts;
+  var buffer = '', stack1, hashTypes, hashContexts, options;
   data.buffer.push("\n                            ");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "item.value.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.renderTitle || (depth0 && depth0.renderTitle)),stack1 ? stack1.call(depth0, "item.value", options) : helperMissing.call(depth0, "renderTitle", "item.value", options))));
   data.buffer.push("\n                    ");
   return buffer;
   }
@@ -755,11 +756,12 @@ function program24(depth0,data) {
   }
 function program25(depth0,data) {
   
-  var buffer = '', hashTypes, hashContexts;
+  var buffer = '', stack1, hashTypes, hashContexts, options;
   data.buffer.push("\n                ");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "field.content.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.renderTitle || (depth0 && depth0.renderTitle)),stack1 ? stack1.call(depth0, "field.content", options) : helperMissing.call(depth0, "renderTitle", "field.content", options))));
   data.buffer.push("\n        ");
   return buffer;
   }
@@ -1445,6 +1447,153 @@ function program49(depth0,data) {
   return buffer;
   
 });
+Ember.TEMPLATES["components/generic_model-list-table"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, hashTypes, hashContexts, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = '', hashTypes, hashContexts;
+  data.buffer.push("\n            <td>");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "name", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("</td>\n        ");
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = '', stack1, hashTypes, hashContexts;
+  data.buffer.push("\n        <tr class=\"eureka-item\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "itemClicked", "row.model", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">\n            ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers.each.call(depth0, "field", "in", "row.fields", {hash:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n        </tr>\n    ");
+  return buffer;
+  }
+function program4(depth0,data) {
+  
+  var buffer = '', stack1, hashTypes, hashContexts;
+  data.buffer.push("\n                <td>\n                ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "field.hasContent", {hash:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                 </td>\n            ");
+  return buffer;
+  }
+function program5(depth0,data) {
+  
+  var buffer = '', stack1, hashContexts, hashTypes, options;
+  data.buffer.push("\n                    ");
+  hashContexts = {'field': depth0};
+  hashTypes = {'field': "ID"};
+  options = {hash:{
+    'field': ("field")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['model-field-display'] || (depth0 && depth0['model-field-display'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-field-display", options))));
+  data.buffer.push("\n                ");
+  return buffer;
+  }
+
+  data.buffer.push("<table class=\"eureka-document-fields table table-hover\">\n    <thead>\n        <tr>\n        ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers.each.call(depth0, "name", "in", "header", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n        </tr>\n    </thead>\n    <tbody>\n    ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers.each.call(depth0, "row", "in", "rows", {hash:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n    </tbody>\n</table>");
+  return buffer;
+  
+});
+Ember.TEMPLATES["components/generic_model-list"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var stack1, hashTypes, hashContexts, self=this, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+
+function program1(depth0,data) {
+  
+  var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
+  data.buffer.push("\n    <div class=\"eureka-result-item row\">\n        ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "item.thumbUrl", {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n\n        <div ");
+  hashContexts = {'class': depth0};
+  hashTypes = {'class': "STRING"};
+  options = {hash:{
+    'class': ("item.thumbUrl:col-xs-8")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
+  data.buffer.push(">\n            <h3 class=\"eureka-item-title\">\n                ");
+  hashContexts = {'classNames': depth0,'classNameBindings': depth0};
+  hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
+  options = {hash:{
+    'classNames': ("eureka-link-to-display"),
+    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
+  },inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0,depth0],types:["ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "item.__meta__.displayRouteName", "item._id", options) : helperMissing.call(depth0, "link-to", "item.__meta__.displayRouteName", "item._id", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n            </h3>\n\n\n            <p class=\"eureka-item-description\">");
+  hashTypes = {};
+  hashContexts = {};
+  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.renderDescription || (depth0 && depth0.renderDescription)),stack1 ? stack1.call(depth0, "item", options) : helperMissing.call(depth0, "renderDescription", "item", options))));
+  data.buffer.push("</p>\n        </div>\n    </div>\n");
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
+  data.buffer.push("\n            <div class=\"eureka-thumb col-xs-4\">\n                ");
+  hashContexts = {'model': depth0,'class': depth0};
+  hashTypes = {'model': "ID",'class': "STRING"};
+  options = {hash:{
+    'model': ("item"),
+    'class': ("eureka-item-thumb")
+  },inverse:self.noop,fn:self.program(3, program3, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['cropped-thumb'] || (depth0 && depth0['cropped-thumb'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "cropped-thumb", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n            </div>\n        ");
+  return buffer;
+  }
+function program3(depth0,data) {
+  
+  var buffer = '';
+  return buffer;
+  }
+
+function program5(depth0,data) {
+  
+  var buffer = '', stack1, hashTypes, hashContexts, options;
+  data.buffer.push("\n                        ");
+  hashTypes = {};
+  hashContexts = {};
+  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.renderTitle || (depth0 && depth0.renderTitle)),stack1 ? stack1.call(depth0, "item", options) : helperMissing.call(depth0, "renderTitle", "item", options))));
+  data.buffer.push("\n                ");
+  return buffer;
+  }
+
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  else { data.buffer.push(''); }
+  
+});
 Ember.TEMPLATES["components/search-query"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
@@ -1890,61 +2039,30 @@ function program11(depth0,data) {
 
 function program13(depth0,data) {
   
-  var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
-  data.buffer.push("\n        <div class=\"eureka-result-item row\">\n            ");
-  hashTypes = {};
-  hashContexts = {};
-  stack1 = helpers['if'].call(depth0, "item.thumbUrl", {hash:{},inverse:self.noop,fn:self.program(14, program14, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n\n            <div ");
-  hashContexts = {'class': depth0};
-  hashTypes = {'class': "STRING"};
+  var buffer = '', stack1, hashContexts, hashTypes, options;
+  data.buffer.push("\n        \n        ");
+  hashContexts = {'model': depth0,'itemClicked': depth0};
+  hashTypes = {'model': "ID",'itemClicked': "STRING"};
   options = {hash:{
-    'class': ("item.thumbUrl:col-xs-8")
+    'model': ("model"),
+    'itemClicked': ("displayItem")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || (depth0 && depth0['bind-attr'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
-  data.buffer.push(">\n                <h3 class=\"eureka-item-title\">\n                    ");
-  hashContexts = {'classNames': depth0,'classNameBindings': depth0};
-  hashTypes = {'classNames': "STRING",'classNameBindings': "STRING"};
-  options = {hash:{
-    'classNames': ("eureka-link-to-display"),
-    'classNameBindings': ("model.__meta__.EurekaGenericModelModelCSS")
-  },inverse:self.noop,fn:self.program(16, program16, data),contexts:[depth0,depth0],types:["ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['link-to'] || (depth0 && depth0['link-to'])),stack1 ? stack1.call(depth0, "item.__meta__.displayRouteName", "item._id", options) : helperMissing.call(depth0, "link-to", "item.__meta__.displayRouteName", "item._id", options));
-  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n                </h3>\n\n\n                <p class=\"eureka-item-description\">");
-  hashTypes = {};
-  hashContexts = {};
-  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers.renderDescription || (depth0 && depth0.renderDescription)),stack1 ? stack1.call(depth0, "item", options) : helperMissing.call(depth0, "renderDescription", "item", options))));
-  data.buffer.push("</p>\n            </div>\n        </div>\n    ");
-  return buffer;
-  }
-function program14(depth0,data) {
-  
-  var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
-  data.buffer.push("\n                <div class=\"eureka-thumb col-xs-4\">\n                    ");
-  hashContexts = {'model': depth0,'class': depth0};
-  hashTypes = {'model': "ID",'class': "STRING"};
-  options = {hash:{
-    'model': ("item"),
-    'class': ("eureka-item-thumb")
-  },inverse:self.noop,fn:self.program(9, program9, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['cropped-thumb'] || (depth0 && depth0['cropped-thumb'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "cropped-thumb", options));
-  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n                </div>\n            ");
+  data.buffer.push(escapeExpression(((stack1 = helpers['model-list-table'] || (depth0 && depth0['model-list-table'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-list-table", options))));
+  data.buffer.push("\n    ");
   return buffer;
   }
 
-function program16(depth0,data) {
+function program15(depth0,data) {
   
-  var buffer = '', stack1, hashTypes, hashContexts, options;
-  data.buffer.push("\n                            ");
-  hashTypes = {};
-  hashContexts = {};
-  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers.renderTitle || (depth0 && depth0.renderTitle)),stack1 ? stack1.call(depth0, "item", options) : helperMissing.call(depth0, "renderTitle", "item", options))));
-  data.buffer.push("\n                    ");
+  var buffer = '', stack1, hashContexts, hashTypes, options;
+  data.buffer.push("\n        \n        ");
+  hashContexts = {'model': depth0};
+  hashTypes = {'model': "ID"};
+  options = {hash:{
+    'model': ("model")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers['model-list'] || (depth0 && depth0['model-list'])),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "model-list", options))));
+  data.buffer.push("\n    ");
   return buffer;
   }
 
@@ -1990,7 +2108,11 @@ function program16(depth0,data) {
   data.buffer.push("\n</form>\n\n\n<div class=\"eureka-results clearfix\">\n    ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers.each.call(depth0, "item", "in", "model", {hash:{},inverse:self.noop,fn:self.program(13, program13, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  data.buffer.push(escapeExpression(helpers.log.call(depth0, "tableView", "tableView", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n    ");
+  hashTypes = {};
+  hashContexts = {};
+  stack2 = helpers['if'].call(depth0, "tableView", {hash:{},inverse:self.program(15, program15, data),fn:self.program(13, program13, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n</div>\n\n");
   return buffer;
