@@ -88,7 +88,7 @@ Eurekapp = (function(clientConfig){
 
     App.ApplicationRoute = Ember.Route.extend({
         model: function() {
-            return App.config;
+            return App.get('config');
         }
     });
 
@@ -801,7 +801,7 @@ Eurekapp = (function(clientConfig){
         _saveModel: function() {
             // this._updateContent();
             var type = this.get('__type__');
-            var endpoint = App.config.apiURI+'/'+type.underscore();
+            var endpoint = App.get('config.apiURL')+'/'+type.underscore();
             var postData = {payload: this._toJSON()};
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.post(endpoint, postData, function(data) {
@@ -828,7 +828,7 @@ Eurekapp = (function(clientConfig){
 
         "delete": function() {
             var type = this.get('__type__');
-            var url = App.config.apiURI+'/'+type.underscore()+'/'+this.get('_id');
+            var url = App.get('config.apiURL')+'/'+type.underscore()+'/'+this.get('_id');
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 $.ajax({
                     url: url,
@@ -1139,8 +1139,8 @@ Eurekapp = (function(clientConfig){
         }.property('__meta__.schema'),
 
         endpoint: function() {
-            return App.config.apiURI+'/'+this.get('type').underscore();
-        }.property('App.config.apiURI', 'type'),
+            return App.get('config.apiURL')+'/'+this.get('type').underscore();
+        }.property('App.config.apiURL', 'type'),
 
         isRelation: function(fieldName) {
             var field = this.get('properties')[fieldName];
@@ -1910,7 +1910,7 @@ Eurekapp = (function(clientConfig){
                 },
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: App.config.apiURI+'/'+relationType.underscore()+'?'+searchFieldName+'[$iregex]=^%QUERY&_limit=9',
+                    url: App.get('config.apiURL')+'/'+relationType.underscore()+'?'+searchFieldName+'[$iregex]=^%QUERY&_limit=9',
                     filter: function (data) {
                         var results = [];
                         var object;
