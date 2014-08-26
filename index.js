@@ -1188,8 +1188,9 @@ Eurekapp = (function(clientConfig){
                     });
                     return resolve(resultSet);
                 }).fail(function(e) {
-                    console.log('----xxxx', e.responseJSON.error);
-                    return reject(e.responseJSON);
+                    console.log('++++', e);
+                    console.log('----xxxx', {error: e.statusText, status: e.status});
+                    return reject({error: e.statusText, status: e.status});
                 });
             });
         },
