@@ -24,6 +24,12 @@ select {
   border-bottom: 0;
 }
 
+.eureka-navbar .application-logo {
+  height: 100%;
+  margin-top: -5px;
+  margin-right: 15px;
+}
+
 html,
 .eureka-navbar,
 .eureka-navigation,

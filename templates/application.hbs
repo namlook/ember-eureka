@@ -5,7 +5,12 @@
             <a class="navbar-brand" onclick="$('.row-offcanvas').toggleClass('active')" class="btn btn-primary btn-xs" data-toggle="offcanvas"><i class="glyphicon glyphicon-align-justify"></i></a>
         </div>
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">{{applicationName}}</a>
+            <a class="navbar-brand" href="#" alt="{{applicationName}}">
+                {{#if applicationLogoURL}}
+                    <img class="hidden-xs application-logo" {{bind-attr src=applicationLogoURL}} alt="logo" />
+                {{/if}}
+                {{applicationName}}
+            </a>
         </div>
     </div>
 </nav>

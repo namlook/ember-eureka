@@ -226,7 +226,8 @@ Eurekapp = (function(clientConfig){
 
 
     App.ApplicationController = Ember.ObjectController.extend({
-        applicationName: Ember.computed.alias('name')
+        applicationName: Ember.computed.alias('name'),
+        applicationLogoURL: Ember.computed.alias('logoURL')
     });
 
 
