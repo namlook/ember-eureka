@@ -23,7 +23,7 @@ function program1(depth0,data) {
   data.buffer.push("\n                ");
   stack1 = helpers._triageMustache.call(depth0, "applicationName", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n            </a>\n        </div>\n    </div>\n</nav>\n<div class=\"eureka-banner-bottom\"></div>\n\n<div class=\"container-fluid eureka-application \">\n\n    <div class=\"row row-offcanvas row-offcanvas-left\">\n        <div class=\"col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas eureka-navigation\" role=\"navigation\">\n            ");
+  data.buffer.push("\n            </a>\n        </div>\n    </div>\n</nav>\n<div class=\"eureka-banner-bottom hidden-xs\"></div>\n\n<div class=\"container-fluid eureka-application \">\n\n    <div class=\"row row-offcanvas row-offcanvas-left\">\n        <div class=\"col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas eureka-navigation\" role=\"navigation\">\n            ");
   data.buffer.push(escapeExpression((helper = helpers['application-menu'] || (depth0 && depth0['application-menu']),options={hash:{
     'model': ("model"),
     'currentPath': ("currentPath")
