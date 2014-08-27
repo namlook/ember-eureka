@@ -324,8 +324,18 @@ Eurekapp = (function(clientConfig){
 
         updateModel: function() {
             var query = this.getWithDefault('query', {});
+
+            // sorting
             var sortBy = this.get('currentSorting');
             query._sortBy = sortBy;
+
+            // limit
+            if (!query._limit) {
+                var limit = this.get('__modelMeta__.views.index.limit');
+                if (limit) {
+                    query._limit = limit;
+                }
+            }
 
             var _this = this;
             var modelType = this.get('model').get('type');
@@ -334,7 +344,7 @@ Eurekapp = (function(clientConfig){
             }, function(e) {
                 alertify.error(e.error);
             });
-        }.observes('query', 'currentSorting'),
+        }.observes('query', 'currentSorting', '__modelMeta__.views.index.limit'),
 
         actions: {
             searchModel: function(query) {
