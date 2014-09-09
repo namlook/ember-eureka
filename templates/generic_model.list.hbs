@@ -70,30 +70,47 @@
     </ul>
 </div>
 
-<form class="eureka-search-section form-inline text-right" role="form">
-    <div class="form-group has-feedback eureka-search-query-container">
-        <span class="glyphicon glyphicon-search form-control-feedback search-icon"></span>
-        {{#search-query action="searchModel" model=model}}{{/search-query}}
-    </div>
-    {{#if sorting.length}}
-        <div class="form-group eureka-sortby-selection">
-            order by {{view Ember.Select
-                           content=sorting
-                           optionValuePath="content.order"
-                           optionLabelPath="content.label"
-                           value=currentSorting}}
+<div class="row">
+    <!-- results -->
+    <div class="col-xs-9 col-sm-9">
+        <div class="eureka-results clearfix">
+            {{#if tableView}}
+                {{!-- {{partial 'components/generic_model-list-table'}} --}}
+                {{model-list-table model=model itemClicked='displayItem'}}
+            {{else}}
+                {{!-- {{partial 'components/generic_model-list'}} --}}
+                {{model-list model=model}}
+            {{/if}}
         </div>
-    {{/if}}
-</form>
+    </div>
 
+    <!-- search and faceting -->
+    <div class="col-xs-3 col-sm-3">
+        <form class="eureka-search-section form-inline text-right" role="form">
+            <div class="form-group has-feedback eureka-search-query-container">
+                <span class="glyphicon glyphicon-search form-control-feedback search-icon"></span>
+                {{#search-query action="searchModel" model=model}}{{/search-query}}
+            </div>
+            {{#if sorting.length}}
+                <div class="form-group eureka-sortby-selection">
+                    order by {{view Ember.Select
+                                   content=sorting
+                                   optionValuePath="content.order"
+                                   optionLabelPath="content.label"
+                                   value=currentSorting}}
+                </div>
+            {{/if}}
+        </form>
 
-<div class="eureka-results clearfix">
-    {{#if tableView}}
-        {{!-- {{partial 'components/generic_model-list-table'}} --}}
-        {{model-list-table model=model itemClicked='displayItem'}}
-    {{else}}
-        {{!-- {{partial 'components/generic_model-list'}} --}}
-        {{model-list model=model}}
-    {{/if}}
+        <h3>Filters</h3>
+        {{#each facetedField in facetedFields}}
+            {{faceted-field fieldPath=facetedField.fieldPath
+                fieldName=facetedField.fieldName
+                query=query
+                limit=facetedField.limit
+                modelType=model.type
+                action='searchModel'}}
+        {{/each}}
+
+    </div>
 </div>
-

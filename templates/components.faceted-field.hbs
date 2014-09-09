@@ -1,0 +1,6 @@
+<h5>{{fieldName}}</h5>
+<ul class="list-unstyled">
+    {{#each item in content}}
+        <li>{{input type="checkbox" disabled=item.count}} {{item.facet}} ({{item.count}})</li>
+    {{/each}}
+</ul>

@@ -299,7 +299,9 @@ Eurekapp = (function(clientConfig){
      * searching, and sorting the results.
      */
     App.GenericModelIndexController = Ember.ArrayController.extend({
+        __modelMeta__: null, // fill at initialization
         viewName: 'index',
+        query: null,
 
         tableView: Ember.computed.alias('__modelMeta__.views.index.tableView'),
 
@@ -346,6 +348,24 @@ Eurekapp = (function(clientConfig){
             });
         }.observes('query', 'currentSorting', '__modelMeta__.views.index.limit'),
 
+        facetedFields: function() {
+            // update facets
+            var _facetedFields = Ember.A();
+            this.get('__modelMeta__.facets').forEach(function(fieldName) {
+                var fieldPath;
+                var limit = 10;
+                if (Ember.isString(fieldName)) {
+                    fieldPath = fieldName;
+                } else {
+                    fieldPath = fieldName.field;
+                    fieldName = fieldName.label;
+                    limit = fieldName.limit || 10;
+                }
+                _facetedFields.pushObject({fieldPath: fieldPath, fieldName: fieldName, limit: limit});
+            });
+            return _facetedFields;
+        }.property('__modelMeta__.facets'),
+
         actions: {
             searchModel: function(query) {
                 this.set('query', query);
@@ -359,6 +379,7 @@ Eurekapp = (function(clientConfig){
 
     /* Display a document */
     App.GenericModelDisplayController = Ember.ObjectController.extend(App.ActionControllerMixin, {
+        __modelMeta__: null, // fill at initialization
         viewName: 'display',
         actions: {
             "delete": function() {
@@ -388,6 +409,7 @@ Eurekapp = (function(clientConfig){
 
     /* Display a form to create a new document */
     App.GenericModelNewController = Ember.ObjectController.extend(App.ActionControllerMixin, {
+        __modelMeta__: null, // fill at initialization
         viewName: 'new',
         actions: {
             save: function() {
@@ -406,6 +428,7 @@ Eurekapp = (function(clientConfig){
 
     /* Display a form to edit an existing document */
     App.GenericModelEditController = Ember.ObjectController.extend(App.ActionControllerMixin, {
+        __modelMeta__: null, // fill at initialization
         viewName: 'edit',
         actions: {
             save: function() {
@@ -462,14 +485,18 @@ Eurekapp = (function(clientConfig){
 
         pluralizedLabel: function() {
             var value = this.get('content.label');
-            var pluralFound = false;
             if (typeof(value) === 'object') {
                 value = value[App.get('config.selectedLang')];
                 if (typeof(value) === 'object') {
                     value = value.plural;
-                    pluralFound = true;
                 }
             }
+
+            var pluralFound = false;
+            if (Ember.isString(value)) {
+                pluralFound = true;
+            }
+
             if (!pluralFound) {
                 value = this.get('label') + 's';
             }
@@ -515,6 +542,10 @@ Eurekapp = (function(clientConfig){
             return this.get('content.schema');
         }.property('content.schema'),
 
+        facets: function() {
+            return this.getWithDefault('content.facets', Ember.A());
+        }.property('content.facets'),
+
         unknownProperty: function(key) {
             /*
              * If a property name ends with 'routeName', then the corresponding
@@ -529,13 +560,27 @@ Eurekapp = (function(clientConfig){
                 var routeName = key.slice(0, key.length - "RouteName".length);
                 routeName = routeName.underscore();
                 return this.get('decamelizedType')+'.'+routeName;
-            } else if (Ember.endsWith(key, "CSS")) {
+            }
+
+            if (Ember.endsWith(key, "CSS")) {
                 var cssClass = key.slice(0, key.length - "CSS".length);
                 if (cssClass.indexOf('GenericModel') > -1) {
                     cssClass = cssClass.replace(/GenericModel/g, this.get('type'));
                 }
                 return cssClass.dasherize();
             }
+
+            if (Ember.endsWith(key, "Field")){
+                var fieldName = key.slice(0, key.length - "Field".length);
+                var field = this.get('properties.'+fieldName);
+                if (field) {
+                    return App.ModelField.create({
+                        name: fieldName,
+                        schema: field
+                    });
+                }
+            }
+
             return this.get('content.'+key);
         }
     });
@@ -1046,14 +1091,13 @@ Eurekapp = (function(clientConfig){
 
 
         unknownProperty: function(key) {
-            var fieldName;
             /*
              * If a property name ends with 'Field', then the ModelField
              * object is returned. This is useful if we're looking for the
              * field schema and model relations...
              */
             if (Ember.endsWith(key, "Field")){
-                fieldName = key.slice(0, key.length - "Field".length);
+                var fieldName = key.slice(0, key.length - "Field".length);
                 var field = this.get('_fields').get(fieldName);
                 if (field) {
                     return field;
@@ -1222,6 +1266,36 @@ Eurekapp = (function(clientConfig){
                     return resolve(obj);
                 });
             });
+        },
+
+        facets: function(field, query) {
+            if (!query) {
+                query = {};
+            }
+            var that = this;
+            var modelType = this.get('type');
+
+            return new Ember.RSVP.Promise(function(resolve, reject) {
+                Ember.$.getJSON(that.get('endpoint')+'/facets/'+field, query).done(function(data){
+                    var results = Ember.A();
+                    data.results.forEach(function(item){
+                        var obj = that.get('model').create({
+                            content: item,
+                            __type__: modelType
+                        });
+                        results.push(obj);
+                    });
+                    var resultSet = App.ResultSet.create({
+                        type: modelType,
+                        content: results
+                    });
+                    return resolve(resultSet);
+                }).fail(function(e) {
+                    console.log('++++', e);
+                    console.log('----xxxx', {error: e.statusText, status: e.status});
+                    return reject({error: e.statusText, status: e.status});
+                });
+            });
         }
     });
 
@@ -1369,6 +1443,16 @@ Eurekapp = (function(clientConfig){
                 return this.get('lang') === App.get('config.defaultLang');
             }
         }.property('lang', 'App.config.selectedLang', 'App.config.defaultLang')
+    });
+
+
+    /** Facets **/
+    App.FacetSet = Ember.ArrayProxy.extend({
+        type: null,
+        fieldName: null,
+        content: null,
+
+
     });
 
     /*** Components ****/
@@ -1839,6 +1923,8 @@ Eurekapp = (function(clientConfig){
 
     });
 
+    /** Relation suggestion components **/
+
     App.RelationAutoSuggestComponent = Ember.TextField.extend({
         classNames: "typeahead",
         searchFieldName: null,
@@ -2086,6 +2172,42 @@ Eurekapp = (function(clientConfig){
         }
     });
 
+
+    /** Faceting components */
+
+    App.FacetedFieldComponent = Ember.Component.extend({
+        modelType: null,
+        fieldPath: null,
+        fieldName: null,
+        limit: null,
+        query: null,
+        content: Ember.A(),
+
+        sendQuery: function() {
+            console.log('action sent !!!');
+            // this.sendAction('action', query);
+        },
+
+        updateContent: function() {
+            var fieldPath = this.get('fieldPath');
+            var limit = this.get('limit');
+            var query = this.get('query') || {};
+            console.log('xxxx', query);
+            if (limit) {
+                query._limit = limit;
+            }
+            var modelType = this.get('modelType');
+            var _this = this;
+            App.db[modelType].facets(fieldPath, query).then(function(facets) {
+                _this.set('content', Ember.A(facets));
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('fieldPath', 'query', 'modelType').on('init')
+
+    });
+
+    /** Other components **/
 
     App.CroppedThumbComponent = Ember.Component.extend({
         tagName: 'img',
