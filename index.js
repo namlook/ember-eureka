@@ -92,6 +92,8 @@ Eurekapp = (function(clientConfig){
         }
     });
 
+    // App.LoadingRoute = Ember.Route.extend({});
+
     /* the RouteTemplateMixin allow all objects which implement the mixin to
      * use a generic template if a model doesn't specified one.
      */
@@ -168,6 +170,7 @@ Eurekapp = (function(clientConfig){
                     query._sortBy = order;
                 }
             }
+
             return this.get('db')[_type].find(query);
         }
     });
@@ -592,7 +595,6 @@ Eurekapp = (function(clientConfig){
 
         init: function() {
             this._super();
-
             /*
              * Process the model content in order to
              * wrap relations with Models
@@ -653,15 +655,12 @@ Eurekapp = (function(clientConfig){
          *  blogPost.title.en -> the engligh version of the value
          */
         __buildI18nProperties: function() {
-            var content = this.get('content');
-            for (var key in content) {
+            var properties = this.get('__meta__.properties');
+            for (var key in properties) {
 
-                var value = content[key];
-                var field = this.get(key+'Field');
-                if (!field) {
-                    continue;
-                }
-                if (field.get('isI18n')) {
+                var fieldSchema = properties[key];
+                if (fieldSchema.i18n) {
+                    var field = this.get(key+'Field');
                     Ember.defineProperty(this, key, Ember.computed('content.key', function(fieldName) {
                         return App.I18nProperty.create({
                             field: field,
@@ -903,8 +902,8 @@ Eurekapp = (function(clientConfig){
             });
         },
 
-        fieldsList: function() {
-            var fields = Ember.A();
+        _fields: function() {
+            var fields = Ember.Object.create();
             var modelSchema = this.get('__meta__.properties');
             for (var fieldName in modelSchema) {
                 var fieldSchema = modelSchema[fieldName];
@@ -995,28 +994,20 @@ Eurekapp = (function(clientConfig){
                 }
                 field.set('content', value);
 
-                // var watchContentPath = 'content';
-                // if (field.get('isMulti')) {
-                //     watchContentPath = 'content.@each.value';
-                // } else if (field.get('isI18n')) {
-                //     Ember.addObserver(field, 'content.@each.lang', field, '_triggerModelChanged');
-                //     watchContentPath = 'content.@each.value';
-                // }
-                // Ember.addObserver(field, watchContentPath, field, '_triggerModelChanged');
-
-                fields.push(field);
+                fields.set(fieldName, field);
             }
             return fields;
         }.property('__meta__.properties').readOnly(),
 
 
-        _fields: function() {
-            var fields = Ember.Object.create();
-            this.get('fieldsList').forEach(function(field){
-                fields.set(field.get('name'), field);
-            });
-            return fields;
-        }.property('fieldsList').readOnly(),
+        fieldsList: function() {
+            var _fieldslist = Ember.A();
+            var modelSchema = this.get('__meta__.properties');
+            for (var fieldName in modelSchema) {
+                _fieldslist.pushObject(this.get('_fields.'+fieldName));
+            }
+            return _fieldslist;
+        }.property('_fields').readOnly(),
 
         _updateContent: function() {
             var fields = this.get('fieldsList');
@@ -1070,18 +1061,6 @@ Eurekapp = (function(clientConfig){
                 _this.set('content.'+field.get('name'), value);
             });
         }.observes('_contentChanged'),
-
-        // _toTable: function() {
-        //     var header = [];
-        //     var columns = [];
-        //     var fields = this.get('fieldsList');
-        //     var _this = this;
-        //     fields.forEach(function(field){
-        //         header.push(field.get('name'));
-        //         columns.push(field.get('content'));
-        //     });
-        //     return [header, columns];
-        // }.property('_contentChanged'),
 
         /**** properties ****/
 
@@ -1160,17 +1139,6 @@ Eurekapp = (function(clientConfig){
             });
             return _fiedsList;
         }.property('schema')
-
-        // fields: function() {
-        //     var _fields = Ember.A();
-        //     for (var fieldName in this.get('schema')) {
-        //         _fields.push({
-        //             name: fieldName,
-        //             structure: this.get('schema')[fieldName]
-        //         });
-        //     }
-        //     return _fields;
-        // }.property('schema'),
     });
 
     /* DatabaseModel
@@ -1224,6 +1192,7 @@ Eurekapp = (function(clientConfig){
             if (!query) {
                 query = {};
             }
+
             var that = this;
             var modelType = this.get('type');
 
@@ -1561,7 +1530,7 @@ Eurekapp = (function(clientConfig){
             this.get('model').forEach(function(item) {
                 var row = {model: item, fields: Ember.A()};
                 item.get('fieldsList').forEach(function(field) {
-                    if (!fieldsToDisplay || fieldsToDisplay && fieldsToDisplay.indexOf(field.get('name')) > -1) {
+                    if (fieldsToDisplay.indexOf(field.get('name')) > -1) {
                         row.fields.pushObject(field);
                     }
                 });
@@ -1571,7 +1540,7 @@ Eurekapp = (function(clientConfig){
         }.property('model.@each._contentChanged'),
 
         fieldsToDisplay: function() {
-            return this.get('model.__meta__.views.index.fields');
+            return this.get('model.__meta__.views.index.fields') || Ember.A();
         }.property('model.__meta__.views.index.fields'),
 
         header: function() {
@@ -1580,7 +1549,7 @@ Eurekapp = (function(clientConfig){
             var _this = this;
             var fieldsToDisplay = this.get('fieldsToDisplay');
             this.get('model.fieldsList').forEach(function(field) {
-                if (!fieldsToDisplay || fieldsToDisplay && fieldsToDisplay.indexOf(field.get('name')) > -1) {
+                if (fieldsToDisplay.indexOf(field.get('name')) > -1) {
                     _headerFields.pushObject(field.get('label'));
                 }
             });

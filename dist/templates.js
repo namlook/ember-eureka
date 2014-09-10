@@ -248,17 +248,12 @@ function program17(depth0,data) {
 Ember.TEMPLATES["components/faceted-field"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, self=this;
+  var buffer = '', stack1, self=this;
 
 function program1(depth0,data) {
   
-  var buffer = '', stack1, helper, options;
+  var buffer = '', stack1;
   data.buffer.push("\n        <li>");
-  data.buffer.push(escapeExpression((helper = helpers.input || (depth0 && depth0.input),options={hash:{
-    'type': ("checkbox"),
-    'disabled': ("item.count")
-  },hashTypes:{'type': "STRING",'disabled': "ID"},hashContexts:{'type': depth0,'disabled': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push(" ");
   stack1 = helpers._triageMustache.call(depth0, "item.facet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push(" (");
@@ -271,10 +266,10 @@ function program1(depth0,data) {
   data.buffer.push("<h5>");
   stack1 = helpers._triageMustache.call(depth0, "fieldName", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("</h5>\n<ul class=\"list-unstyled\">\n    ");
+  data.buffer.push("</h5>\n\n    \n\n<ul>\n    ");
   stack1 = helpers.each.call(depth0, "item", "in", "content", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n</ul>");
+  data.buffer.push("\n</ul>\n");
   return buffer;
   
 })
@@ -1665,25 +1660,14 @@ function program7(depth0,data) {
 
 function program9(depth0,data) {
   
-  var buffer = '', helper, options;
-  data.buffer.push("\n                \n                ");
-  data.buffer.push(escapeExpression((helper = helpers['model-list-table'] || (depth0 && depth0['model-list-table']),options={hash:{
-    'model': ("model"),
-    'itemClicked': ("displayItem")
-  },hashTypes:{'model': "ID",'itemClicked': "STRING"},hashContexts:{'model': depth0,'itemClicked': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list-table", options))));
-  data.buffer.push("\n            ");
-  return buffer;
+  
+  data.buffer.push("\n    <div class=\"col-xs-9 col-sm-9\">\n    ");
   }
 
 function program11(depth0,data) {
   
-  var buffer = '', helper, options;
-  data.buffer.push("\n                \n                ");
-  data.buffer.push(escapeExpression((helper = helpers['model-list'] || (depth0 && depth0['model-list']),options={hash:{
-    'model': ("model")
-  },hashTypes:{'model': "ID"},hashContexts:{'model': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list", options))));
-  data.buffer.push("\n            ");
-  return buffer;
+  
+  data.buffer.push("\n    <div class=\"col-xs-12 col-sm-12\">\n    ");
   }
 
 function program13(depth0,data) {
@@ -1707,6 +1691,38 @@ function program15(depth0,data) {
   }
 
 function program17(depth0,data) {
+  
+  var buffer = '', helper, options;
+  data.buffer.push("\n                \n                ");
+  data.buffer.push(escapeExpression((helper = helpers['model-list-table'] || (depth0 && depth0['model-list-table']),options={hash:{
+    'model': ("model"),
+    'itemClicked': ("displayItem")
+  },hashTypes:{'model': "ID",'itemClicked': "STRING"},hashContexts:{'model': depth0,'itemClicked': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list-table", options))));
+  data.buffer.push("\n            ");
+  return buffer;
+  }
+
+function program19(depth0,data) {
+  
+  var buffer = '', helper, options;
+  data.buffer.push("\n                \n                ");
+  data.buffer.push(escapeExpression((helper = helpers['model-list'] || (depth0 && depth0['model-list']),options={hash:{
+    'model': ("model")
+  },hashTypes:{'model': "ID"},hashContexts:{'model': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list", options))));
+  data.buffer.push("\n            ");
+  return buffer;
+  }
+
+function program21(depth0,data) {
+  
+  var buffer = '', stack1;
+  data.buffer.push("\n    <div class=\"col-xs-3 col-sm-3\">\n        <h3>Stats</h3>\n        ");
+  stack1 = helpers.each.call(depth0, "facetedField", "in", "facetedFields", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(22, program22, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n\n    </div>\n    ");
+  return buffer;
+  }
+function program22(depth0,data) {
   
   var buffer = '', helper, options;
   data.buffer.push("\n            ");
@@ -1738,10 +1754,10 @@ function program17(depth0,data) {
   data.buffer.push(">\n    <ul class=\"nav nav-tabs\">\n        ");
   stack1 = helpers['if'].call(depth0, "filters.length", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n    </ul>\n</div>\n\n<div class=\"row\">\n    <!-- results -->\n    <div class=\"col-xs-9 col-sm-9\">\n        <div class=\"eureka-results clearfix\">\n            ");
-  stack1 = helpers['if'].call(depth0, "tableView", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),contexts:[depth0],types:["ID"],data:data});
+  data.buffer.push("\n    </ul>\n</div>\n\n<div class=\"row\">\n    <!-- results -->\n    ");
+  stack1 = helpers['if'].call(depth0, "facetedFields", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n        </div>\n    </div>\n\n    <!-- search and faceting -->\n    <div class=\"col-xs-3 col-sm-3\">\n        <form class=\"eureka-search-section form-inline text-right\" role=\"form\">\n            <div class=\"form-group has-feedback eureka-search-query-container\">\n                <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n                ");
+  data.buffer.push("\n        <form class=\"eureka-search-section form-inline text-right\" role=\"form\">\n            <div class=\"form-group has-feedback eureka-search-query-container\">\n                <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n                ");
   stack1 = (helper = helpers['search-query'] || (depth0 && depth0['search-query']),options={hash:{
     'action': ("searchModel"),
     'model': ("model")
@@ -1750,10 +1766,13 @@ function program17(depth0,data) {
   data.buffer.push("\n            </div>\n            ");
   stack1 = helpers['if'].call(depth0, "sorting.length", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(15, program15, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n        </form>\n\n        <h3>Filters</h3>\n        ");
-  stack1 = helpers.each.call(depth0, "facetedField", "in", "facetedFields", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(17, program17, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
+  data.buffer.push("\n        </form>\n        <div class=\"eureka-results clearfix\">\n            ");
+  stack1 = helpers['if'].call(depth0, "tableView", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(19, program19, data),fn:self.program(17, program17, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n\n    </div>\n</div>\n");
+  data.buffer.push("\n        </div>\n    </div>\n\n    <!-- search and faceting -->\n    ");
+  stack1 = helpers['if'].call(depth0, "facetedFields", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(21, program21, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n</div>\n");
   return buffer;
   
 })
@@ -1790,5 +1809,15 @@ function program1(depth0,data) {
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["STRING"],data:data})));
   data.buffer.push(">save</button>\n        </div>\n    </div>\n</form>");
   return buffer;
+  
+})
+
+Ember.TEMPLATES["loading"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  
+
+
+  data.buffer.push("<h1>loading...</h1>");
   
 })

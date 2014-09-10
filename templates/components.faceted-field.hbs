@@ -1,6 +1,10 @@
 <h5>{{fieldName}}</h5>
-<ul class="list-unstyled">
+{{!-- {{#if isLoading}} --}}
+    {{!-- <img src="https://d13yacurqjgara.cloudfront.net/users/82092/screenshots/1073359/spinner.gif" /> --}}
+{{!-- {{else}} --}}
+<ul>
     {{#each item in content}}
-        <li>{{input type="checkbox" disabled=item.count}} {{item.facet}} ({{item.count}})</li>
+        <li>{{item.facet}} ({{item.count}})</li>
     {{/each}}
 </ul>
+{{!-- {{/if}} --}}
