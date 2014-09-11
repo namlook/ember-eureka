@@ -81,6 +81,10 @@ html,
 
 /*** list ***/
 
+.eureka-right-sidebar {
+  border-left: solid 1px #ddd;
+}
+
 .eureka-result-item {
   margin-bottom: 50px;
 }

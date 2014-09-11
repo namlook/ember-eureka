@@ -1245,7 +1245,7 @@ function program3(depth0,data) {
   data.buffer.push("\n    ");
   stack1 = helpers['if'].call(depth0, "sorting.length", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n    <table class=\"eureka-document-fields table table-hover\">\n        <thead>\n            <tr>\n            ");
+  data.buffer.push("\n    <table class=\"eureka-document-fields table table-hover table-striped\">\n        <thead>\n            <tr>\n            ");
   stack1 = helpers.each.call(depth0, "name", "in", "header", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n            </tr>\n        </thead>\n        <tbody>\n        ");
@@ -1748,7 +1748,7 @@ function program17(depth0,data) {
 function program19(depth0,data) {
   
   var buffer = '', stack1;
-  data.buffer.push("\n    <div class=\"col-xs-3 col-sm-3\">\n        <h3>Stats</h3>\n        ");
+  data.buffer.push("\n    <div class=\"col-xs-3 col-sm-3 eureka-right-sidebar\">\n        <h3>Stats</h3>\n        ");
   stack1 = helpers.each.call(depth0, "facetedField", "in", "facetedFields", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(20, program20, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n\n    </div>\n    ");
