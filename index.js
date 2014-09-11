@@ -171,7 +171,8 @@ Eurekapp = (function(clientConfig){
                 }
             }
 
-            return this.get('db')[_type].find(query);
+            return Ember.Object.create({type: _type, query: query});
+            // return this.get('db')[_type].find(query);
         }
     });
 
@@ -301,7 +302,7 @@ Eurekapp = (function(clientConfig){
      * This controller display a list the documents. It is responsible of
      * searching, and sorting the results.
      */
-    App.GenericModelIndexController = Ember.ArrayController.extend({
+    App.GenericModelIndexController = Ember.ObjectController.extend({
         __modelMeta__: null, // fill at initialization
         viewName: 'index',
         query: null,
@@ -312,44 +313,44 @@ Eurekapp = (function(clientConfig){
             return this.get('__modelMeta__.views.index.filters') || [];
         }.property('__modelMeta__.views.index.filters'),
 
-        sorting: function() {
-            var _filters = [];
-            var sortBy = this.get('__modelMeta__.views.index.sortBy');
-            if (typeof(sortBy) === 'object') {
-                _filters = sortBy;
-            }
-            return _filters;
-        }.property('__modelMeta__.views.index.sortBy'),
+        // sorting: function() {
+        //     var _filters = [];
+        //     var sortBy = this.get('__modelMeta__.views.index.sortBy');
+        //     if (typeof(sortBy) === 'object') {
+        //         _filters = sortBy;
+        //     }
+        //     return _filters;
+        // }.property('__modelMeta__.views.index.sortBy'),
 
-        defaultSorting: function() {
-            return this.get('sorting').filterBy('default', true).objectAt(0);
-        }.property('sorting'),
+        // defaultSorting: function() {
+        //     return this.get('sorting').filterBy('default', true).objectAt(0);
+        // }.property('sorting'),
 
-        currentSorting: Ember.computed.oneWay('defaultSorting.order'),
+        // currentSorting: Ember.computed.oneWay('defaultSorting.order'),
 
-        updateModel: function() {
-            var query = this.getWithDefault('query', {});
+        // updateModel: function() {
+        //     var query = this.getWithDefault('query', {});
 
-            // sorting
-            var sortBy = this.get('currentSorting');
-            query._sortBy = sortBy;
+        //     // sorting
+        //     var sortBy = this.get('currentSorting');
+        //     query._sortBy = sortBy;
 
-            // limit
-            if (!query._limit) {
-                var limit = this.get('__modelMeta__.views.index.limit');
-                if (limit) {
-                    query._limit = limit;
-                }
-            }
+        //     // limit
+        //     if (!query._limit) {
+        //         var limit = this.get('__modelMeta__.views.index.limit');
+        //         if (limit) {
+        //             query._limit = limit;
+        //         }
+        //     }
 
-            var _this = this;
-            var modelType = this.get('model').get('type');
-            App.db[modelType].find(query).then(function(model) {
-                _this.set('model', model);
-            }, function(e) {
-                alertify.error(e.error);
-            });
-        }.observes('query', 'currentSorting', '__modelMeta__.views.index.limit'),
+        //     var _this = this;
+        //     var modelType = this.get('model').get('type');
+        //     App.db[modelType].find(query).then(function(model) {
+        //         _this.set('model', model);
+        //     }, function(e) {
+        //         alertify.error(e.error);
+        //     });
+        // }.observes('query', 'currentSorting', '__modelMeta__.views.index.limit'),
 
         facetedFields: function() {
             // update facets
@@ -478,12 +479,55 @@ Eurekapp = (function(clientConfig){
             return value || this.get('type').underscore().replace(/_/g, ' ').capitalize();
         }.property('content.label', 'type', 'App.config.selectedLang'),
 
+        fieldsList: function() {
+            var _fiedsList = Ember.A();
+            var _this = this;
+            this.get('fieldNames').forEach(function(fieldName) {
+                _fiedsList.pushObject(App.ModelField.create({
+                    name: fieldName,
+                    schema: _this.get('properties.'+fieldName)
+                }));
+            });
+            return _fiedsList;
+        }.property('properties', 'fieldNames').readOnly(),
+
+        // fieldsList: function() {
+        //     var _fieldslist = Ember.A();
+        //     var modelSchema = this.get('properties');
+        //     for (var fieldName in modelSchema) {
+        //         var fieldSchema = modelSchema[fieldName];
+        //         var field;
+        //         if (fieldSchema.multi) {
+        //             field = App.ModelMultiField.create({
+        //                 name: fieldName,
+        //                 schema: Ember.Object.create(fieldSchema)
+        //             });
+        //         } else {
+        //             field = App.ModelField.create({
+        //                 name: fieldName,
+        //                 schema: Ember.Object.create(fieldSchema),
+        //             });
+        //         }
+        //         _fieldslist.pushObject(this.get('fields.'+fieldName));
+        //     }
+        //     return _fieldslist;
+        // }.property('properties').readOnly(),
+
+        fields: function() {
+            var _fields = Ember.Object.create();
+            this.get('fieldsList').forEach(function(field) {
+                _fields.set(field.get('name'), field);
+            });
+            return _fields;
+        }.property('fieldsList').readOnly(),
+
         fieldNames: function() {
-            var names = [];
-            for (var fieldName in this.get('properties')) {
-                names.push(fieldName);
-            }
-            return names;
+            return Ember.keys(this.get('properties'));
+            // var names = [];
+            // for (var fieldName in this.get('properties')) {
+            //     names.push(fieldName);
+            // }
+            // return names;
         }.property('properties'),
 
         pluralizedLabel: function() {
@@ -1127,18 +1171,20 @@ Eurekapp = (function(clientConfig){
         }.property('__meta__.schema'),
 
         fieldsList: function() {
-            var fieldNames = this.get('__meta__.fieldNames');
-            var _fiedsList = Ember.A();
-            var _this = this;
-            var modelMeta = App.getModelMeta(this.get('type'));
-            fieldNames.forEach(function(fieldName) {
-                _fiedsList.pushObject(App.ModelField.create({
-                    name: fieldName,
-                    schema: modelMeta.get('properties')[fieldName]
-                }));
-            });
-            return _fiedsList;
-        }.property('schema')
+            return this.get('__meta__.fieldsList');
+            // var fieldNames = this.get('__meta__.fieldNames');
+            // var _fiedsList = Ember.A();
+            // var _this = this;
+            // var modelMeta = App.getModelMeta(this.get('type'));
+            // fieldNames.forEach(function(fieldName) {
+            //     _fiedsList.pushObject(App.ModelField.create({
+            //         name: fieldName,
+            //         schema: modelMeta.get('properties')[fieldName]
+            //     }));
+            // });
+            // return _fiedsList;
+        // }.property('schema')
+        }.property('__meta__.fieldsList')
     });
 
     /* DatabaseModel
@@ -1206,11 +1252,10 @@ Eurekapp = (function(clientConfig){
                         });
                         results.push(obj);
                     });
-                    var resultSet = App.ResultSet.create({
+                    return resolve(App.ResultSet.create({
                         type: modelType,
                         content: results
-                    });
-                    return resolve(resultSet);
+                    }));
                 }).fail(function(e) {
                     console.log('++++', e);
                     console.log('----xxxx', {error: e.statusText, status: e.status});
@@ -1512,49 +1557,119 @@ Eurekapp = (function(clientConfig){
     });
 
     /** index components **/
-    App.ModelListComponent = Ember.Component.extend(App.TemplateMixin, {
+    App.ModelListMixin = Ember.Mixin.create({
+        modelMeta: null,
+        modelType: Ember.computed.alias('modelMeta.type'),
+        query: null,
         model: null,
-        modelType: Ember.computed.alias('model.type'),
-        genericTemplateName: 'components/<generic_model>-list',
+        isLoading: true,
+
+        filters: function() {
+            return this.get('modelMeta.views.index.filters') || [];
+        }.property('modelMeta.views.index.filters'),
+
+        sorting: function() {
+            var _filters = [];
+            var sortBy = this.get('modelMeta.views.index.sortBy');
+            if (typeof(sortBy) === 'object') {
+                _filters = sortBy;
+            }
+            return _filters;
+        }.property('modelMeta.views.index.sortBy'),
+
+        defaultSorting: function() {
+            return this.get('sorting').filterBy('default', true).objectAt(0);
+        }.property('sorting'),
+
+        currentSorting: Ember.computed.oneWay('defaultSorting.order'),
+
+        updateModel: function() {
+            this.set('isLoading', true);
+            var query = this.get('query') || {};
+            var meta = this.get('modelMeta');
+
+            // limit
+            var limit = meta.get('views.index.limit');
+            if (limit) {
+                query._limit = limit;
+            }
+
+            // populate
+            query._populate = meta.get('indexViewPopulate');
+
+            // sorting
+            var sortBy = this.get('currentSorting');
+            if (sortBy) {
+                query._sortBy = sortBy;
+            } else {
+                var metaSortBy = meta.get('views.index.sortBy');
+                if (query._sortBy === undefined && metaSortBy) {
+                    var order;
+                    if (typeof(metaSortBy) === 'string') {
+                        order = metaSortBy;
+                    } else if (metaSortBy.filterBy('default').length) {
+                        order = metaSortBy.filterBy('default')[0].order;
+                    } else {
+                        order = metaSortBy[0].order;
+                    }
+                    query._sortBy = order;
+                }
+            }
+
+            // fetch data
+            var _this = this;
+            var modelType = this.get('modelType');
+            App.db[modelType].find(query).then(function(model) {
+                _this.set('model', model);
+                _this.set('isLoading', false);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('query', 'currentSorting').on('init'),
     });
 
-    App.ModelListTableComponent = Ember.Component.extend(App.TemplateMixin, {
-        model: null,
-        modelType: Ember.computed.alias('model.type'),
+
+    App.ModelListComponent = Ember.Component.extend(App.TemplateMixin, App.ModelListMixin, {
+        genericTemplateName: 'components/<generic_model>-list'
+    });
+
+
+    App.ModelListTableComponent = Ember.Component.extend(App.TemplateMixin, App.ModelListMixin, {
         genericTemplateName: 'components/<generic_model>-list-table',
 
         rows: function() {
             var results = Ember.A();
-            var _this = this;
-            var fieldsToDisplay = this.get('fieldsToDisplay');
-            this.get('model').forEach(function(item) {
-                var row = {model: item, fields: Ember.A()};
-                item.get('fieldsList').forEach(function(field) {
-                    if (fieldsToDisplay.indexOf(field.get('name')) > -1) {
-                        row.fields.pushObject(field);
-                    }
+            if (this.get('model')) {
+                var _this = this;
+                var fieldsToDisplay = this.get('fieldsToDisplay');
+                this.get('model').forEach(function(item) {
+                    var row = {model: item, fields: Ember.A()};
+                    fieldsToDisplay.forEach(function(fieldName) {
+                        row.fields.pushObject(item.get(fieldName+'Field'));
+                    });
+                    results.pushObject(Ember.Object.create(row));
                 });
-                results.pushObject(Ember.Object.create(row));
-            });
+            }
             return results;
-        }.property('model.@each._contentChanged'),
+        }.property('model.@each._contentChanged', 'fieldsToDisplay'),
 
         fieldsToDisplay: function() {
-            return this.get('model.__meta__.views.index.fields') || Ember.A();
-        }.property('model.__meta__.views.index.fields'),
+            return this.get('modelMeta.views.index.fields') || Ember.A();
+        }.property('modelMeta.views.index.fields'),
 
         header: function() {
             var _headerFields = Ember.A();
-            var field, fieldSchema;
-            var _this = this;
-            var fieldsToDisplay = this.get('fieldsToDisplay');
-            this.get('model.fieldsList').forEach(function(field) {
-                if (fieldsToDisplay.indexOf(field.get('name')) > -1) {
-                    _headerFields.pushObject(field.get('label'));
-                }
-            });
+            if (this.get('model')) {
+                var field, fieldSchema;
+                var _this = this;
+                var fieldsToDisplay = this.get('fieldsToDisplay');
+                var metaFields = this.get('modelMeta.fields');
+                fieldsToDisplay.forEach(function(fieldName) {
+                    _headerFields.pushObject(metaFields.get(fieldName).get('label'));
+                });
+            }
             return _headerFields;
-        }.property('fieldsToDisplay', 'model.fieldsList', 'App.config.selectedLang'),
+        }.property('fieldsToDisplay', 'model', 'modelMeta.fields', 'App.config.selectedLang'),
 
         actions: {
             itemClicked: function(item) {
@@ -2005,17 +2120,23 @@ Eurekapp = (function(clientConfig){
     /*** query components **/
 
     App.SearchQueryComponent = Ember.Component.extend({
-        model: null,
+        modelMeta: null,
 
         didInsertElement: function() {
             var _this = this;
             var $hintMessage = this.$('.eureka-hint-message');
             $hintMessage.hide();
-            this.$('.eureka-search-query-input').focusin(function() {
+            var $searchInput = this.$('.eureka-search-query-input');
+            var $searchContainer = $searchInput.parents('.eureka-search-section .eureka-search-query-container.form-group.has-feedback');
+            $searchInput.focusin(function() {
                 $hintMessage.show('slow');
+                $searchContainer.animate({width: '100%'}, 700);
             });
-            this.$('.eureka-search-query-input').focusout(function() {
+            $searchInput.focusout(function() {
                 $hintMessage.hide('slow');
+                if (!$searchInput.val().trim()) {
+                    $searchContainer.animate({width: 'auto'}, 700);
+                }
             });
         },
 
@@ -2027,18 +2148,18 @@ Eurekapp = (function(clientConfig){
     });
 
     App.SearchQueryInputComponent = Ember.TextField.extend({
-        model: null,
+        modelMeta: null,
         autocomplete: 'off',
         onEvent: 'keyPress',
         classNames: 'eureka-search-query-input form-control',
 
         placeholder: function() {
-            var modelType = this.get('model').get('type');
+            var modelType = this.get('modelMeta').get('type');
             return App.getModelMeta(modelType).get('searchPlaceholder');
-        }.property('model.type'),
+        }.property('modelMeta.type'),
 
         focusOut: function(e) {
-            this.sendQuery();
+            this.set('value', this.get('value').replace(/^\?+/,""));
         },
 
         keyPress: function(e) {
@@ -2059,17 +2180,15 @@ Eurekapp = (function(clientConfig){
                 { // fields available
                     match: /(^|\s*)\?(\w*)$/,
                     replace: function (value) {
-                        var model = _this.get('model');
-                        currentModelContext = model
-                          .get('__meta__.properties')[value].type;
+                        var modelMeta = _this.get('modelMeta');
+                        currentModelContext = modelMeta.get('properties')[value].type;
                         return '$1' + value;
                     },
                     search: function (term, callback) {
-                        var model = _this.get('model');
-                        var fieldsList = model.get('fieldsList').map(function(field){
+                        var fieldNames = _this.get('modelMeta.fieldsList').map(function(field){
                             return field.name;
                         });
-                        callback($.map(fieldsList, function (word) {
+                        callback($.map(fieldNames, function (word) {
                             return word.indexOf(term) === 0 ? word : null;
                         }));
                     },
@@ -2078,13 +2197,11 @@ Eurekapp = (function(clientConfig){
                 }, { // fields available in relations
                     match: /([\w\.]+)\.(\w*)$/,
                     replace: function(value) {
-                        currentModelContext = App.getModelMeta(currentModelContext)
-                          .get('properties')[value].type;
+                        currentModelContext = App.getModelMeta(currentModelContext).get('properties')[value].type;
                         return '$1.' + value;
                     },
                     search: function (term, callback) {
-                        var relProperties = App.getModelMeta(currentModelContext)
-                          .get('properties');
+                        var relProperties = App.getModelMeta(currentModelContext).get('properties');
                         var relFieldNames = [];
                         for (var prop in relProperties) {
                             relFieldNames.push(prop);
@@ -2126,12 +2243,12 @@ Eurekapp = (function(clientConfig){
                     splited = statement.split('=');
                     query[splited[0].trim()] = splited[1].trim();
                 } else {
-                    var modelType = _this.get('model').get('type');
+                    var modelType = _this.get('modelMeta.type');
                     var searchFieldName = App.getModelMeta(modelType).get('searchFieldName');
                     query[searchFieldName] = {'$iregex': '^'+value};
                 }
             });
-            query._populate = this.get('model.__meta__.indexViewPopulate');
+            query._populate = this.get('modelMeta.indexViewPopulate');
             return query;
         },
 
@@ -2150,6 +2267,7 @@ Eurekapp = (function(clientConfig){
         fieldName: null,
         limit: null,
         query: null,
+        isLoading: true,
         content: Ember.A(),
 
         sendQuery: function() {
@@ -2158,10 +2276,10 @@ Eurekapp = (function(clientConfig){
         },
 
         updateContent: function() {
+            this.set('isLoading', true);
             var fieldPath = this.get('fieldPath');
             var limit = this.get('limit');
             var query = this.get('query') || {};
-            console.log('xxxx', query);
             if (limit) {
                 query._limit = limit;
             }
@@ -2169,6 +2287,7 @@ Eurekapp = (function(clientConfig){
             var _this = this;
             App.db[modelType].facets(fieldPath, query).then(function(facets) {
                 _this.set('content', Ember.A(facets));
+                _this.set('isLoading', false);
             }, function(e) {
                 alertify.error(e.error);
             });

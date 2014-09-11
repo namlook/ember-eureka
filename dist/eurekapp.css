@@ -189,7 +189,6 @@ html,
 
 /**** search section ****/
 
-
 .eureka-search-section .eureka-search-query-container.form-group.has-feedback{
   margin-top: 10px;
 }
@@ -204,6 +203,7 @@ html,
   border-right: none;
   box-shadow: none;
   border-radius: 0;
+  width: 100%;
 }
 
 .eureka-search-section .eureka-hint {

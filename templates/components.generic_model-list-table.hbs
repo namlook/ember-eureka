@@ -1,22 +1,35 @@
-<table class="eureka-document-fields table table-hover">
-    <thead>
-        <tr>
-        {{#each name in header}}
-            <td>{{name}}</td>
-        {{/each}}
-        </tr>
-    </thead>
-    <tbody>
-    {{#each row in rows}}
-        <tr class="eureka-item" {{action 'itemClicked' row.model}}>
-            {{#each field in row.fields}}
-                <td>
-                {{#if field.hasContent}}
-                    {{model-field-display field=field}}
-                {{/if}}
-                 </td>
+{{#if isLoading}}
+    <h1>loading...</h1>
+{{else}}
+    {{#if sorting.length}}
+        <div class="form-group eureka-sortby-selection">
+            order by {{view Ember.Select
+                           content=sorting
+                           optionValuePath="content.order"
+                           optionLabelPath="content.label"
+                           value=currentSorting}}
+        </div>
+    {{/if}}
+    <table class="eureka-document-fields table table-hover">
+        <thead>
+            <tr>
+            {{#each name in header}}
+                <td>{{name}}</td>
             {{/each}}
-        </tr>
-    {{/each}}
-    </tbody>
-</table>
+            </tr>
+        </thead>
+        <tbody>
+        {{#each row in rows}}
+            <tr class="eureka-item" {{action 'itemClicked' row.model}}>
+                {{#each field in row.fields}}
+                    <td>
+                    {{#if field.hasContent}}
+                        {{model-field-display field=field}}
+                    {{/if}}
+                     </td>
+                {{/each}}
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+{{/if}}
