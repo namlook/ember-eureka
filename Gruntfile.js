@@ -1,6 +1,8 @@
 module.exports = function(grunt) {
 
-    require('jit-grunt')(grunt);
+    require('jit-grunt')(grunt, {
+        emberTemplates: 'grunt-ember-templates'
+    });
     grunt.initConfig({
         // watch files
         watch: {
