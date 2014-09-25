@@ -1388,7 +1388,7 @@ Eurekapp = (function(clientConfig){
         }.property('isRelation'),
 
         isHidden: function() {
-            return !!this.get('schema.hidden');
+            return !!this.get('schema').hidden;
         }.property('schema.hidden'),
 
         /* _triggerModelChanged
@@ -1688,7 +1688,7 @@ Eurekapp = (function(clientConfig){
         fields: function() {
             var fields = Ember.A();
             this.get('model').get('fieldsList').forEach(function(field){
-                if (field.get('hasContent')) {
+                if (field.get('hasContent') && !field.get('isHidden')) {
                     fields.pushObject(field);
                 }
             });
@@ -1711,7 +1711,7 @@ Eurekapp = (function(clientConfig){
                     var fields = Ember.A();
                     metaFieldset.fields.forEach(function(fieldName) {
                         field = _this.get('model.'+fieldName+'Field');
-                        if (field.get('hasContent')) {
+                        if (field.get('hasContent') && !field.get('isHidden')) {
                             fields.pushObject(field);
                         }
                         alreadyDone.push(fieldName);
@@ -1731,7 +1731,7 @@ Eurekapp = (function(clientConfig){
             for (var name in this.get('model.__meta__.schema')) {
                 if (alreadyDone.indexOf(name) === -1) {
                     field = _this.get('model.'+name+'Field');
-                    if (field.get('hasContent')) {
+                    if (field.get('hasContent') && !field.get('isHidden')) {
                         _fieldsLeft.pushObject(field);
                     }
                 }
