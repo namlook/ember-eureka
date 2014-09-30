@@ -333,14 +333,13 @@ Eurekapp = (function(clientConfig){
             });
             // If no widget are defined, let's display a regular view
             if (!rows.length) {
-                rows.pushObject(App.WidgetRow.create({
-                    content: Ember.A([App.ModelWidget.create({
+                rows.pushObject(Ember.A([
+                    App.ModelWidget.create({
                         modelMeta: _this.get('__modelMeta__'),
                         type: 'regularView'
-                    })])
-                }));
+                    })
+                ]));
             }
-            console.log('ooooo', rows.length);
             return rows;
         }.property('__modelMeta__.type'),
         // tableView: Ember.computed.alias('__modelMeta__.views.index.tableView'),
@@ -1437,6 +1436,10 @@ Eurekapp = (function(clientConfig){
             return this.get('schema.type') === 'date';
         }.property('schema.type'),
 
+        dateFormat: function() {
+            return this.get('schema.dateFormat');
+        }.property('schema.dateFormat'),
+
         relationModel: function() {
             if (this.get('isRelation')) {
                 return App.db[this.get('schema').get('type')].get('model');
@@ -2426,24 +2429,6 @@ Eurekapp = (function(clientConfig){
         }.property('type')
     });
 
-    App.WidgetRow = Ember.ArrayProxy.extend({
-        css: null,
-
-        columnCssClasses: function() {
-            console.log('ooooo', this.get('css'));
-            if (this.get('css')) {
-                return this.get('css');
-            }
-            var nbWidget = this.get('content').length;
-            var colSize = parseInt(12/nbWidget, 10);
-            var xs = nbWidget > 2 ? 12/2 : colSize;
-            var sm = nbWidget > 3 ? 12/3 : colSize;
-            var md = nbWidget > 4 ? 12/4 : colSize;
-            var lg = nbWidget > 6 ? 12/6 : colSize;
-            return 'col-xs-'+xs+' col-sm-'+sm+' col-md-'+md+' col-lg-'+lg;
-        }.property('content.@each', 'cssClasses')
-    });
-
     /** Faceting components */
 
     App.ModelFacetWidgetComponent = Ember.Component.extend(App.TemplateMixin, {
@@ -2885,6 +2870,19 @@ Eurekapp = (function(clientConfig){
             });
             this.$().removeAttr('readonly');
         }
+    });
+
+    /*
+     *    Helpers
+     */
+
+     // date format
+    Ember.Handlebars.registerBoundHelper('format-date', function(date, options) {
+        var format = options.hash.format;
+        if (format === 'fromNow') {
+            return moment(date).fromNow();
+        }
+        return moment(date).format(format);
     });
 
     /* renderTitle helper

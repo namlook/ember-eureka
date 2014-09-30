@@ -90,7 +90,7 @@
             {{else}}
                 {{log 'field' field.isDate field}}
                 {{#if field.isDate}}
-                    daaaate{{field.content}}
+                    {{format-date field.content format=field.dateFormat}}
                 {{else}}
                     {{field.content}}
                 {{/if}}

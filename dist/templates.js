@@ -828,10 +828,11 @@ function program45(depth0,data) {
   }
 function program46(depth0,data) {
   
-  var buffer = '', stack1;
-  data.buffer.push("\n                    daaaate");
-  stack1 = helpers._triageMustache.call(depth0, "field.content", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  var buffer = '', helper, options;
+  data.buffer.push("\n                    ");
+  data.buffer.push(escapeExpression((helper = helpers['format-date'] || (depth0 && depth0['format-date']),options={hash:{
+    'format': ("field.dateFormat")
+  },hashTypes:{'format': "ID"},hashContexts:{'format': depth0},contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "field.content", options) : helperMissing.call(depth0, "format-date", "field.content", options))));
   data.buffer.push("\n                ");
   return buffer;
   }
