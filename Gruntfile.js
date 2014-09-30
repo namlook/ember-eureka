@@ -30,4 +30,5 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('build', ['emberTemplates']);
+    grunt.registerTask('live', ['build', 'watch']);
 };
