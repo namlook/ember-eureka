@@ -1,9 +1,9 @@
 <h5>{{fieldName}}</h5>
 {{#if isLoading}}
-    <i>loading...</i>
+    <i>loading stats on {{fieldName}}...</i>
 {{else}}
     <ul>
-        {{#each item in content}}
+        {{#each item in results}}
             <li>{{item.facet}} ({{item.count}})</li>
         {{/each}}
     </ul>

@@ -245,49 +245,6 @@ function program17(depth0,data) {
   
 })
 
-Ember.TEMPLATES["components/faceted-field"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
-this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, self=this;
-
-function program1(depth0,data) {
-  
-  
-  data.buffer.push("\n    <i>loading...</i>\n");
-  }
-
-function program3(depth0,data) {
-  
-  var buffer = '', stack1;
-  data.buffer.push("\n    <ul>\n        ");
-  stack1 = helpers.each.call(depth0, "item", "in", "content", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n    </ul>\n");
-  return buffer;
-  }
-function program4(depth0,data) {
-  
-  var buffer = '', stack1;
-  data.buffer.push("\n            <li>");
-  stack1 = helpers._triageMustache.call(depth0, "item.facet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push(" (");
-  stack1 = helpers._triageMustache.call(depth0, "item.count", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push(")</li>\n        ");
-  return buffer;
-  }
-
-  data.buffer.push("<h5>");
-  stack1 = helpers._triageMustache.call(depth0, "fieldName", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("</h5>\n");
-  stack1 = helpers['if'].call(depth0, "isLoading", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  return buffer;
-  
-})
-
 Ember.TEMPLATES["components/generic_model-display"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
@@ -373,6 +330,53 @@ function program8(depth0,data) {
   stack1 = helpers['if'].call(depth0, "fieldsets.length", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(7, program7, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n");
+  return buffer;
+  
+})
+
+Ember.TEMPLATES["components/generic_model-facet-widget"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = '', stack1;
+  data.buffer.push("\n    <i>loading stats on ");
+  stack1 = helpers._triageMustache.call(depth0, "fieldName", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("...</i>\n");
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = '', stack1;
+  data.buffer.push("\n    <ul>\n        ");
+  stack1 = helpers.each.call(depth0, "item", "in", "results", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n    </ul>\n");
+  return buffer;
+  }
+function program4(depth0,data) {
+  
+  var buffer = '', stack1;
+  data.buffer.push("\n            <li>");
+  stack1 = helpers._triageMustache.call(depth0, "item.facet", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push(" (");
+  stack1 = helpers._triageMustache.call(depth0, "item.count", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push(")</li>\n        ");
+  return buffer;
+  }
+
+  data.buffer.push("<h5>");
+  stack1 = helpers._triageMustache.call(depth0, "fieldName", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("</h5>\n");
+  stack1 = helpers['if'].call(depth0, "isLoading", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   return buffer;
   
 })
@@ -815,9 +819,30 @@ function program45(depth0,data) {
   
   var buffer = '', stack1;
   data.buffer.push("\n                ");
-  stack1 = helpers._triageMustache.call(depth0, "field.content", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  data.buffer.push(escapeExpression(helpers.log.call(depth0, "field", "field.isDate", "field", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],data:data})));
+  data.buffer.push("\n                ");
+  stack1 = helpers['if'].call(depth0, "field.isDate", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(48, program48, data),fn:self.program(46, program46, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n            ");
+  return buffer;
+  }
+function program46(depth0,data) {
+  
+  var buffer = '', stack1;
+  data.buffer.push("\n                    daaaate");
+  stack1 = helpers._triageMustache.call(depth0, "field.content", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                ");
+  return buffer;
+  }
+
+function program48(depth0,data) {
+  
+  var buffer = '', stack1;
+  data.buffer.push("\n                    ");
+  stack1 = helpers._triageMustache.call(depth0, "field.content", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                ");
   return buffer;
   }
 
@@ -1374,6 +1399,39 @@ function program5(depth0,data) {
   
 })
 
+Ember.TEMPLATES["components/generic_model-total-widget"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  
+  data.buffer.push("\n    <i>loading matching number...</i>\n");
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = '', stack1;
+  data.buffer.push("\n    <h5>total matching: ");
+  stack1 = helpers._triageMustache.call(depth0, "total", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("</h5>\n");
+  return buffer;
+  }
+
+  data.buffer.push("<div ");
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+    'class': (":total-widget modelMeta.EurekaGenericModelModelCSS")
+  },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
+  data.buffer.push(">\n");
+  stack1 = helpers['if'].call(depth0, "isLoading", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n</div>");
+  return buffer;
+  
+})
+
 Ember.TEMPLATES["components/search-query"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
@@ -1643,38 +1701,44 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = '', stack1;
-  data.buffer.push("\n                + Create ");
-  stack1 = helpers._triageMustache.call(depth0, "__modelMeta__.label", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n        ");
-  return buffer;
+  
+  data.buffer.push("\n                    <i class=\"glyphicon glyphicon-plus\"></i> create\n            ");
   }
 
 function program3(depth0,data) {
   
+  var buffer = '';
+  return buffer;
+  }
+
+function program5(depth0,data) {
+  
   var buffer = '', stack1, helper, options;
-  data.buffer.push("\n            ");
+  data.buffer.push("\n    <div ");
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+    'class': (":eureka-filter-section filters.length::eureka-filter-section-empty")
+  },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
+  data.buffer.push(">\n        <ul class=\"nav nav-tabs\">\n            ");
   stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
     'tagName': ("li"),
     'href': (false),
     'classNames': ("eureka-link-to-index"),
     'classNameBindings': ("__modelMeta__.EurekaGenericModelModelCSS")
-  },hashTypes:{'tagName': "STRING",'href': "BOOLEAN",'classNames': "STRING",'classNameBindings': "STRING"},hashContexts:{'tagName': depth0,'href': depth0,'classNames': depth0,'classNameBindings': depth0},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "__modelMeta__.indexRouteName", options) : helperMissing.call(depth0, "link-to", "__modelMeta__.indexRouteName", options));
+  },hashTypes:{'tagName': "STRING",'href': "BOOLEAN",'classNames': "STRING",'classNameBindings': "STRING"},hashContexts:{'tagName': depth0,'href': depth0,'classNames': depth0,'classNameBindings': depth0},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "__modelMeta__.indexRouteName", options) : helperMissing.call(depth0, "link-to", "__modelMeta__.indexRouteName", options));
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n            ");
-  stack1 = helpers.each.call(depth0, "filter", "in", "filters", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
+  stack1 = helpers.each.call(depth0, "filter", "in", "filters", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(8, program8, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n        ");
+  data.buffer.push("\n        </ul>\n    </div>\n");
   return buffer;
   }
-function program4(depth0,data) {
+function program6(depth0,data) {
   
   
   data.buffer.push("\n                    <a href=\"#\">All</a>\n            ");
   }
 
-function program6(depth0,data) {
+function program8(depth0,data) {
   
   var buffer = '', stack1, helper, options;
   data.buffer.push("\n                ");
@@ -1683,12 +1747,12 @@ function program6(depth0,data) {
     'href': (false),
     'classNames': ("eureka-filter-to"),
     'classNameBindings': ("__modelMeta__.EurekaGenericModelModelCSS")
-  },hashTypes:{'tagName': "STRING",'href': "BOOLEAN",'classNames': "STRING",'classNameBindings': "STRING"},hashContexts:{'tagName': depth0,'href': depth0,'classNames': depth0,'classNameBindings': depth0},inverse:self.noop,fn:self.program(7, program7, data),contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "filter.route", options) : helperMissing.call(depth0, "link-to", "filter.route", options));
+  },hashTypes:{'tagName': "STRING",'href': "BOOLEAN",'classNames': "STRING",'classNameBindings': "STRING"},hashContexts:{'tagName': depth0,'href': depth0,'classNames': depth0,'classNameBindings': depth0},inverse:self.noop,fn:self.program(9, program9, data),contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "filter.route", options) : helperMissing.call(depth0, "link-to", "filter.route", options));
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n            ");
   return buffer;
   }
-function program7(depth0,data) {
+function program9(depth0,data) {
   
   var buffer = '', stack1;
   data.buffer.push("\n                        <a href=\"#\">\n                            <i ");
@@ -1702,106 +1766,157 @@ function program7(depth0,data) {
   return buffer;
   }
 
-function program9(depth0,data) {
-  
-  
-  data.buffer.push("\n    <div class=\"col-xs-9 col-sm-9\">\n    ");
-  }
-
 function program11(depth0,data) {
   
-  
-  data.buffer.push("\n    <div class=\"col-xs-12 col-sm-12\">\n    ");
+  var buffer = '', stack1;
+  data.buffer.push("\n    <div class=\"row eureka-widgets-row\">\n        ");
+  stack1 = helpers.each.call(depth0, "widget", "in", "widgetRow", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(12, program12, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n    </div>\n    ");
+  return buffer;
   }
-
+function program12(depth0,data) {
+  
+  var buffer = '', stack1;
+  data.buffer.push("\n            <div ");
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+    'class': ("widget.css :eureka-widget")
+  },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
+  data.buffer.push(">\n                ");
+  stack1 = helpers['if'].call(depth0, "widget.isTimeSeries", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(13, program13, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                ");
+  stack1 = helpers['if'].call(depth0, "widget.isTimeline", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(15, program15, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                ");
+  stack1 = helpers['if'].call(depth0, "widget.isMatchingQueryDonut", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(17, program17, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                ");
+  stack1 = helpers['if'].call(depth0, "widget.isFacetDonut", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(19, program19, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                ");
+  stack1 = helpers['if'].call(depth0, "widget.isTableView", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(21, program21, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                ");
+  stack1 = helpers['if'].call(depth0, "widget.isRegularView", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(23, program23, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n            </div>\n        ");
+  return buffer;
+  }
 function program13(depth0,data) {
   
-  var buffer = '';
+  var buffer = '', stack1, helper, options;
+  data.buffer.push("\n                    <h5 class=\"text-center\">");
+  stack1 = helpers._triageMustache.call(depth0, "widget.label", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("</h5>\n                    ");
+  data.buffer.push(escapeExpression((helper = helpers['model-timeseries-widget'] || (depth0 && depth0['model-timeseries-widget']),options={hash:{
+    'fieldPath': ("widget.field"),
+    'label': ("widget.label"),
+    'aggregationType': ("widget.aggregationType"),
+    'query': ("query"),
+    'modelMeta': ("__modelMeta__")
+  },hashTypes:{'fieldPath': "ID",'label': "ID",'aggregationType': "ID",'query': "ID",'modelMeta': "ID"},hashContexts:{'fieldPath': depth0,'label': depth0,'aggregationType': depth0,'query': depth0,'modelMeta': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-timeseries-widget", options))));
+  data.buffer.push("\n                ");
   return buffer;
   }
 
 function program15(depth0,data) {
   
   var buffer = '', helper, options;
-  data.buffer.push("\n                \n                ");
-  data.buffer.push(escapeExpression((helper = helpers['model-list-table'] || (depth0 && depth0['model-list-table']),options={hash:{
+  data.buffer.push("\n                    ");
+  data.buffer.push(escapeExpression((helper = helpers['model-timeline-widget'] || (depth0 && depth0['model-timeline-widget']),options={hash:{
     'modelMeta': ("__modelMeta__"),
     'query': ("query"),
-    'itemClicked': ("displayItem")
-  },hashTypes:{'modelMeta': "ID",'query': "ID",'itemClicked': "STRING"},hashContexts:{'modelMeta': depth0,'query': depth0,'itemClicked': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list-table", options))));
-  data.buffer.push("\n            ");
+    'contentField': ("widget.contentField"),
+    'startField': ("widget.startField"),
+    'endField': ("widget.endField")
+  },hashTypes:{'modelMeta': "ID",'query': "ID",'contentField': "ID",'startField': "ID",'endField': "ID"},hashContexts:{'modelMeta': depth0,'query': depth0,'contentField': depth0,'startField': depth0,'endField': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-timeline-widget", options))));
+  data.buffer.push("\n                ");
   return buffer;
   }
 
 function program17(depth0,data) {
   
   var buffer = '', helper, options;
-  data.buffer.push("\n                \n                ");
-  data.buffer.push(escapeExpression((helper = helpers['model-list'] || (depth0 && depth0['model-list']),options={hash:{
+  data.buffer.push("\n                    ");
+  data.buffer.push(escapeExpression((helper = helpers['model-matching-query-donut-widget'] || (depth0 && depth0['model-matching-query-donut-widget']),options={hash:{
     'modelMeta': ("__modelMeta__"),
     'query': ("query")
-  },hashTypes:{'modelMeta': "ID",'query': "ID"},hashContexts:{'modelMeta': depth0,'query': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list", options))));
-  data.buffer.push("\n            ");
+  },hashTypes:{'modelMeta': "ID",'query': "ID"},hashContexts:{'modelMeta': depth0,'query': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-matching-query-donut-widget", options))));
+  data.buffer.push("\n                ");
   return buffer;
   }
 
 function program19(depth0,data) {
   
-  var buffer = '', stack1;
-  data.buffer.push("\n    <div class=\"col-xs-3 col-sm-3 eureka-right-sidebar\">\n        <h3>Stats</h3>\n        ");
-  stack1 = helpers.each.call(depth0, "facetedField", "in", "facetedFields", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(20, program20, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n\n    </div>\n    ");
-  return buffer;
-  }
-function program20(depth0,data) {
-  
   var buffer = '', helper, options;
-  data.buffer.push("\n            ");
-  data.buffer.push(escapeExpression((helper = helpers['faceted-field'] || (depth0 && depth0['faceted-field']),options={hash:{
-    'fieldPath': ("facetedField.fieldPath"),
-    'fieldName': ("facetedField.fieldName"),
+  data.buffer.push("\n                    ");
+  data.buffer.push(escapeExpression((helper = helpers['model-facet-donut-widget'] || (depth0 && depth0['model-facet-donut-widget']),options={hash:{
+    'fieldPath': ("widget.field"),
+    'label': ("widget.label"),
     'query': ("query"),
-    'limit': ("facetedField.limit"),
-    'modelType': ("model.type"),
-    'action': ("searchModel")
-  },hashTypes:{'fieldPath': "ID",'fieldName': "ID",'query': "ID",'limit': "ID",'modelType': "ID",'action': "STRING"},hashContexts:{'fieldPath': depth0,'fieldName': depth0,'query': depth0,'limit': depth0,'modelType': depth0,'action': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "faceted-field", options))));
-  data.buffer.push("\n        ");
+    'modelMeta': ("__modelMeta__")
+  },hashTypes:{'fieldPath': "ID",'label': "ID",'query': "ID",'modelMeta': "ID"},hashContexts:{'fieldPath': depth0,'label': depth0,'query': depth0,'modelMeta': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-facet-donut-widget", options))));
+  data.buffer.push("\n                ");
   return buffer;
   }
 
-  data.buffer.push("\n<div class=\"eureka-title-section\">\n    <div class=\"col-xs-7 col-sm-7\">\n        <h1> ");
+function program21(depth0,data) {
+  
+  var buffer = '', helper, options;
+  data.buffer.push("\n                    ");
+  data.buffer.push(escapeExpression((helper = helpers['model-list-table'] || (depth0 && depth0['model-list-table']),options={hash:{
+    'modelMeta': ("__modelMeta__"),
+    'query': ("query"),
+    'fields': ("widget.fields"),
+    'limit': ("widget.limit"),
+    'populate': ("widget.populate"),
+    'sortBy': ("widget.sortBy"),
+    'itemClicked': ("displayItem")
+  },hashTypes:{'modelMeta': "ID",'query': "ID",'fields': "ID",'limit': "ID",'populate': "ID",'sortBy': "ID",'itemClicked': "STRING"},hashContexts:{'modelMeta': depth0,'query': depth0,'fields': depth0,'limit': depth0,'populate': depth0,'sortBy': depth0,'itemClicked': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list-table", options))));
+  data.buffer.push("\n                ");
+  return buffer;
+  }
+
+function program23(depth0,data) {
+  
+  var buffer = '', helper, options;
+  data.buffer.push("\n                    ");
+  data.buffer.push(escapeExpression((helper = helpers['model-list'] || (depth0 && depth0['model-list']),options={hash:{
+    'modelMeta': ("__modelMeta__"),
+    'query': ("query"),
+    'limit': ("widget.limit"),
+    'populate': ("widget.populate"),
+    'sortBy': ("widget.sortBy")
+  },hashTypes:{'modelMeta': "ID",'query': "ID",'limit': "ID",'populate': "ID",'sortBy': "ID"},hashContexts:{'modelMeta': depth0,'query': depth0,'limit': depth0,'populate': depth0,'sortBy': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list", options))));
+  data.buffer.push("\n                ");
+  return buffer;
+  }
+
+  data.buffer.push("\n<nav class=\"navbar navbar-default eureka-section-navbar\" role=\"navigation\">\n  <div class=\"container-fluid\">\n    <!-- Brand and toggle get grouped for better mobile display -->\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">");
   stack1 = helpers._triageMustache.call(depth0, "__modelMeta__.pluralizedLabel", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push(" </h1>\n\n\n    </div>\n    <div class=\"col-xs-5 col-sm-5 text-right eureka-link-to-new-section\">\n        ");
+  data.buffer.push(" </a>\n    </div>\n\n    <!-- Collect the nav links, forms, and other content for toggling -->\n    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li>\n            ");
   stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{
-    'classNames': ("btn btn-default eureka-link-to-new"),
+    'classNames': ("eureka-link-to-new btn btn-default"),
     'classNameBindings': ("__modelMeta__.EurekaGenericModelModelCSS")
   },hashTypes:{'classNames': "STRING",'classNameBindings': "STRING"},hashContexts:{'classNames': depth0,'classNameBindings': depth0},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "__modelMeta__.newRouteName", options) : helperMissing.call(depth0, "link-to", "__modelMeta__.newRouteName", options));
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n    </div>\n</div>\n\n<div ");
-  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
-    'class': (":eureka-filter-section filters.length::eureka-filter-section-empty")
-  },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
-  data.buffer.push(">\n    <ul class=\"nav nav-tabs\">\n        ");
-  stack1 = helpers['if'].call(depth0, "filters.length", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n    </ul>\n</div>\n\n<div class=\"row\">\n    <!-- results -->\n    ");
-  stack1 = helpers['if'].call(depth0, "facetedFields", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n        <form class=\"eureka-search-section form-inline text-right\" role=\"form\">\n            <div class=\"form-group has-feedback eureka-search-query-container\">\n                <span class=\"glyphicon glyphicon-search form-control-feedback search-icon\"></span>\n                ");
-  stack1 = (helper = helpers['search-query'] || (depth0 && depth0['search-query']),options={hash:{
+  data.buffer.push("\n        </li>\n      </ul>\n        <form class=\"navbar-form\" role=\"search\">\n        <div class=\"form-group\" style=\"display:inline;\">\n          <div class=\"input-group\">\n            <span class=\"input-group-addon\"><span class=\"glyphicon glyphicon-search\"></span></span>\n            \n            \n            ");
+  stack1 = (helper = helpers['search-query-input'] || (depth0 && depth0['search-query-input']),options={hash:{
     'action': ("searchModel"),
+    'classNames': ("eureka-search-input"),
     'modelMeta': ("__modelMeta__")
-  },hashTypes:{'action': "STRING",'modelMeta': "ID"},hashContexts:{'action': depth0,'modelMeta': depth0},inverse:self.noop,fn:self.program(13, program13, data),contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "search-query", options));
+  },hashTypes:{'action': "STRING",'classNames': "STRING",'modelMeta': "ID"},hashContexts:{'action': depth0,'classNames': depth0,'modelMeta': depth0},inverse:self.noop,fn:self.program(3, program3, data),contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "search-query-input", options));
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n            </div>\n        </form>\n        <div class=\"eureka-results clearfix\">\n            ");
-  stack1 = helpers['if'].call(depth0, "tableView", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(17, program17, data),fn:self.program(15, program15, data),contexts:[depth0],types:["ID"],data:data});
+  data.buffer.push("\n          </div>\n        </div>\n            \n            \n            \n        </form>\n    </div><!-- /.navbar-collapse -->\n  </div><!-- /.container-fluid -->\n</nav>\n\n\n\n\n\n\n");
+  stack1 = helpers['if'].call(depth0, "filters.length", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n        </div>\n    </div>\n\n    <!-- search and faceting -->\n    ");
-  stack1 = helpers['if'].call(depth0, "facetedFields", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(19, program19, data),contexts:[depth0],types:["ID"],data:data});
+  data.buffer.push("\n\n<div class=\"eureka-widgets\">\n    ");
+  stack1 = helpers.each.call(depth0, "widgetRow", "in", "widgetRows", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(11, program11, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n</div>\n");
+  data.buffer.push("\n</div>\n\n\n");
   return buffer;
   
 })

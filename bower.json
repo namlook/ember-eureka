@@ -28,6 +28,9 @@
     "pickadate": "~3.5.2",
     "alertify.js": "~0.3.11",
     "jQuery-Fakecrop": "VuongN/jQuery-Fakecrop",
-    "jquery-textcomplete": "~0.2.3"
+    "jquery-textcomplete": "~0.2.3",
+    "morrisjs": "~0.5.1",
+    "vis": "~3.5.0",
+    "moment": "~2.8.3"
   }
 }

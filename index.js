@@ -307,7 +307,43 @@ Eurekapp = (function(clientConfig){
         viewName: 'index',
         query: null,
 
-        tableView: Ember.computed.alias('__modelMeta__.views.index.tableView'),
+        widgetRows: function() {
+            var rows = Ember.A();
+            var _this = this;
+            var widgetsConf = this.get('__modelMeta__.views.index.widgets') || Ember.A();
+            widgetsConf.forEach(function(row) {
+
+                // build CSS
+                var nbWidget = row.length;
+                var colSize = parseInt(12/nbWidget, 10);
+                var xs = nbWidget > 2 ? 12/2 : colSize;
+                var sm = nbWidget > 3 ? 12/3 : colSize;
+                var md = nbWidget > 4 ? 12/4 : colSize;
+                var lg = nbWidget > 6 ? 12/6 : colSize;
+                var css = 'col-xs-'+xs+' col-sm-'+sm+' col-md-'+md+' col-lg-'+lg;
+
+                rows.pushObject(row.map(function(conf) {
+                    if (!conf.css) {
+                        conf.css = css;
+                    }
+                    var widget = App.ModelWidget.create(conf);
+                    widget.set('modelMeta', _this.get('__modelMeta__'));
+                    return widget;
+                }));
+            });
+            // If no widget are defined, let's display a regular view
+            if (!rows.length) {
+                rows.pushObject(App.WidgetRow.create({
+                    content: Ember.A([App.ModelWidget.create({
+                        modelMeta: _this.get('__modelMeta__'),
+                        type: 'regularView'
+                    })])
+                }));
+            }
+            console.log('ooooo', rows.length);
+            return rows;
+        }.property('__modelMeta__.type'),
+        // tableView: Ember.computed.alias('__modelMeta__.views.index.tableView'),
 
         filters: function() {
             return this.get('__modelMeta__.views.index.filters') || [];
@@ -352,23 +388,25 @@ Eurekapp = (function(clientConfig){
         //     });
         // }.observes('query', 'currentSorting', '__modelMeta__.views.index.limit'),
 
-        facetedFields: function() {
-            // update facets
-            var _facetedFields = Ember.A();
-            this.get('__modelMeta__.facets').forEach(function(fieldName) {
-                var fieldPath;
-                var limit = 10;
-                if (Ember.isString(fieldName)) {
-                    fieldPath = fieldName;
-                } else {
-                    fieldPath = fieldName.field;
-                    fieldName = fieldName.label;
-                    limit = fieldName.limit || 10;
-                }
-                _facetedFields.pushObject({fieldPath: fieldPath, fieldName: fieldName, limit: limit});
-            });
-            return _facetedFields;
-        }.property('__modelMeta__.facets'),
+        // facetedFields: function() {
+        //     // update facets
+        //     var _facetedFields = Ember.A();
+        //     this.get('__modelMeta__.facets').forEach(function(fieldName) {
+        //         var fieldPath;
+        //         var limit = 10;
+        //         if (Ember.isString(fieldName)) {
+        //             fieldPath = fieldName;
+        //         } else {
+        //             fieldPath = fieldName.field;
+        //             fieldName = fieldName.label;
+        //             limit = fieldName.limit || 10;
+        //         }
+        //         _facetedFields.pushObject({fieldPath: fieldPath, fieldName: fieldName, limit: limit});
+        //     });
+        //     return _facetedFields;
+        // }.property('__modelMeta__.facets'),
+
+
 
         actions: {
             searchModel: function(query) {
@@ -1266,7 +1304,6 @@ Eurekapp = (function(clientConfig){
 
         first: function(query) {
             var that = this;
-            var modelType = this.get('type');
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint'), query, function(data){
                     var obj;
@@ -1282,6 +1319,20 @@ Eurekapp = (function(clientConfig){
             });
         },
 
+        count: function(query) {
+            var that = this;
+            if (!query) {
+                query = {};
+            }
+            return new Ember.RSVP.Promise(function(resolve, reject) {
+                Ember.$.getJSON(that.get('endpoint')+'/count', query).done(function(data){
+                    resolve(data.total);
+                }).fail(function(e) {
+                    return reject({error: e.statusText, status: e.status});
+                });
+            });
+        },
+
         facets: function(field, query) {
             if (!query) {
                 query = {};
@@ -1291,19 +1342,20 @@ Eurekapp = (function(clientConfig){
 
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 Ember.$.getJSON(that.get('endpoint')+'/facets/'+field, query).done(function(data){
-                    var results = Ember.A();
-                    data.results.forEach(function(item){
-                        var obj = that.get('model').create({
-                            content: item,
-                            __type__: modelType
-                        });
-                        results.push(obj);
-                    });
-                    var resultSet = App.ResultSet.create({
-                        type: modelType,
-                        content: results
-                    });
-                    return resolve(resultSet);
+                    var results = Ember.A(data.results);
+                    // data.results.forEach(function(item){
+                    //     var obj = that.get('model').create({
+                    //         content: item,
+                    //         __type__: modelType
+                    //     });
+                    //     results.push(obj);
+                    // });
+                    // var resultSet = App.ResultSet.create({
+                    //     type: modelType,
+                    //     content: results
+                    // });
+                    // return resolve(resultSet);
+                    return resolve(results);
                 }).fail(function(e) {
                     console.log('++++', e);
                     console.log('----xxxx', {error: e.statusText, status: e.status});
@@ -1380,6 +1432,10 @@ Eurekapp = (function(clientConfig){
         isI18n: function() {
             return !!this.get('schema').i18n;
         }.property('schema.i18n'),
+
+        isDate: function() {
+            return this.get('schema.type') === 'date';
+        }.property('schema.type'),
 
         relationModel: function() {
             if (this.get('isRelation')) {
@@ -1556,12 +1612,16 @@ Eurekapp = (function(clientConfig){
         }.observes('templateType')
     });
 
+
     /** index components **/
     App.ModelListMixin = Ember.Mixin.create({
         modelMeta: null,
         modelType: Ember.computed.alias('modelMeta.type'),
         query: null,
         model: null,
+        limit: null,
+        populate: null,
+        sortBy: null,
         isLoading: true,
 
         filters: function() {
@@ -1570,12 +1630,13 @@ Eurekapp = (function(clientConfig){
 
         sorting: function() {
             var _filters = [];
-            var sortBy = this.get('modelMeta.views.index.sortBy');
+            // var sortBy = this.get('modelMeta.views.index.sortBy');
+            var sortBy = this.get('sortBy');
             if (typeof(sortBy) === 'object') {
                 _filters = sortBy;
             }
             return _filters;
-        }.property('modelMeta.views.index.sortBy'),
+        }.property('sortBy'),
 
         defaultSorting: function() {
             return this.get('sorting').filterBy('default', true).objectAt(0);
@@ -1589,13 +1650,15 @@ Eurekapp = (function(clientConfig){
             var meta = this.get('modelMeta');
 
             // limit
-            var limit = meta.get('views.index.limit');
+            // var limit = meta.get('views.index.limit');
+            var limit = this.get('limit');
             if (limit) {
                 query._limit = limit;
             }
 
             // populate
-            query._populate = meta.get('indexViewPopulate');
+            // query._populate = meta.get('indexViewPopulate');
+            query._populate = this.get('populate');
 
             // sorting
             var sortBy = this.get('currentSorting');
@@ -1636,6 +1699,8 @@ Eurekapp = (function(clientConfig){
 
     App.ModelListTableComponent = Ember.Component.extend(App.TemplateMixin, App.ModelListMixin, {
         genericTemplateName: 'components/<generic_model>-list-table',
+        fields: null,
+        fieldsToDisplay: Ember.computed.alias('fields'),
 
         rows: function() {
             var results = Ember.A();
@@ -1652,10 +1717,6 @@ Eurekapp = (function(clientConfig){
             }
             return results;
         }.property('model.@each._contentChanged', 'fieldsToDisplay'),
-
-        fieldsToDisplay: function() {
-            return this.get('modelMeta.views.index.fields') || Ember.A();
-        }.property('modelMeta.views.index.fields'),
 
         header: function() {
             var _headerFields = Ember.A();
@@ -2230,15 +2291,28 @@ Eurekapp = (function(clientConfig){
             value = value.trim();
             value.split('&&').forEach(function(statement) {
                 var splited;
+                var op;
                 if (statement.indexOf('>') > -1) {
                     splited = statement.split('>');
-                    query[splited[0].trim()] = {'$gt': splited[1].trim()};
+                    op = splited[0].trim();
+                    if (!query[op]) {
+                        query[op] = {};
+                    }
+                    query[op]['$gt'] = splited[1].trim();
                 } else if (statement.indexOf('<') > -1) {
                     splited = statement.split('<');
-                    query[splited[0].trim()] = {'$lt': splited[1].trim()};
+                    op = splited[0].trim();
+                    if (!query[op]) {
+                        query[op] = {};
+                    }
+                    query[op]['$lt'] = splited[1].trim();
                 } else if (statement.indexOf('!=') > -1) {
                     splited = statement.split('!=');
-                    query[splited[0].trim()] = {'$ne': splited[1].trim()};
+                    op = splited[0].trim();
+                    if (!query[op]) {
+                        query[op] = {};
+                    }
+                    query[op]['$ne'] = splited[1].trim();
                 } else if (statement.indexOf('=') > -1) {
                     splited = statement.split('=');
                     query[splited[0].trim()] = splited[1].trim();
@@ -2259,16 +2333,128 @@ Eurekapp = (function(clientConfig){
     });
 
 
+    /*
+     *   Widgets
+     */
+
+    App.ModelWidget = Ember.Object.extend({
+        modelMeta: null,
+        type: null,
+
+        label: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.label');
+        }.property('modelMeta', 'type'),
+
+        field: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.field');
+        }.property('modelMeta', 'type'),
+
+        fields: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.fields') || Ember.A();
+        }.property('modelMeta', 'type'),
+
+        populate: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.populate');
+        }.property('modelMeta', 'type'),
+
+        sortBy: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.sortBy');
+        }.property('modelMeta', 'type'),
+
+        limit: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.limit');
+        }.property('modelMeta', 'type'),
+
+        startField: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.startField');
+        }.property('modelMeta', 'type'),
+
+        endField: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.endField');
+        }.property('modelMeta', 'type'),
+
+        contentField: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.contentField');
+        }.property('modelMeta', 'type'),
+
+        aggregationType: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.aggregationType');
+        }.property('modelMeta', 'type'),
+
+        isRegularView: function() {
+            return this.get('type') === 'regularView';
+        }.property('type'),
+
+        isTableView: function() {
+            return this.get('type') === 'tableView';
+        }.property('type'),
+
+        isTimeSeries: function() {
+            return this.get('type') === 'timeSeries';
+        }.property('type'),
+
+        isTimeline: function() {
+            return this.get('type') === 'timeline';
+        }.property('type'),
+
+        isFacetDonut: function() {
+            return this.get('type') === 'facetDonut';
+        }.property('type'),
+
+        isMatchingQueryDonut: function() {
+            return this.get('type') === 'matchingQueryDonut';
+        }.property('type')
+    });
+
+    App.WidgetRow = Ember.ArrayProxy.extend({
+        css: null,
+
+        columnCssClasses: function() {
+            console.log('ooooo', this.get('css'));
+            if (this.get('css')) {
+                return this.get('css');
+            }
+            var nbWidget = this.get('content').length;
+            var colSize = parseInt(12/nbWidget, 10);
+            var xs = nbWidget > 2 ? 12/2 : colSize;
+            var sm = nbWidget > 3 ? 12/3 : colSize;
+            var md = nbWidget > 4 ? 12/4 : colSize;
+            var lg = nbWidget > 6 ? 12/6 : colSize;
+            return 'col-xs-'+xs+' col-sm-'+sm+' col-md-'+md+' col-lg-'+lg;
+        }.property('content.@each', 'cssClasses')
+    });
+
     /** Faceting components */
 
-    App.FacetedFieldComponent = Ember.Component.extend({
+    App.ModelFacetWidgetComponent = Ember.Component.extend(App.TemplateMixin, {
         modelType: null,
+        genericTemplateName: 'components/<generic_model>-facet-widget',
         fieldPath: null,
         fieldName: null,
         limit: null,
         query: null,
         isLoading: true,
-        content: Ember.A(),
+        results: Ember.A(),
 
         sendQuery: function() {
             console.log('action sent !!!');
@@ -2286,14 +2472,364 @@ Eurekapp = (function(clientConfig){
             var modelType = this.get('modelType');
             var _this = this;
             App.db[modelType].facets(fieldPath, query).then(function(facets) {
-                _this.set('content', Ember.A(facets));
+                _this.set('results', Ember.A(facets));
                 _this.set('isLoading', false);
             }, function(e) {
                 alertify.error(e.error);
             });
         }.observes('fieldPath', 'query', 'modelType').on('init')
+    });
+
+    App.ModelTimeseriesWidgetComponent = Ember.Component.extend({
+        modelMeta: null,
+        modelType: Ember.computed.alias('modelMeta.type'),
+        fieldPath: null,
+        label: null,
+        aggregationType: null,
+        query: null,
+        isLoading: true,
+
+        chart: null,
+        results: Ember.A(),
+
+        renderGraph: function() {
+            console.log('renderGraph', this.get('results').toArray());
+            this.get('chart').setData(this.get('results').toArray());
+        }.observes('results.@each.queryCount'),
+
+        didInsertElement: function() {
+            var _this = this;
+            var chart = new Morris.Area({
+                element: _this.$(),
+                data: [],
+                resize: true,
+                // smooth: true,
+                behaveLikeLine: true,
+                xkey: 'facet',
+                ykeys: ['count', 'queryCount'],
+                labels: ['total', 'query'],
+                lineColors: ['#bbb', '#0BA462']
+            });
+            this.set('chart', chart);
+        },
+
+        sendQuery: function() {
+            console.log('action sent !!!');
+            // this.sendAction('action', query);
+        },
+
+        updateTotal: function() {
+            console.log('update total');
+            var query = this.get('query') || {};
+            var aggregationType = this.get('aggregationType');
+            if (aggregationType) {
+                query._aggregation = aggregationType;
+            }
+            var _this = this;
+            var modelType = this.get('modelType');
+            var fieldPath = this.get('fieldPath');
+            App.db[modelType].facets(fieldPath, query).then(function(data) {
+                var results = Ember.A(data.map(function(item) {
+                    item.queryCount = item.count;
+                    return item;
+                }));
+                _this.set('results', Ember.A(data));
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('modelType', 'fieldPath').on('init'),
+
+        updateContent: function() {
+            this.set('isLoading', true);
+            var query = this.get('query') || {};
+            console.log('observer update content');
+            if (!Ember.isEmpty(query)) {
+                console.log('update content');
+                query = Ember.copy(query);
+                var aggregationType = this.get('aggregationType');
+                if (aggregationType) {
+                    query._aggregation = aggregationType;
+                }
+                var modelType = this.get('modelType');
+                var fieldPath = this.get('fieldPath');
+                var _this = this;
+                App.db[modelType].facets(fieldPath, query).then(function(facets) {
+                    _this.get('results').forEach(function(item) {
+                        var value = facets.findBy('facet', item.facet);
+                        if (value) {
+                            value = value.count;
+                        } else {
+                            value = null;
+                        }
+                        item.queryCount = value;
+                    });
+                    console.log('===', _this.get('results'));
+                    _this.renderGraph(); // XXX
+                    // _this.set('results', Ember.A(facets));
+                    _this.set('isLoading', false);
+                }, function(e) {
+                    alertify.error(e.error);
+                });
+            }
+        }.observes('fieldPath', 'query', 'modelType')
+    });
+
+
+    App.ModelTimelineWidgetComponent = Ember.Component.extend({
+        modelMeta: null,
+        modelType: Ember.computed.alias('modelMeta.type'),
+        startField: null,
+        endField: null,
+        contentField: null,
+        chart: null,
+        dataset: new vis.DataSet(),
+        results: Ember.A(),
+
+        renderChart: function() {
+            var dataset = this.get('dataset');
+            var startField = this.get('startField');
+            var endField = this.get('endField');
+            var contentField = this.get('contentField');
+            dataset.clear();
+            var _this = this;
+            this.get('results').forEach(function(item) {
+                var data = {
+                    id: item.get('_id'),
+                    content: item.get(contentField),
+                    start: item.get(startField).toISOString()
+                };
+                if (item.get(endField)) {
+                    data.end = item.get(endField).toISOString();
+                } else {
+                    data.type = 'point';
+                }
+                dataset.add(data);
+            });
+            this.get('chart').fit();
+        }.observes('results.@each._id'),
+
+        didInsertElement: function() {
+            var container = this.$()[0];
+            var options = {clickToUse: true};
+            var chart = new vis.Timeline(container, this.get('dataset'), options);
+            this.set('chart', chart);
+        },
+
+        updateContent: function() {
+            this.set('isLoading', true);
+            var query = this.get('query') || {};
+            var modelType = this.get('modelType');
+            var _this = this;
+            // query._fields = [this.get('contentField'), this.get('startField'), this.get('endField')];
+            App.db[modelType].find(query).then(function(data) {
+                _this.set('results', data);
+                _this.set('isLoading', false);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('query', 'modelType').on('init')
 
     });
+
+    App.ModelTotalWidgetComponent = Ember.Component.extend(App.TemplateMixin, {
+        modelMeta: null,
+        modelType: Ember.computed.alias('modelMeta.type'),
+        genericTemplateName: 'components/<generic_model>-total-widget',
+        isLoading: true,
+        query: null,
+        total: null,
+
+        updateContent: function() {
+            this.set('isLoading', true);
+            var query = this.get('query') || {};
+            var modelType = this.get('modelType');
+            var _this = this;
+            App.db[modelType].count(query).then(function(total) {
+                _this.set('total', total);
+                _this.set('isLoading', false);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('query', 'modelType').on('init')
+    });
+
+    App.ModelFacetDonutWidgetComponent = Ember.Component.extend({
+        modelMeta: null,
+        modelType: Ember.computed.alias('modelMeta.type'),
+        fieldPath: null,
+        label: null,
+        aggregation: null,
+        query: null,
+        isLoading: true,
+        totalCount: null,
+
+        chart: null,
+        results: Ember.A(),
+
+        renderGraph: function() {
+            var totalCount = this.get('totalCount');
+            var results = this.get('results');
+            var data = [];
+            if (totalCount != null && results.length) {
+                results.forEach(function(item) {
+                    data.push({label: item.facet, value: item.count});
+                });
+                this.get('chart').setData(data);
+                this.get('chart').select(0);
+            }
+        }.observes('totalCount', 'results.@each.count'),
+
+        didInsertElement: function() {
+            var _this = this;
+            var chart = new Morris.Donut({
+                element: _this.$(),
+                data: [
+                    {label: 'loading data', value: 0},
+                ],
+                resize: true,
+                smooth: true,
+                formatter: function(y, data) {
+                    var percent = parseInt((y/_this.get('totalCount'))*100, 10);
+                    return y+' ('+percent+'%)';
+                }
+            });
+            chart.select(0);
+            this.set('chart', chart);
+        },
+
+        updateTotalCount: function() {
+            this.set('isLoading', true);
+            var modelType = this.get('modelType');
+            var _this = this;
+            var query = this.get('query') || {};
+            App.db[modelType].count(query).then(function(total) {
+                _this.set('totalCount', total);
+                _this.set('isLoading', false);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('modelType').on('init'),
+
+        updateResults: function() {
+            this.set('isLoading', true);
+            var fieldPath = this.get('fieldPath');
+            var aggregation = this.get('aggregation');
+            var query = this.get('query') || {};
+            query = Ember.copy(query);
+            if (aggregation) {
+                query._aggregation = aggregation;
+            }
+            var modelType = this.get('modelType');
+            var _this = this;
+            App.db[modelType].facets(fieldPath, query).then(function(facets) {
+                _this.set('results', Ember.A(facets));
+                _this.set('isLoading', false);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('fieldPath', 'query', 'modelType').on('init')
+    });
+
+    App.ModelMatchingQueryDonutWidgetComponent = Ember.Component.extend({
+        modelMeta: null,
+        modelType: Ember.computed.alias('modelMeta.type'),
+        query: null,
+        isLoading: true,
+        totalCount: null,
+        matchingCount: null,
+        chart: null,
+
+        renderGraph: function() {
+            var totalCount = this.get('totalCount');
+            var matchingCount = this.get('matchingCount');
+            if (totalCount != null && matchingCount != null) {
+                this.get('chart').setData([
+                    {label: 'matching items', value: matchingCount},
+                    {label: 'non matching items', value: totalCount - matchingCount}
+                ]);
+                this.get('chart').select(0);
+            }
+        }.observes('totalCount', 'matchingCount'),
+
+        didInsertElement: function() {
+            var _this = this;
+            var chart = new Morris.Donut({
+                element: _this.$(),
+                data: [
+                    {label: 'loading data...', value: 0},
+                ],
+                colors: ['#0BA462', '#ccc'],
+                resize: true,
+                smooth: true,
+                formatter: function(y, data) {
+                    var percent = parseInt((y/_this.get('totalCount'))*100, 10);
+                    if (isNaN(percent)) {
+                        return '';
+                    }
+                    return y+' ('+percent+'%)';
+                }
+            });
+            chart.select(0);
+            this.set('chart', chart);
+        },
+
+        sendQuery: function() {
+            console.log('action sent !!!');
+            // this.sendAction('action', query);
+        },
+
+        updateTotalCount: function() {
+            this.set('isLoading', true);
+            var modelType = this.get('modelType');
+            var _this = this;
+            App.db[modelType].count().then(function(total) {
+                _this.set('totalCount', total);
+                _this.set('isLoading', false);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('modelType').on('init'),
+
+        updateMatchingCount: function() {
+            this.set('isLoading', true);
+            var fieldPath = this.get('fieldPath');
+            var limit = this.get('limit');
+            var aggregation = this.get('aggregation');
+            var query = this.get('query') || {};
+            // if (limit) {
+            //     query._limit = limit;
+            // }
+            query = Ember.copy(query);
+            // if (aggregation) {
+                // query._aggregation = aggregation;
+            // }
+            var modelType = this.get('modelType');
+            var _this = this;
+            App.db[modelType].count(query).then(function(total) {
+                _this.set('matchingCount', total);
+                _this.set('isLoading', false);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('query', 'modelType').on('init')
+    });
+
+
+    // App.MapWidgetComponent = Ember.Component.extend({
+    //     map: null,
+
+    //     didInsertElement: function() {
+    //         var map = L.map('map').setView([51.505, -0.09], 13);
+
+    //         L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //             attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+    //             maxZoom: 18
+    //         }).addTo(map);
+
+    //         this.set('map', map);
+    //     }
+
+    // });
 
     /** Other components **/
 
