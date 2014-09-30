@@ -15,7 +15,7 @@
   "scripts": {
     "postinstall": "npm run build",
     "build": "./node_modules/.bin/grunt build",
-    "live": "./node_modules/.bin/grunt watch",
+    "live": "./node_modules/.bin/grunt live",
     "test": "echo \"See Eureka.tests for complete integrations tests\""
   },
   "author": "Namlook",
