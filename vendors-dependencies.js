@@ -26,6 +26,10 @@ module.exports = {
         "bower_components/morrisjs/morris.js",
         // vis.js
         'bower_components/vis/dist/vis.js',
+        // leaflet
+        'bower_components/leaflet/dist/leaflet.js',
+        // leaflets plugins
+        'bower_components/leaflet.markercluster/dist/leaflet.markercluster.js',
         // Eurekapp
         "bower_components/eurekapp/index.js",
         "bower_components/eurekapp/dist/templates.js"
@@ -44,6 +48,11 @@ module.exports = {
         "bower_components/morrisjs/morris.css",
         // vis.js
         'bower_components/vis/dist/vis.css',
+        // leaflet
+        'bower_components/leaflet/dist/leaflet.css',
+        // leaflets plugins
+        'bower_components/leaflet.markercluster/dist/MarkerCluster.css',
+        'bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css',
         // eurekapp
         "bower_components/eurekapp/dist/eurekapp.css"
     ]

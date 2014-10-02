@@ -326,7 +326,6 @@ function program8(depth0,data) {
   return buffer;
   }
 
-  data.buffer.push("\n");
   stack1 = helpers['if'].call(depth0, "fieldsets.length", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(7, program7, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n");
@@ -818,8 +817,6 @@ function program43(depth0,data) {
 function program45(depth0,data) {
   
   var buffer = '', stack1;
-  data.buffer.push("\n                ");
-  data.buffer.push(escapeExpression(helpers.log.call(depth0, "field", "field.isDate", "field", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0,depth0,depth0],types:["STRING","ID","ID"],data:data})));
   data.buffer.push("\n                ");
   stack1 = helpers['if'].call(depth0, "field.isDate", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(48, program48, data),fn:self.program(46, program46, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
@@ -1646,17 +1643,17 @@ function program12(depth0,data) {
   data.buffer.push(escapeExpression((helper = helpers.renderTitle || (depth0 && depth0.renderTitle),options={hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "model", options) : helperMissing.call(depth0, "renderTitle", "model", options))));
   data.buffer.push("\n                </h1>\n            </div>\n            <div class=\"eureka-document-description\">\n                <p>");
   data.buffer.push(escapeExpression((helper = helpers.renderDescription || (depth0 && depth0.renderDescription),options={hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data},helper ? helper.call(depth0, "model", options) : helperMissing.call(depth0, "renderDescription", "model", options))));
-  data.buffer.push("</p>\n            </div>\n        </div>\n    </div>\n\n    <ul class=\"nav nav-tabs\">\n        <li class=\"active\"><a href=\"#\">Informations</a></li>\n    </ul>\n\n    <ul class=\"eureka-actions nav nav-pills pull-right\">\n        ");
+  data.buffer.push("</p>\n            </div>\n        </div>\n    </div>\n\n\n\n    <ul class=\"nav nav-tabs\">\n        <li class=\"active\"><a href=\"#\">Informations</a></li>\n    </ul>\n\n    <ul class=\"eureka-actions nav nav-pills pull-right\">\n        ");
   stack1 = helpers.each.call(depth0, "modelAction", "in", "mainModelActions", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n        ");
   stack1 = helpers['if'].call(depth0, "secondaryModelActions.length", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(11, program11, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n    </ul>\n\n    ");
+  data.buffer.push("\n    </ul>\n\n    \n    ");
   data.buffer.push(escapeExpression((helper = helpers['model-display'] || (depth0 && depth0['model-display']),options={hash:{
     'model': ("model")
   },hashTypes:{'model': "ID"},hashContexts:{'model': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-display", options))));
-  data.buffer.push("\n</div>");
+  data.buffer.push("\n</div>\n");
   return buffer;
   
 })
@@ -1801,6 +1798,9 @@ function program12(depth0,data) {
   data.buffer.push("\n                ");
   stack1 = helpers['if'].call(depth0, "widget.isRegularView", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(23, program23, data),contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n                ");
+  stack1 = helpers['if'].call(depth0, "widget.isMap", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(25, program25, data),contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n            </div>\n        ");
   return buffer;
   }
@@ -1831,8 +1831,9 @@ function program15(depth0,data) {
     'query': ("query"),
     'contentField': ("widget.contentField"),
     'startField': ("widget.startField"),
-    'endField': ("widget.endField")
-  },hashTypes:{'modelMeta': "ID",'query': "ID",'contentField': "ID",'startField': "ID",'endField': "ID"},hashContexts:{'modelMeta': depth0,'query': depth0,'contentField': depth0,'startField': depth0,'endField': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-timeline-widget", options))));
+    'endField': ("widget.endField"),
+    'populate': ("widget.populate")
+  },hashTypes:{'modelMeta': "ID",'query': "ID",'contentField': "ID",'startField': "ID",'endField': "ID",'populate': "ID"},hashContexts:{'modelMeta': depth0,'query': depth0,'contentField': depth0,'startField': depth0,'endField': depth0,'populate': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-timeline-widget", options))));
   data.buffer.push("\n                ");
   return buffer;
   }
@@ -1891,6 +1892,22 @@ function program23(depth0,data) {
     'populate': ("widget.populate"),
     'sortBy': ("widget.sortBy")
   },hashTypes:{'modelMeta': "ID",'query': "ID",'limit': "ID",'populate': "ID",'sortBy': "ID"},hashContexts:{'modelMeta': depth0,'query': depth0,'limit': depth0,'populate': depth0,'sortBy': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "model-list", options))));
+  data.buffer.push("\n                ");
+  return buffer;
+  }
+
+function program25(depth0,data) {
+  
+  var buffer = '', helper, options;
+  data.buffer.push("\n                    ");
+  data.buffer.push(escapeExpression((helper = helpers['query-map-widget'] || (depth0 && depth0['query-map-widget']),options={hash:{
+    'modelMeta': ("__modelMeta__"),
+    'query': ("query"),
+    'latitudeField': ("widget.latitudeField"),
+    'longitudeField': ("widget.longitudeField"),
+    'limit': ("widget.limit"),
+    'groupMarkers': ("widget.groupMarkers")
+  },hashTypes:{'modelMeta': "ID",'query': "ID",'latitudeField': "ID",'longitudeField': "ID",'limit': "ID",'groupMarkers': "ID"},hashContexts:{'modelMeta': depth0,'query': depth0,'latitudeField': depth0,'longitudeField': depth0,'limit': depth0,'groupMarkers': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "query-map-widget", options))));
   data.buffer.push("\n                ");
   return buffer;
   }

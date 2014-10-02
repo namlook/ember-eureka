@@ -422,6 +422,43 @@ Eurekapp = (function(clientConfig){
     App.GenericModelDisplayController = Ember.ObjectController.extend(App.ActionControllerMixin, {
         __modelMeta__: null, // fill at initialization
         viewName: 'display',
+
+        widgetRows: function() {
+            var rows = Ember.A();
+            var _this = this;
+            var widgetsConf = this.get('__modelMeta__.views.index.widgets') || Ember.A();
+            widgetsConf.forEach(function(row) {
+
+                // build CSS
+                var nbWidget = row.length;
+                var colSize = parseInt(12/nbWidget, 10);
+                var xs = nbWidget > 2 ? 12/2 : colSize;
+                var sm = nbWidget > 3 ? 12/3 : colSize;
+                var md = nbWidget > 4 ? 12/4 : colSize;
+                var lg = nbWidget > 6 ? 12/6 : colSize;
+                var css = 'col-xs-'+xs+' col-sm-'+sm+' col-md-'+md+' col-lg-'+lg;
+
+                rows.pushObject(row.map(function(conf) {
+                    if (!conf.css) {
+                        conf.css = css;
+                    }
+                    var widget = App.ModelWidget.create(conf);
+                    widget.set('modelMeta', _this.get('__modelMeta__'));
+                    return widget;
+                }));
+            });
+            // If no widget are defined, let's display a regular view
+            // if (!rows.length) {
+            //     rows.pushObject(Ember.A([
+            //         App.ModelWidget.create({
+            //             modelMeta: _this.get('__modelMeta__'),
+            //             type: 'regularView'
+            //         })
+            //     ]));
+            // }
+            return rows;
+        }.property('__modelMeta__.type'),
+
         actions: {
             "delete": function() {
                 var _this = this;
@@ -2404,6 +2441,12 @@ Eurekapp = (function(clientConfig){
             return modelMeta.get('views.index.widgets.'+type+'.aggregationType');
         }.property('modelMeta', 'type'),
 
+        groupMarkers: function() {
+            var modelMeta = this.get('modelMeta');
+            var type = this.get('type');
+            return modelMeta.get('views.index.widgets.'+type+'.groupMarkers');
+        }.property('modelMeta', 'type'),
+
         isRegularView: function() {
             return this.get('type') === 'regularView';
         }.property('type'),
@@ -2418,6 +2461,10 @@ Eurekapp = (function(clientConfig){
 
         isTimeline: function() {
             return this.get('type') === 'timeline';
+        }.property('type'),
+
+        isMap: function() {
+            return this.get('type') === 'map';
         }.property('type'),
 
         isFacetDonut: function() {
@@ -2478,7 +2525,6 @@ Eurekapp = (function(clientConfig){
         results: Ember.A(),
 
         renderGraph: function() {
-            console.log('renderGraph', this.get('results').toArray());
             this.get('chart').setData(this.get('results').toArray());
         }.observes('results.@each.queryCount'),
 
@@ -2504,7 +2550,6 @@ Eurekapp = (function(clientConfig){
         },
 
         updateTotal: function() {
-            console.log('update total');
             var query = this.get('query') || {};
             var aggregationType = this.get('aggregationType');
             if (aggregationType) {
@@ -2527,9 +2572,7 @@ Eurekapp = (function(clientConfig){
         updateContent: function() {
             this.set('isLoading', true);
             var query = this.get('query') || {};
-            console.log('observer update content');
             if (!Ember.isEmpty(query)) {
-                console.log('update content');
                 query = Ember.copy(query);
                 var aggregationType = this.get('aggregationType');
                 if (aggregationType) {
@@ -2548,7 +2591,6 @@ Eurekapp = (function(clientConfig){
                         }
                         item.queryCount = value;
                     });
-                    console.log('===', _this.get('results'));
                     _this.renderGraph(); // XXX
                     // _this.set('results', Ember.A(facets));
                     _this.set('isLoading', false);
@@ -2566,6 +2608,7 @@ Eurekapp = (function(clientConfig){
         startField: null,
         endField: null,
         contentField: null,
+        populate: null,
         chart: null,
         dataset: new vis.DataSet(),
         results: Ember.A(),
@@ -2578,6 +2621,9 @@ Eurekapp = (function(clientConfig){
             dataset.clear();
             var _this = this;
             this.get('results').forEach(function(item) {
+                if (!contentField) {
+                    contentField = 'title';
+                }
                 var data = {
                     id: item.get('_id'),
                     content: item.get(contentField),
@@ -2602,9 +2648,13 @@ Eurekapp = (function(clientConfig){
 
         updateContent: function() {
             this.set('isLoading', true);
-            var query = this.get('query') || {};
             var modelType = this.get('modelType');
             var _this = this;
+            var query = this.get('query') || {};
+            query = Ember.copy(query);
+            if (this.get('populate')) {
+                query._populate = this.get('populate');
+            }
             // query._fields = [this.get('contentField'), this.get('startField'), this.get('endField')];
             App.db[modelType].find(query).then(function(data) {
                 _this.set('results', data);
@@ -2781,13 +2831,7 @@ Eurekapp = (function(clientConfig){
             var limit = this.get('limit');
             var aggregation = this.get('aggregation');
             var query = this.get('query') || {};
-            // if (limit) {
-            //     query._limit = limit;
-            // }
             query = Ember.copy(query);
-            // if (aggregation) {
-                // query._aggregation = aggregation;
-            // }
             var modelType = this.get('modelType');
             var _this = this;
             App.db[modelType].count(query).then(function(total) {
@@ -2800,21 +2844,173 @@ Eurekapp = (function(clientConfig){
     });
 
 
-    // App.MapWidgetComponent = Ember.Component.extend({
-    //     map: null,
+    App.QueryMapWidgetComponent = Ember.Component.extend({
+        modelMeta: null,
+        modelType: Ember.computed.alias('modelMeta.type'),
+        query: null,
+        latitudeField: null,
+        longitudeField: null,
+        limit: null,
+        groupMarkers: null,
 
-    //     didInsertElement: function() {
-    //         var map = L.map('map').setView([51.505, -0.09], 13);
+        classNames: ['eureka-map-widget'],
+        map: null,
+        results: null,
+        updateMap: false,
+        _markers: null,
 
-    //         L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //             attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-    //             maxZoom: 18
-    //         }).addTo(map);
+        renderMap: function() {
+            if (!this.get('updateMap')) {
+                return;
+            }
+            var _this = this;
+            var pinIcon = L.icon({
+                iconUrl: '/app/bower_components/leaflet/dist/images/marker-icon.png',
+                iconRetinaUrl: '/app/bower_components/leaflet/dist/images/marker-icon-2x.png',
+            });
+            var latLng = [];
 
-    //         this.set('map', map);
-    //     }
+            if (this.get('_markers')) {
+                this.get('map').removeLayer(this.get('_markers'));
+            }
 
-    // });
+            var markers;
+            if (this.get('groupMarkers')) {
+                markers = new L.MarkerClusterGroup();
+            } else {
+                markers = new L.FeatureGroup();
+            }
+
+            this.set('_markers', markers);
+
+            this.get('results').forEach(function(item) {
+                var latitudeField = _this.get('latitudeField');
+                var longitudeField = _this.get('longitudeField');
+
+                var latitude = item.get(latitudeField);
+                var longitude = item.get(longitudeField);
+
+                if (latitude && longitude) {
+                    latLng.push([latitude, longitude]);
+                    var marker = new L.marker([latitude, longitude], {icon: pinIcon});
+                    marker.bindPopup( '<a href="#/'+_this.get('modelType').toLowerCase()+'/'+item.get('_id')+'" target="_blank">'+item.get('_id')+'</a>' );
+                    markers.addLayer(marker);
+                }
+            });
+            if (latLng.length) {
+                this.$().show();
+                this.get('map').addLayer(markers);
+                this.get('map').fitBounds(latLng);
+            } else {
+                this.$().hide();
+            }
+            this.set('updateMap', false);
+        }.observes('updateMap'),
+
+        didInsertElement: function() {
+            var map = L.map(this.$()[0].id, {
+                center: [20.0, 5.0],
+                minZoom: 2,
+                zoom: 2
+            });
+
+            L.tileLayer( 'http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright" title="OpenStreetMap" target="_blank">OpenStreetMap</a> contributors | Tiles Courtesy of <a href="http://www.mapquest.com/" title="MapQuest" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png" width="16" height="16">',
+                subdomains: ['otile1','otile2','otile3','otile4']
+            }).addTo(map);
+
+            map.on('popupopen', function(e) {
+                var px = map.project(e.popup._latlng);
+                px.y -= e.popup._container.clientHeight/2;
+                map.panTo(map.unproject(px),{animate: true});
+            });
+
+            map.scrollWheelZoom.disable();
+
+            this.set('map', map);
+        },
+
+        willDestroy: function () {
+            if (this.get('map')) {
+                this.get('map').remove();
+            }
+        },
+
+        updateContent: function() {
+            this.set('isLoading', true);
+            var modelType = this.get('modelType');
+            var latitudeField = this.get('latitudeField');
+            var longitudeField = this.get('longitudeField');
+            var _this = this;
+            var query = this.get('query') || {};
+            query = Ember.copy(query);
+            query._limit = this.get('limit');
+            query._fields = [this.get(latitudeField), this.get(longitudeField)];
+            App.db[modelType].find(query).then(function(data) {
+                _this.set('results', data);
+                _this.set('isLoading', false);
+                _this.set('updateMap', true);
+            }, function(e) {
+                alertify.error(e.error);
+            });
+        }.observes('query', 'modelType').on('init')
+
+    });
+
+    App.ModelMapWidgetComponent = Ember.Component.extend({
+        model: null,
+        modelType: Ember.computed.alias('model.type'),
+        latitudeField: null,
+        longitudeField: null,
+        limit: null,
+
+        classNames: ['eureka-map-widget'],
+        map: null,
+
+        didInsertElement: function() {
+            var latitudeField = this.get('latitudeField');
+            var longitudeField = this.get('longitudeField');
+
+            var model = this.get('model');
+            var latitude = model.get(latitudeField);
+            var longitude = model.get(longitudeField);
+
+            this.$().hide();
+            if (latitude && longitude) {
+                this.$().show();
+                var _this = this;
+                var map = L.map(this.$()[0].id, {
+                    center: [20.0, 5.0],
+                    minZoom: 2,
+                    zoom: _this.get('zoom')
+                });
+
+                L.tileLayer( 'http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="http://osm.org/copyright" title="OpenStreetMap" target="_blank">OpenStreetMap</a> contributors | Tiles Courtesy of <a href="http://www.mapquest.com/" title="MapQuest" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png" width="16" height="16">',
+                    subdomains: ['otile1','otile2','otile3','otile4']
+                }).addTo(map);
+
+                var pinIcon = L.icon({
+                    iconUrl: '/app/bower_components/leaflet/dist/images/marker-icon.png',
+                    iconRetinaUrl: '/app/bower_components/leaflet/dist/images/marker-icon-2x.png',
+                });
+
+                var marker = new L.marker([latitude, longitude], {icon: pinIcon});
+                marker.addTo(map);
+                map.panTo([latitude, longitude],{animate: true});
+
+                map.scrollWheelZoom.disable();
+                this.set('map', map);
+            }
+        },
+
+        willDestroy: function () {
+            if (this.get('map')) {
+                this.get('map').remove();
+            }
+        }
+
+    });
 
     /** Other components **/
 

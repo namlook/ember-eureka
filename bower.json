@@ -31,6 +31,7 @@
     "jquery-textcomplete": "~0.2.3",
     "morrisjs": "~0.5.1",
     "vis": "~3.5.0",
-    "moment": "~2.8.3"
+    "moment": "~2.8.3",
+    "leaflet": "~0.7.3"
   }
 }

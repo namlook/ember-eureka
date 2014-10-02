@@ -129,7 +129,8 @@
                         query=query
                         contentField=widget.contentField
                         startField=widget.startField
-                        endField=widget.endField}}
+                        endField=widget.endField
+                        populate=widget.populate}}
                 {{/if}}
                 {{#if widget.isMatchingQueryDonut}}
                     {{model-matching-query-donut-widget modelMeta=__modelMeta__ query=query}}
@@ -155,6 +156,14 @@
                         limit=widget.limit
                         populate=widget.populate
                         sortBy=widget.sortBy}}
+                {{/if}}
+                {{#if widget.isMap}}
+                    {{query-map-widget modelMeta=__modelMeta__
+                        query=query
+                        latitudeField=widget.latitudeField
+                        longitudeField=widget.longitudeField
+                        limit=widget.limit
+                        groupMarkers=widget.groupMarkers}}
                 {{/if}}
             </div>
         {{/each}}
