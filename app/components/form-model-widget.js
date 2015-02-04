@@ -13,10 +13,15 @@ export default ModelWidget.extend({
     actions: {
         save: function() {
             var model = this.get('model');
+            var that = this;
             model.save().then(function(m) {
-                console.log('saaaaaved', m.get('_id'));
-                // TODO send action to controller for transition
+                that.sendAction('toControllerAction', {name: 'save', payload:m});
             });
+        },
+        cancel: function() {
+            var model = this.get('model');
+            model.rollback();
+            this.sendAction('toControllerAction', {name: 'cancel', payload: model});
         }
     },
 
