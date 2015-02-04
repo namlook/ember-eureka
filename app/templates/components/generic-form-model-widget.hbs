@@ -1,0 +1,10 @@
+
+<ul>
+{{#each field in model._fields}}
+    <li>{{form-property field=field}}</li>
+{{/each}}
+</ul>
+
+{{#unless isEmbedded}}
+    <button {{action 'save'}}>save</button>
+{{/unless}}

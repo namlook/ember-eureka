@@ -1,0 +1,8 @@
+
+<h1>{{model.title}}</h1>
+
+<ul>
+{{#each field in model._fields}}
+    <li><label>{{field.meta.label}}</label> {{display-property field=field}} </li>
+{{/each}}
+</ul>

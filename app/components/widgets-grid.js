@@ -1,0 +1,80 @@
+
+import Ember from 'ember';
+
+var defaultWidgetConfiguration = {
+    model: {
+        index: {
+            widgets: [
+                {type: 'display-model'}
+            ]
+        },
+        new: {
+            widgets: [
+                {type: 'form-model'}
+            ]
+        },
+        edit: {
+            widgets: [
+                {type: 'form-model'}
+            ]
+        }
+    },
+    collection: {
+        index: {
+            widgets: [
+                {type: 'list-collection'}
+            ]
+        }
+    }
+};
+
+export default Ember.Component.extend({
+
+    routeModel: null,
+    routeName: null,
+
+    modelMeta: function() {
+        return this.get('routeModel.meta');
+    }.property('routeModel.meta'),
+
+
+    _widgetsConfig: function() {
+        var widgetsConfig = Ember.Object.create(defaultWidgetConfiguration);
+
+        // we need the "widget's path" from the routeName:
+        // user.model.index -> model.index
+        var path = this.get('routeName').split('.').slice(1).join('.');
+        var userConfig = this.get('modelMeta.views.'+path);
+
+        if (userConfig) {
+            widgetsConfig.set(path, userConfig);
+        }
+
+        return widgetsConfig.get(path+'.'+'widgets') || Ember.A();
+    }.property('modelMeta.views'),
+
+
+    widgetsConfig: function() {
+        var results = Ember.A();
+        var that = this;
+
+        this.get('_widgetsConfig').forEach(function(widget) {
+
+            // we will need the full component name, let's add it here
+            var componentName = widget.type+'-widget';
+            widget.componentName = componentName;
+            var widgetConf = Ember.Object.create(widget);
+
+            if (!that.container.resolve('component:'+componentName)) {
+                console.error('component', componentName, 'not found, please create it.');
+            }
+
+            results.pushObject(widgetConf);
+        });
+        return results;
+    }.property('_widgetsConfig'),
+
+    // _initializeGrid: function() {
+    // }.on('didInsertElement')
+
+});

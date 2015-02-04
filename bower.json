@@ -1,37 +1,17 @@
 {
-  "name": "eurekapp",
-  "version": "0.0.0",
-  "authors": [
-    "namlook <n.namlook@gmail.com>"
-  ],
-  "moduleType": [
-    "node"
-  ],
-  "main": "index.js",
-  "license": "MIT",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests",
-    "gulpfile.js",
-    "package.json",
-    "templates"
-  ],
+  "name": "ember-eureka",
   "dependencies": {
-    "ember": "~1.7.0",
-    "normalize-css": "~3.0.1",
-    "bootstrap": "~3.1.1",
-    "typeahead.js": "~0.10.2",
-    "pickadate": "~3.5.2",
-    "alertify.js": "~0.3.11",
-    "jQuery-Fakecrop": "VuongN/jQuery-Fakecrop",
-    "jquery-textcomplete": "~0.2.3",
-    "morrisjs": "~0.5.1",
-    "vis": "~3.5.0",
-    "moment": "~2.8.3",
-    "leaflet": "~0.7.3"
+    "handlebars": "~1.3.0",
+    "jquery": "^1.11.1",
+    "ember": "1.8.1",
+    "ember-data": "1.0.0-beta.12",
+    "ember-resolver": "~0.1.11",
+    "loader.js": "ember-cli/loader.js#1.0.1",
+    "ember-cli-shims": "ember-cli/ember-cli-shims#0.0.3",
+    "ember-cli-test-loader": "rwjblue/ember-cli-test-loader#0.0.4",
+    "ember-load-initializers": "ember-cli/ember-load-initializers#0.0.2",
+    "ember-qunit": "0.1.8",
+    "ember-qunit-notifications": "0.0.5",
+    "qunit": "~1.17.1"
   }
 }
