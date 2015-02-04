@@ -13,6 +13,11 @@ export default Ember.Object.extend({
     }.on('init'),
 
     _triggerModelChanges: function() {
-        this.get('model')._triggerFieldChanges(this, this.get('values'));
+        var values = this.get('values');
+        var meta = this.get('meta');
+        if (values.length && !meta.get('isRelation')) {
+            values = values.mapBy('value');
+        }
+        this.get('model')._triggerFieldChanges(this, values);
     }.observes('values.[]')
 });

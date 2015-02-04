@@ -17,5 +17,13 @@
         {{/if}}
     {{/if}}
 {{else}}
-    {{field.value}}
+    {{#if field.meta.isMulti}}
+    <ul>
+        {{#each fieldValue in field.values}}
+            <li>{{fieldValue.value}}</li>
+        {{/each}}
+    </ul>
+    {{else}}
+        {{field.value}}
+    {{/if}}
 {{/if}}

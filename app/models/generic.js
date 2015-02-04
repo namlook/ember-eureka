@@ -123,7 +123,6 @@ export default Ember.ObjectProxy.extend({
 
 
     save: function() {
-        // TOO
         this._resetContentChanges();
         this._fillInitialContent();
         var pojo = this.toPojo();
@@ -181,11 +180,7 @@ export default Ember.ObjectProxy.extend({
                 }
 
             } else { // regular value
-                if (isMulti) {
-                    pojo[fieldName] = contentValue.mapBy('value');
-                } else {
-                    pojo[fieldName] = contentValue;
-                }
+                pojo[fieldName] = contentValue;
             }
         });
         return pojo;
