@@ -1,4 +1,4 @@
-import TypeaheadInput from 'ember-typeahead-input/typeahead-input';
+import TypeaheadInput from 'ember-typeahead-input';
 
 
 /** The TypeaheadInput component takes its configuration
