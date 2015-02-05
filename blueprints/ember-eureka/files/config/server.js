@@ -6,6 +6,7 @@ module.exports = {
     name: pkg.name,
     version: 1,
     port: 4000,
+    enableCORS: true,
     database: {
         adapter: 'rdf',
         config: {
