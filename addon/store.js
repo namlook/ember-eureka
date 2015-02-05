@@ -136,7 +136,6 @@ export default Ember.Object.extend({
         var resourceEndpoint = this.get('resourceEndpoint');
         var postData = {payload: JSON.stringify(pojo)};
         var that = this;
-        console.log(postData);
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.post(resourceEndpoint, postData, function(data) {
                 var record = that.createRecord(data.object);
