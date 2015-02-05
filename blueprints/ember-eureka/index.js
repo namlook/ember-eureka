@@ -39,11 +39,16 @@ module.exports = {
 
     return this.addPackagesToProject([
         {name: 'namlook/eurekapi'},
+        {name: 'ember-typeahead-input'},
         {name: 'ember-dynamic-component'},
         {name: 'ember-bootstrap'}
     ]).then(function() {
-        ui.writeLine('  Running the ember-bootstrap blueprint');
+        ui.writeLine('  Running ember-bootstrap blueprints');
         options.args = ['ember-bootstrap'];
+        return blueprintTask.run(options);
+    }).then(function() {
+        ui.writeLine('  Running ember-typeahead-input blueprints');
+        options.args = ['ember-typeahead-input'];
         return blueprintTask.run(options);
     });
   }

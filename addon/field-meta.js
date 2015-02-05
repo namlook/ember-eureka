@@ -23,6 +23,14 @@ export default Ember.ObjectProxy.extend({
 
     isMulti: function() {
         return !!this.get('content.multi');
-    }.property('content.multi')
+    }.property('content.multi'),
+
+    isText: function() {
+        return ['text', 'string'].indexOf(this.get('type')) > -1;
+    }.property('type'),
+
+    isNumber: function() {
+        return ['float', 'double', 'integer', 'number'].indexOf(this.get('type')) > -1;
+    }.property('type')
 
 });
