@@ -156,6 +156,12 @@ export default Ember.ObjectProxy.extend({
                 if (isMulti) {
                     pojos = [];
                     contentValue.forEach(function(relation) {
+
+                        // deal with PromiseProxy objects
+                        if (Ember.get(relation, 'promise')) {
+                            relation = relation.get('content');
+                        }
+
                         if (relation.toPojo !== undefined) {
                             if (Ember.get(relation, '_id')) {
                                 pojos.push({
@@ -172,6 +178,12 @@ export default Ember.ObjectProxy.extend({
                     pojo[fieldName] = pojos;
 
                 } else { // single-relation
+
+                    // deal with PromiseProxy objects
+                    if (Ember.get(contentValue, 'promise')) {
+                        contentValue = contentValue.get('content');
+                    }
+
                     if (contentValue.toPojo !== undefined) {
                         pojo[fieldName] = contentValue.toPojo();
                     } else {

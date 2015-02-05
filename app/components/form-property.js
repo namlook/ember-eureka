@@ -41,7 +41,7 @@ export default Property.extend({
         },
         cancelRelation: function() {
             var field = this.get('field');
-            if (field.get('value.isFulfilled') !== undefined) {
+            if (field.get('value.promise') !== undefined) {
                 this.get('field.value.content').rollback(); // it's a proxy-promise
             } else {
                 this.get('field.value').rollback();
@@ -56,7 +56,7 @@ export default Property.extend({
             var field = this.get('field');
             var relation;
 
-            if (field.get('value.isFulfilled') !== undefined) {
+            if (field.get('value.promise') !== undefined) {
                 relation = field.get('value.content');  // it's a proxy-promise
             } else {
                 relation = field.get('value');
