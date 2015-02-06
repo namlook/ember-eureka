@@ -5,24 +5,24 @@ var defaultWidgetConfiguration = {
     model: {
         index: {
             widgets: [
-                {type: 'display-model'}
+                {type: 'model-display'}
             ]
         },
         new: {
             widgets: [
-                {type: 'form-model'}
+                {type: 'model-form'}
             ]
         },
         edit: {
             widgets: [
-                {type: 'form-model'}
+                {type: 'model-form'}
             ]
         }
     },
     collection: {
         index: {
             widgets: [
-                {type: 'list-collection'}
+                {type: 'collection-list'}
             ]
         }
     }
@@ -61,7 +61,7 @@ export default Ember.Component.extend({
         this.get('_widgetsConfig').forEach(function(widget) {
 
             // we will need the full component name, let's add it here
-            var componentName = widget.type+'-widget';
+            var componentName = 'widget-'+widget.type;
             widget.componentName = componentName;
             var widgetConf = Ember.Object.create(widget);
 

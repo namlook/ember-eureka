@@ -3,7 +3,7 @@ import {
   test
 } from 'ember-qunit';
 
-moduleForComponent('display-model-widget', 'DisplayModelWidgetComponent', {
+moduleForComponent('widget-model-display', 'WidgetModelDisplayComponent', {
   // specify the other units that are required for this test
   // needs: ['component:foo', 'helper:bar']
 });

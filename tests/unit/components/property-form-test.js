@@ -3,7 +3,7 @@ import {
   test
 } from 'ember-qunit';
 
-moduleForComponent('form-field-widget', 'FormFieldWidgetComponent', {
+moduleForComponent('property-form', 'PropertyFormComponent', {
   // specify the other units that are required for this test
   // needs: ['component:foo', 'helper:bar']
 });

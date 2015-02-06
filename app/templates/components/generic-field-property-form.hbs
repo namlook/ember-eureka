@@ -12,7 +12,7 @@
                 {{#each relation in field.values}}
                     {{#if relation._ui.editing}}
                         <li>
-                            {{form-model-widget routeModel=relation isEmbedded=true}}
+                            {{widget-model-form routeModel=relation isEmbedded=true}}
                             {{#if relation._syncNeeded}}
                                 <button {{action 'cancelRelations' relation}}> cancel </button>
                                 <button {{action 'doneRelations' relation}}> save </button>
@@ -37,7 +37,7 @@
                 loading...
             {{else}}
                 {{#if field.editing}}
-                    {{form-model-widget routeModel=field.value isEmbedded=true}}
+                    {{widget-model-form routeModel=field.value isEmbedded=true}}
                     {{#if field.value._syncNeeded}}
                         <button {{action 'cancelRelation'}}> cancel </button>
                         <button {{action 'doneRelation'}}> save </button>
