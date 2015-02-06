@@ -38,12 +38,20 @@ export default Ember.Component.extend({
 
     widgetName: function() {
         /** hack : get the name of the component class **/
-        return this.constructor.toString().split('@')[1].split(':')[1];
+        var name = this.constructor.toString().split('@')[1].split(':')[1];
+        if (!name) {
+            console.error('cannot load widget name from', this.constructor.toString());
+        }
+        return name;
     }.property(),
 
 
     defaultLayout: Ember.computed(function() {
         var widgetName = this.get('widgetName');
+        var modelType = this.get('modelType');
+        if (!modelType) {
+            console.error('cannot load widget: modelType is null');
+        }
         var dasherizedModelType = this.get('modelType').dasherize();
         if (this.container.resolve('template:components/'+dasherizedModelType+'-'+widgetName)) {
             widgetName = dasherizedModelType+'-'+widgetName;
