@@ -16,7 +16,7 @@ export default Ember.Component.extend({
     classNameBindings: ['bsColumns'],
 
     bsColumns: function() {
-        var columns = this.get('config.columns');
+        var columns = this.get('config.columns') || '12';
         return 'col-sm-'+columns;
     }.property('config.columns'),
 
