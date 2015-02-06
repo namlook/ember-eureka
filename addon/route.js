@@ -22,12 +22,13 @@ export default Ember.Route.extend({
     renderTemplate: function() {
         this._super(this, arguments);
 
+        var path = this.get('name').split('.').join('/');
+
         // if the template doesn't exists, we render the generic template
         if (!this.container.resolve('template:'+path)) {
 
             var routeType = this.get('routeType');
             var dasherizedModelType = this.get('modelType').dasherize();
-            var path = this.get('name').split('.').join('/');
 
             this.render('_widgets', {                     // render the template '_widgets'
                 into: dasherizedModelType+'.'+routeType,  // into this template (ex: `user.collection`)
