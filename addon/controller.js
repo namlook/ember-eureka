@@ -5,6 +5,17 @@ export default Ember.Controller.extend({
 
     currentRouteName: Ember.computed.alias('controllers.application.currentRouteName'),
 
+    /** returns the parent of the route :
+     * if the currentRouteName is `user.model.edit`,
+     * the currentRouteParentName is `user.model`
+     *
+     * This is used to load the correct widgets:
+     *  `user.model.widgets` or user.mode.edit.widgets`
+     */
+    currentRouteParentName: function() {
+        return this.get('currentRouteName').split('.').slice(0, -1).join('.');
+    }.property('currentRouteName'),
+
     meta: function() {
         return this.get('model.meta');
     }.property('model.meta'),
