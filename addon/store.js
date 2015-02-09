@@ -1,52 +1,123 @@
+import Ember from 'ember';
+import ModelMeta from './model-meta';
+
+/** computed property function for relation fields
+ */
+var _relationCPFunction = function(fieldMeta) {
+    var relationComputedFunction;
+    var fieldName = fieldMeta.get('title');
+
+    // deals with multi relation field
+    if (fieldMeta.get('isMulti')) {
+
+        // "this" represents the model
+        relationComputedFunction = function(key, value) {
+            // getter
+            if (arguments.length === 1) {
+                var db = this.get('meta.store.db');
+                var val = this.get('content.'+fieldName);
+                if (val && val.length) {
+                    var relationIds = this.get('content.'+fieldName).mapBy('_id');
+                    var relationType = this.get('meta.'+fieldName+'Field.type');
+                    return db[relationType].find({_id: {$in: relationIds}});
+                }
+
+            // setter
+            } else {
+                this.setField(fieldName, value);
+            }
+        }.property('content.'+fieldName);
+
+    } else {
+
+        // "this" represents the model
+        relationComputedFunction = function(key, value) {
+
+            // getter
+            if (arguments.length === 1) {
+                var db = this.get('meta.store.db');
+                var relationId = this.get('content.'+fieldName+'._id');
+                if (relationId) {
+                    var relationType = this.get('meta.'+fieldName+'Field.type');
+                    return db[relationType].first({_id: relationId});
+                }
+
+            // setter
+            } else {
+                this.setField(fieldName, value);
+            }
+        }.property('content.'+fieldName);
+    }
+    return relationComputedFunction;
+};
+
+
+/** computed property function for regular fields
+ */
+var _regularCPFunction = function(fieldMeta) {
+
+    // building the computed property function
+    // "this" represents the model
+    var fieldName = fieldMeta.get('title');
+    var isBoolean = fieldMeta.get('isBoolean');
+    var fieldComputedFunction = function(key, value) {
+
+        // getter
+        if (arguments.length === 1) {
+            var val = this.get('content.'+fieldName);
+            if (isBoolean) {
+                val = !!val;
+            }
+            return val;
+
+        // setter
+        } else {
+            if (isBoolean) {
+                value = !!value;
+            } else if (value === '') {
+                value = undefined;
+            }
+            this.setField(fieldName, value);
+            return value;
+        }
+    }.property('content.'+fieldName);
+
+    return fieldComputedFunction;
+};
+
 
 /** A store is like a model instance factory.
  *  Its purpose is to deal with the stored data
  */
-
-import Ember from 'ember';
-import ModelMeta from './model-meta';
-
 export default Ember.Object.extend({
     db: null,
     modelType: null,
     modelClass: null,
     modelStructure: null,
 
-    /** build computed property for all relations
-     * this computed property will return a promise
-     * will all the relation data
+    /** build computed property for all structure's fields
+     * If the field is a relation field, the computed property will
+     * return a promise, otherwise, the value from the content
      */
-    _addRelationComputedPropertiesToModelClass: function() {
+    _buildComputedPropertiesFromStructure: function() {
         var computedProperties = {};
-        var relationComputedFunction;
-        var modelMeta = this.get('modelMeta');
-        this.get('modelMeta.relationFieldNames').forEach(function(fieldname) {
-            var fieldMeta = modelMeta.get(fieldname+'Field');
-            if (fieldMeta.get('isMulti')) {
+        var computedFunction;
+        var that = this;
+        this.get('modelMeta.fieldNames').forEach(function(fieldName) {
 
-                relationComputedFunction = function() {
-                    var db = this.get('meta.store.db');
-                    var value = this.get('content.'+fieldname);
-                    if (value && value.length) {
-                        var relationIds = this.get('content.'+fieldname).mapBy('_id');
-                        var relationType = this.get('meta.'+fieldname+'Field.type');
-                        return db[relationType].find({_id: {$in: relationIds}});
-                    }
-                }.property('content.'+fieldname);
+            var fieldMeta = that.get('modelMeta.'+fieldName+'Field');
 
+            if (fieldMeta.get('isRelation')) {
+                computedFunction = _relationCPFunction(fieldMeta);
             } else {
-
-                relationComputedFunction = function() {
-                    var db = this.get('meta.store.db');
-                    var relationId = this.get('content.'+fieldname+'._id');
-                    if (relationId) {
-                        var relationType = this.get('meta.'+fieldname+'Field.type');
-                        return db[relationType].first({_id: relationId});
-                    }
-                }.property('content.'+fieldname);
+                computedFunction = _regularCPFunction(fieldMeta);
             }
-            computedProperties[fieldname] = relationComputedFunction;
+
+            // set the function
+            computedProperties[fieldName] = computedFunction;
         });
+
+        // update the model class
         this.get('modelClass').reopen(computedProperties);
     }.observes('modelClass').on('init'),
 
@@ -68,7 +139,10 @@ export default Ember.Object.extend({
     }.property('modelType'),
 
     createRecord: function(record) {
-        record = record || Ember.Object.create({});
+        if (record === undefined) {
+            record = {};
+        }
+        record = Ember.Object.create(record);
         var modelMeta = this.get('modelMeta');
         return this.get('modelClass').create({
             content: record,

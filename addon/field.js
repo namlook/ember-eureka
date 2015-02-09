@@ -6,7 +6,12 @@ export default Ember.Object.extend({
     value: null,
     model: null,
 
+    /** observes the value and update the
+     * model content if needed
+     */
     _valueObserver: function() {
-        this.get('model')._triggerFieldChanges(this, this.get('value'));
+        var fieldName = this.get('meta.title');
+        var value = this.get('value');
+        this.set('model.'+fieldName, value);
     }.observes('value'),
 });

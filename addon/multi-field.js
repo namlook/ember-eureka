@@ -12,12 +12,18 @@ export default Ember.Object.extend({
         }
     }.on('init'),
 
-    _triggerModelChanges: function() {
+
+    /** observes the values and update the model content
+     * if needed
+     */
+    _valuesObserver: function() {
         var values = this.get('values');
+        var fieldName = this.get('meta.title');
         var meta = this.get('meta');
         if (values.length && !meta.get('isRelation')) {
-            values = values.mapBy('value');
+            values = values.mapBy('value').compact();
+
         }
-        this.get('model')._triggerFieldChanges(this, values);
-    }.observes('values.[]')
+        this.set('model.'+fieldName, values);
+    }.observes('values.@each.value')
 });

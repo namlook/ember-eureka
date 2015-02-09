@@ -31,6 +31,9 @@ export default Ember.ObjectProxy.extend({
 
     isNumber: function() {
         return ['float', 'double', 'integer', 'number'].indexOf(this.get('type')) > -1;
-    }.property('type')
+    }.property('type'),
 
+    isBoolean: function() {
+        return ['bool', 'boolean'].indexOf(this.get('type')) > -1;
+    }.property('type')
 });

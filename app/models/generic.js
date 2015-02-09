@@ -25,34 +25,9 @@ export default Ember.ObjectProxy.extend({
     },
 
 
-    /** update the content from the field's values.
-     * This is done by observing the `_contentChanges.count` attribute
-     * updated by the fields via the `_triggerFieldChanges` method
-     *
-     * field -> _triggerFieldChanges -> _contentChanges.count++ -> _updateContent
+    /** returns the number of changes of the content
      */
-    _updateContent: function() {
-        var count = this.get('_contentChanges.count');
-        if (count > 0) {
-            var fieldTitle = this.get('_contentChanges.fieldName');
-            var fieldValue = this.get('_contentChanges.value');
-            this.set('content.'+fieldTitle, fieldValue);
-        }
-    }.observes('_contentChanges.count'),
-
-
-    _triggerFieldChanges: function(field, value) {
-        this.set('_contentChanges.fieldName', field.get('meta.title'));
-        this.set('_contentChanges.value', value);
-        this.incrementProperty('_contentChanges.count');
-    },
-
-
-    /** returns true if the content has changed
-     */
-    _hasChanged: function() {
-        return this.get('_contentChanges.count') > 0;
-    }.property('_contentChanges.count'),
+    _hasChanged: Ember.computed.alias('_contentChanges.count'),
 
 
     /** returns true if the object is has a footprint on a database
@@ -61,6 +36,26 @@ export default Ember.ObjectProxy.extend({
     _syncNeeded: function() {
         return this.get('_hasChanged') && !!this.get('content._id');
     }.property('_hasChanged', 'content._id'),
+
+
+    /** update the value of a field.
+     * This method trigger the `_contentChanges.count` attribute.
+     * In order to track the model's content changes, make sure
+     * you are using this method to set a field's value.
+     *
+     * Note that you can set the value directly via the computed
+     * property ; so the following two examples are equal:
+     *
+     *   blogPost.setField('author', 'Namlook');
+     *
+     *   blogPost.set('author', 'Namlook');
+     */
+    setField: function(fieldName, value) {
+        this.set('content.'+fieldName, value);
+        this.set('_contentChanges.fieldName', fieldName);
+        this.set('_contentChanges.value', value);
+        this.incrementProperty('_contentChanges.count');
+    },
 
 
     _initialContent: null,
@@ -95,7 +90,6 @@ export default Ember.ObjectProxy.extend({
     _ui: Ember.computed(function() {
         return Ember.create(null);
     }),
-
 
     /** build the fields list from the meta informations
      * This computed property watches the `_reloadFields` attribute
@@ -139,7 +133,7 @@ export default Ember.ObjectProxy.extend({
         var fieldMeta, isRelation, isMulti, contentValue;
 
         // force to update the content from the fields' values
-        this._updateContent();
+        // this._updateContent();
 
         // iterate over each content attributes and get the pojo
         // from each relations
@@ -211,7 +205,7 @@ export default Ember.ObjectProxy.extend({
             that.set('content.'+fieldTitle, oldValue);
         });
         this._resetContentChanges();
-        this._triggerReloadFields();
+        // this._triggerReloadFields();
     },
 
 
