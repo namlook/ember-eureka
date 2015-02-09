@@ -1,7 +1,12 @@
 <div class="container-fluid eureka-dashboard">
   <div class="row">
     {{#each widgetConf in widgetsConfig}}
-        {{dynamic-component type=widgetConf.componentName routeModel=routeModel config=widgetConf toControllerAction="toControllerAction"}}
+        {{dynamic-component
+            type=widgetConf.componentName
+            application=application
+            routeModel=routeModel
+            config=widgetConf
+            toControllerAction="toControllerAction"}}
     {{/each}}
     </div>
 </div>

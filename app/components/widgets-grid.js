@@ -31,7 +31,14 @@ var defaultWidgetConfiguration = {
 export default Ember.Component.extend({
 
     routeModel: null,
+    application: null,
+
+
+    /** the routeName is used to fetch the related widget
+     * configuration from the structure (si `_widgetsConfig`)
+     */
     routeName: null,
+
 
     modelMeta: function() {
         return this.get('routeModel.meta');

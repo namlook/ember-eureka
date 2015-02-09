@@ -4,6 +4,7 @@ export default Ember.Controller.extend({
     needs: ['application'],
 
     currentRouteName: Ember.computed.alias('controllers.application.currentRouteName'),
+    application: Ember.computed.alias('controllers.application'),
 
     /** returns the parent of the route :
      * if the currentRouteName is `user.model.edit`,
@@ -37,6 +38,7 @@ export default Ember.Controller.extend({
          *   this.sendAction('toControllerAction', {name: 'save', payload: model});
          */
         toControllerAction: function(action) {
+            console.log('received action', action);
             if (action.name) {
                 this.send(action.name, action.payload);
             } else {

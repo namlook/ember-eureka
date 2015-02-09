@@ -20,13 +20,14 @@ export default Ember.Component.extend({
      */
     config: null,
 
+    routeModel: null,
+    application: null,
+
     bsColumns: function() {
         var columns = this.get('config.columns') || '12';
         return 'col-sm-'+columns;
     }.property('config.columns'),
 
-
-    routeModel: null,
 
     modelMeta: function() {
         return this.get('routeModel.meta');
