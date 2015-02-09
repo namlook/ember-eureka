@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import Property from 'ember-eureka/property';
 import isEmpty from 'ember-eureka/utils/is-empty';
 
@@ -84,7 +85,7 @@ export default Property.extend({
         },
         addValue: function() {
             var field = this.get('field');
-            field.get('values').pushObject({value: null});
+            field.get('values').pushObject(Ember.Object.create({value: null}));
         },
 
         removeValue: function(value) {
