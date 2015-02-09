@@ -14,7 +14,10 @@ var getRoutes = function(routeType, modelType) { // model or collection
     if (modelType) {
         views = config.APP.structure.models[modelType].views;
         if (views) {
-            routes = Ember.keys(Ember.get(views, routeType));
+            var routeTypeView = Ember.get(views, routeType);
+            if (routeTypeView) {
+                routes = Ember.keys(routeTypeView);
+            }
         }
     } else {
         views = config.APP.structure.application.views;
