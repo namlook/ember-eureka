@@ -1,5 +1,7 @@
 import Widget from 'ember-eureka/widget';
 
-// TODO to be deleted ?
-
-export default Widget.extend({});
+export default Widget.extend({
+    model: function() {
+        return this.get('routeModel');
+    }.property('routeModel')
+});

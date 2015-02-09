@@ -74,6 +74,7 @@ export default Ember.Component.extend({
         return results;
     }.property('_widgetsConfig'),
 
+
     actions: {
         // forwards the actions to the parent component (until the controller)
         toControllerAction: function(actionName) {
