@@ -14,18 +14,9 @@ import Ember from 'ember';
 export default Ember.Component.extend({
     field: null,
 
-    fieldMeta: function() {
-        return this.get('field.meta');
-    }.property('field.meta'),
-
-    modelMeta: function() {
-        return this.get('fieldMeta.modelMeta');
-    }.property('fieldMeta.modelMeta'),
-
-    modelType: function() {
-        return this.get('modelMeta.modelType');
-    }.property('modelMeta.modelType'),
-
+    fieldMeta: Ember.computed.alias('field.meta'),
+    modelMeta: Ember.computed.alias('fieldMeta.modelMeta'),
+    modelType: Ember.computed.alias('modelMeta.modelType'),
 
     _componentName: function() {
         /** hack : get the name of the component class **/

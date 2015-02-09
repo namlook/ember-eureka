@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import TypeaheadInput from 'ember-typeahead-input';
 
 
@@ -56,14 +57,8 @@ export default TypeaheadInput.extend({
     field: null,
 
 
-    fieldMeta: function() {
-        return this.get('field.meta');
-    }.property('field.meta'),
-
-
-    fieldType: function() {
-        return this.get('fieldMeta.type');
-    }.property('fieldMeta.type'),
+    fieldMeta: Ember.computed.alias('field.meta'),
+    fieldType: Ember.computed.alias('fieldMeta.type'),
 
 
     searchKey: function() {

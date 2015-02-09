@@ -15,21 +15,11 @@ export default Ember.Component.extend({
         return ['boolean', 'bool'].indexOf(this.get('fieldMeta.type')) > -1;
     }.property('fieldMeta.type'),
 
-    isDate: function() {
-        return this.get('fieldMeta.type') === 'date';
-    }.property('fieldMeta.type'),
+    isDate: Ember.computed.equal('fieldMeta.type', 'date'),
+    isDateTime: Ember.computed.equal('fieldMeta.type', 'datetime'),
+    isTime: Ember.computed.equal('fieldMeta.type', 'time'),
 
-    isDateTime: function() {
-        return this.get('fieldMeta.type') === 'datetime';
-    }.property('fieldMeta.type'),
-
-    isTime: function() {
-        return this.get('fieldMeta.type') === 'time';
-    }.property('fieldMeta.type'),
-
-    isRelation: function() {
-        return this.get('fieldMeta.isRelation');
-    }.property('fieldMeta.isRelation'),
+    isRelation: Ember.computed.bool('fieldMeta.isRelation'),
 
     keyPress: function(e) {
         if (e.charCode === 13) {

@@ -21,9 +21,7 @@ export default Ember.ObjectProxy.extend({
         return !!modelMeta.get('store.db')[fieldType];
     }.property('content.type'),
 
-    isMulti: function() {
-        return !!this.get('content.multi');
-    }.property('content.multi'),
+    isMulti: Ember.computed.bool('content.multi'),
 
     isText: function() {
         return ['text', 'string'].indexOf(this.get('type')) > -1;

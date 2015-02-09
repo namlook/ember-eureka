@@ -38,11 +38,7 @@ export default Ember.Component.extend({
      * configuration from the structure (si `_widgetsConfig`)
      */
     routeName: null,
-
-
-    modelMeta: function() {
-        return this.get('routeModel.meta');
-    }.property('routeModel.meta'),
+    modelMeta: Ember.computed.alias('routeModel.meta'),
 
 
     _widgetsConfig: function() {

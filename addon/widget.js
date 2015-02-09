@@ -23,23 +23,15 @@ export default Ember.Component.extend({
     routeModel: null,
     application: null,
 
+    modelMeta: Ember.computed.alias('routeModel.meta'),
+    modelStore: Ember.computed.alias('modelMeta.store'),
+    modelType: Ember.computed.alias('modelMeta.modelType'),
+
+
     bsColumns: function() {
         var columns = this.get('config.columns') || '12';
         return 'col-sm-'+columns;
     }.property('config.columns'),
-
-
-    modelMeta: function() {
-        return this.get('routeModel.meta');
-    }.property('routeModel.meta'),
-
-    modelStore: function() {
-        return this.get('modelMeta.store');
-    }.property('modelMeta.store'),
-
-    modelType: function() {
-        return this.get('modelMeta.modelType');
-    }.property('modelMeta.modelType'),
 
 
     widgetName: function() {

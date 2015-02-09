@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import ModelWidget from 'ember-eureka/model-widget';
 
 export default ModelWidget.extend({
@@ -5,10 +6,7 @@ export default ModelWidget.extend({
     /** if false, display the save button
      */
     isEmbedded: false,
-
-    model: function() {
-        return this.get('routeModel');
-    }.property('routeModel'),
+    model: Ember.computed.alias('routeModel'),
 
     actions: {
         save: function() {
