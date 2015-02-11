@@ -1,12 +1,18 @@
 
-<ul>
-{{#each field in model._fields}}
-    <li>{{property-form field=field}}</li>
-{{/each}}
-</ul>
+<div class="panel panel-default">
+    <div class="panel-heading">{{modelType}}</div>
+    <div class="panel-body">
 
-{{#unless isEmbedded}}
-    <button {{action 'cancel'}}>cancel</button>
-    <button {{action 'save'}}>save</button>
-{{/unless}}
+        <ul>
+        {{#each field in model._fields}}
+            <li>{{property-form field=field}}</li>
+        {{/each}}
+        </ul>
 
+        {{#unless isEmbedded}}
+            <button {{action 'cancel'}}>cancel</button>
+            <button {{action 'save'}}>save</button>
+        {{/unless}}
+
+    </div>
+</div>

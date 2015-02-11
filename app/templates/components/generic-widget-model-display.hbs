@@ -1,8 +1,11 @@
-
-<h1>{{model.title}}</h1>
-
-<ul>
-{{#each field in model._fields}}
-    <li><label>{{field.meta.label}}</label> {{property-display field=field}} </li>
-{{/each}}
-</ul>
+<div class="panel panel-default">
+    <div class="panel-heading">{{model.title}}</div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+        {{#each field in model._fields}}
+            <dt> {{field.meta.label}} </dt>
+            <dd> {{property-display field=field}} </dd>
+        {{/each}}
+        </dl>
+    </div>
+</div>
