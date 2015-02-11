@@ -11,6 +11,8 @@ import config from '../config/environment';
 var getRoutes = function(routeType, modelType) { // model or collection
     var routes = [];
     var views = {};
+
+    // if it's a model view
     if (modelType) {
         views = config.APP.structure.models[modelType].views;
         if (views) {
@@ -19,6 +21,8 @@ var getRoutes = function(routeType, modelType) { // model or collection
                 routes = Ember.keys(routeTypeView);
             }
         }
+
+    // otherwise, it's an application view
     } else {
         views = config.APP.structure.application.views;
         if (views) {
@@ -56,6 +60,10 @@ export function initialize(container, application) {
                     collectionRoutes.forEach(function(route) {
                         if (route === 'default') {
                             console.error('Eureka: using "default" as route is not supported (reserved keyword)');
+
+                        // if the route is index, skip it ! (we already added it)
+                        } else if (route === 'index') {
+                            return;
                         }
                         that.route(route, {path: '/i/'+route});
                     });
@@ -70,6 +78,10 @@ export function initialize(container, application) {
                     modelRoutes.forEach(function(route) {
                         if (route === 'default') {
                             console.error('Eureka: using "default" as route is not supported (reserved keyword)');
+
+                        // if the route is index, skip it ! (we already added it)
+                        } else if (route === 'index') {
+                            return;
                         }
                         that.route(route, {path: '/'+route});
                     });

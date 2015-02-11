@@ -10,6 +10,9 @@ export default Route.extend({
         if (!isEmpty(transition.queryParams)) {
             query = JSON.parse(transition.queryParams.query);
         }
+        if (isEmpty(query)) {
+            query = null;
+        }
         var meta = this.get('store.modelMeta');
         return Ember.Object.create({
             query: query,
