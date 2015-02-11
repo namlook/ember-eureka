@@ -1,6 +1,6 @@
 <div class="container-fluid eureka-dashboard">
   <div class="row">
-    {{#each widgetConf in widgetsConfig}}
+    {{#each widgetConf in widgetsConfigList}}
         {{dynamic-component
             type=widgetConf.componentName
             application=application

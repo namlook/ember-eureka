@@ -41,27 +41,32 @@ export default Ember.Component.extend({
     modelMeta: Ember.computed.alias('routeModel.meta'),
 
 
-    _widgetsConfig: function() {
-        var widgetsConfig = Ember.Object.create(defaultWidgetConfiguration);
+    _getWidgetsConfigList: function() {
 
         // we need the "widget's path" from the routeName:
         // user.model.index -> model.index
         var path = this.get('routeName').split('.').slice(1).join('.');
-        var userConfig = this.get('modelMeta.views.'+path);
 
-        if (userConfig) {
-            widgetsConfig.set(path, userConfig);
+        // get the widgets configuration from the structure
+        var widgetsConfig = this.get('modelMeta.views.'+path);
+
+        // if no configurations are found, take the default one
+        if (!widgetsConfig) {
+            widgetsConfig = Ember.get(defaultWidgetConfiguration, path);
         }
 
-        return widgetsConfig.get(path+'.'+'widgets') || Ember.A();
-    }.property('modelMeta.views'),
+        var widgetsConfigList = Ember.get(widgetsConfig, 'widgets');
+        return Ember.A(widgetsConfigList);
+    },
 
 
-    widgetsConfig: function() {
+    widgetsConfigList: function() {
         var results = Ember.A();
         var that = this;
 
-        this.get('_widgetsConfig').forEach(function(widget) {
+        var _widgetsConfig = this._getWidgetsConfigList();
+
+        _widgetsConfig.forEach(function(widget) {
 
             // we will need the full component name, let's add it here
             var componentName = 'widget-'+widget.type;
@@ -75,7 +80,7 @@ export default Ember.Component.extend({
             results.pushObject(widgetConf);
         });
         return results;
-    }.property('_widgetsConfig'),
+    }.property('routeName'),
 
 
     actions: {
