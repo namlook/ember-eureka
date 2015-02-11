@@ -4,6 +4,7 @@ export default Route.extend({
 
     model: function() {
         var dasherizedModelType = this.get('modelType').dasherize();
-        return this.modelFor(dasherizedModelType+'.collection');
+        return this.modelFor(dasherizedModelType+'.model');
     }
+
 });

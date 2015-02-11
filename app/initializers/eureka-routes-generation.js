@@ -54,6 +54,9 @@ export function initialize(container, application) {
                     // generate the routes from `views.collection`
                     var that = this;
                     collectionRoutes.forEach(function(route) {
+                        if (route === 'default') {
+                            console.error('Eureka: using "default" as route is not supported (reserved keyword)');
+                        }
                         that.route(route, {path: '/i/'+route});
                     });
                 });
@@ -65,10 +68,12 @@ export function initialize(container, application) {
                     // generate the routes from `views.model`
                     var that = this;
                     modelRoutes.forEach(function(route) {
+                        if (route === 'default') {
+                            console.error('Eureka: using "default" as route is not supported (reserved keyword)');
+                        }
                         that.route(route, {path: '/'+route});
                     });
                     this.route('edit', {path: '/edit'});
-                    // this.route('related', {path: '/:related'});
                 });
             });
         });
