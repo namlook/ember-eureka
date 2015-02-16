@@ -4,7 +4,9 @@
         <dl class="dl-horizontal">
         {{#each field in model._fields}}
             <dt> {{field.meta.label}} </dt>
-            <dd> {{property-display field=field}} </dd>
+            <dd> {{dynamic-component
+                    type=field.meta.displayWidgetComponentName
+                    field=field}} </dd>
         {{/each}}
         </dl>
     </div>

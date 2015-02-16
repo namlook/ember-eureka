@@ -20,17 +20,17 @@ export default Ember.ObjectProxy.extend({
     displayWidgetComponentName: function() {
         var container = this.get('modelMeta.store.container');
         var dasherizedModelType = this.get('modelMeta.modelType').dasherize();
-        var componentName = dasherizedModelType + '-' + this.get('name') + '-property-display';
+        var componentName = dasherizedModelType + '-' + this.get('name') + 'widget-property-display';
         if (!container.resolve('component:'+componentName)) {
             var propertyWidget = this.get('widget');
             if (propertyWidget) {
-                componentName = 'property-' + propertyWidget + '-display';
+                componentName = 'widget-property-' + propertyWidget + '-display';
                 if (!container.resolve('component:'+componentName)) {
-                    console.error('Error: cannot found the property widget', componentName, 'falling back to property-display');
-                    componentName = 'property-display';
+                    console.error('Error: cannot found the property widget', componentName, 'falling back to widget-property-display');
+                    componentName = 'widget-property-display';
                 }
             } else {
-                componentName = 'property-display';
+                componentName = 'widget-property-display';
             }
         }
         return componentName;
@@ -40,20 +40,20 @@ export default Ember.ObjectProxy.extend({
     formWidgetComponentName: function() {
         var container = this.get('modelMeta.store.container');
         var dasherizedModelType = this.get('modelMeta.modelType').dasherize();
-        var componentName = dasherizedModelType + '-' + this.get('name') + '-property-form';
+        var componentName = dasherizedModelType + '-' + this.get('name') + 'widget-property-form';
         console.log('1) -', componentName);
         if (!container.resolve('component:'+componentName)) {
             var propertyWidget = this.get('widget');
             console.log('@@widget>', propertyWidget);
             if (propertyWidget) {
-                componentName = 'property-' + propertyWidget + '-form';
+                componentName = 'widget-property-' + propertyWidget + '-form';
                 console.log('2) -', componentName);
                 if (!container.resolve('component:'+componentName)) {
-                    console.error('Error: cannot found the property widget', componentName, 'falling back to property-form');
-                    componentName = 'property-form';
+                    console.error('Error: cannot found the property widget', componentName, 'falling back to widget-property-form');
+                    componentName = 'widget-property-form';
                 }
             } else {
-                componentName = 'property-form';
+                componentName = 'widget-property-form';
                 console.log('3) -', componentName);
             }
         }

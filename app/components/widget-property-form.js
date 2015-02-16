@@ -1,8 +1,8 @@
 import Ember from 'ember';
-import Property from 'ember-eureka/property';
+import WidgetProperty from 'ember-eureka/widget-property';
 import isEmpty from 'ember-eureka/utils/is-empty';
 
-export default Property.extend({
+export default WidgetProperty.extend({
     field: null,
     editing: false,
 
