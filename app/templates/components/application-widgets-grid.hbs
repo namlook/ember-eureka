@@ -1,6 +1,5 @@
 <div class="container-fluid eureka-dashboard">
   <div class="row">
-
     {{#each widgetConf in widgetsConfigList}}
         {{#if widgetConf.isOutlet}}
             {{#widget-outlet config=widgetConf}}
@@ -10,19 +9,16 @@
             {{dynamic-component
                 type=widgetConf.componentName
                 application=application
-                routeModel=routeModel
                 config=widgetConf
                 toControllerAction="toControllerAction"}}
         {{/if}}
     {{/each}}
 
-    {{!-- if there is no "widget-outlet", and grid ask for an outlet, we append it --}}
-    {{#if yieldOutlet}}
-        {{#unless hasOutlet}}
-            {{#widget-outlet config=widgetConf}}
-                {{yield}}
-            {{/widget-outlet}}
-        {{/unless}}
-    {{/if}}
+    {{!-- if there is no "widget-outlet", let's append an outlet --}}
+    {{#unless hasOutlet}}
+        {{#widget-outlet config=widgetConf}}
+            {{yield}}
+        {{/widget-outlet}}
+    {{/unless}}
     </div>
 </div>

@@ -1,6 +1,5 @@
 <h2>the model {{model._id}}</h2>
 
-{{!-- parent widgets (navbar...) --}}
-{{widgets-grid routeModel=model application=application routeName=currentRouteParentName toControllerAction="toControllerAction"}}
-
-{{outlet}}
+{{#widgets-grid routeModel=model application=application routeName=currentRouteParentName toControllerAction="toControllerAction" yieldOutlet=true}}
+    {{outlet}}
+{{/widgets-grid}}

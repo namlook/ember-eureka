@@ -40,6 +40,14 @@ export default Ember.Component.extend({
     routeName: null,
     modelMeta: Ember.computed.alias('routeModel.meta'),
 
+    /** if true, and the grid don't have a `widget-outlet` (`hasOutlet` is `false`)
+     * then the grid will append an outlet
+     */
+    yieldOutlet: false,
+
+    hasOutlet: function() {
+        return this.get('widgetsConfigList').mapBy('isOutlet').compact().length > 0;
+    }.property('widgetsConfigList.@each.isOutlet'),
 
     _getWidgetsConfigList: function() {
 
@@ -75,6 +83,10 @@ export default Ember.Component.extend({
 
             if (!that.container.resolve('component:'+componentName)) {
                 console.error('component', componentName, 'not found, please create it.');
+            }
+
+            if (widgetConf.get('type') === 'outlet') {
+                widgetConf.set('isOutlet', true);
             }
 
             results.pushObject(widgetConf);
