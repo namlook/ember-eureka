@@ -51,22 +51,26 @@ export default Ember.Component.extend({
     }.property('widgetsConfigList.@each.isOutlet'),
 
 
+    /** return the name of the widget composant.
+     * It not composant is found for a specific model,
+     * fallback to the generic one (if possible).
+     *
+     * Example:
+     *    - if `user-widget-model-form` doesn't resolve
+     *    - use `widget-model-form`
+     */
     getWidgetComponentName: function(widgetName) {
         var dasherizedModelType = this.get('modelType').dasherize();
         var componentName = dasherizedModelType+'-widget-'+widgetName;
 
-        console.log('1) -', componentName);
-
         if (!this.container.resolve('component:'+componentName)) {
             componentName = 'widget-'+widgetName;
-            console.log('2) -', componentName);
         }
 
         if (!this.container.resolve('component:'+componentName)) {
             console.error('component', componentName, 'not found, please create it.');
         }
 
-        console.log('#) -', componentName);
         return componentName;
     },
 
