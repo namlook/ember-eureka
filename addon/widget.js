@@ -2,14 +2,13 @@ import Ember from 'ember';
 
 /** A Widget is a component with a default behavior
  * The Widget take as params the routeModel.
- * If the widget name starts with "generic-", then it is
- * possible to overwrite its template for a specific model type.
+ * If the widget related component is not found,
+ * then the default one is used:
  *
- * Example templates for the widget `example-widget`:
- *     - templates/components/generic-example-widget
- *     - templates/components/user-example-widget
+ * Example for User model:
  *
- * /!\ Adding the template `example-widget` will not able the overwriting /!\
+ *   - if the component `user-widget-model-display` is not found,
+ *   - then fallback to the component `widget-model-display`
  */
 export default Ember.Component.extend({
     classNames: ['eureka-widget'],
@@ -31,32 +30,6 @@ export default Ember.Component.extend({
     bsColumns: function() {
         var columns = this.get('config.columns') || '12';
         return 'col-sm-'+columns;
-    }.property('config.columns'),
-
-
-    widgetName: function() {
-        /** hack : get the name of the component class **/
-        var name = this.constructor.toString().split('@')[1].split(':')[1];
-        if (!name) {
-            console.error('cannot load widget name from', this.constructor.toString());
-        }
-        return name;
-    }.property(),
-
-
-    defaultLayout: Ember.computed(function() {
-        var widgetName = this.get('widgetName');
-        var modelType = this.get('modelType');
-        if (!modelType) {
-            console.error('cannot load widget: modelType is null');
-        }
-        var dasherizedModelType = this.get('modelType').dasherize();
-        if (this.container.resolve('template:components/'+dasherizedModelType+'-'+widgetName)) {
-            widgetName = dasherizedModelType+'-'+widgetName;
-        } else {
-            widgetName = 'generic-'+widgetName;
-        }
-        return this.container.lookup('template:components/' + widgetName);
-    })
+    }.property('config.columns')
 
 });

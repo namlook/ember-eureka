@@ -39,6 +39,7 @@ export default Ember.Component.extend({
      */
     routeName: null,
     modelMeta: Ember.computed.alias('routeModel.meta'),
+    modelType: Ember.computed.alias('modelMeta.modelType'),
 
     /** if true, and the grid don't have a `widget-outlet` (`hasOutlet` is `false`)
      * then the grid will append an outlet
@@ -48,6 +49,26 @@ export default Ember.Component.extend({
     hasOutlet: function() {
         return this.get('widgetsConfigList').mapBy('isOutlet').compact().length > 0;
     }.property('widgetsConfigList.@each.isOutlet'),
+
+
+    getWidgetComponentName: function(widgetName) {
+        var dasherizedModelType = this.get('modelType').dasherize();
+        var componentName = dasherizedModelType+'-widget-'+widgetName;
+
+        console.log('1) -', componentName);
+
+        if (!this.container.resolve('component:'+componentName)) {
+            componentName = 'widget-'+widgetName;
+            console.log('2) -', componentName);
+        }
+
+        if (!this.container.resolve('component:'+componentName)) {
+            console.error('component', componentName, 'not found, please create it.');
+        }
+
+        console.log('#) -', componentName);
+        return componentName;
+    },
 
     _getWidgetsConfigList: function() {
 
@@ -77,13 +98,9 @@ export default Ember.Component.extend({
         _widgetsConfig.forEach(function(widget) {
 
             // we will need the full component name, let's add it here
-            var componentName = 'widget-'+widget.type;
+            var componentName = that.getWidgetComponentName(widget.type);
             widget.componentName = componentName;
             var widgetConf = Ember.Object.create(widget);
-
-            if (!that.container.resolve('component:'+componentName)) {
-                console.error('component', componentName, 'not found, please create it.');
-            }
 
             if (widgetConf.get('type') === 'outlet') {
                 widgetConf.set('isOutlet', true);
