@@ -1,6 +1,6 @@
-import CollectionWidget from 'ember-eureka/collection-widget';
+import WidgetCollection from 'ember-eureka/widget-collection';
 
-export default CollectionWidget.extend({
+export default WidgetCollection.extend({
 
     queryText: function() {
         var query = this.get('routeModel.query');

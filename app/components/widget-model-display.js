@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import ModelWidget from 'ember-eureka/model-widget';
+import WidgetModel from 'ember-eureka/widget-model';
 
-export default ModelWidget.extend({
+export default WidgetModel.extend({
     fields: Ember.computed.alias('model._fields')
 });
