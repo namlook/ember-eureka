@@ -64,14 +64,8 @@ export default Ember.ObjectProxy.extend({
      * changes later
      */
     _fillInitialContent: function() {
-
-        var content;
-        try {
-            content = Ember.copy(this.get('content'), true);
-        } catch (e) {
-            content = {};
-        }
-        this.set('_initialContent', content);
+        var initContent = JSON.parse(JSON.stringify(this.toPojo()));
+        this.set('_initialContent', initContent);
     }.on('init'),
 
 
@@ -106,9 +100,32 @@ export default Ember.ObjectProxy.extend({
     }.property('meta.modelType', '_reloadFields'),
 
 
-    title: function() {
-        return this.get('content.title') || this.get('content._id');
-    }.property('content.title', 'content._id'),
+    /** the title computed property is a little special,
+     *  it is used to represent each model of the system.
+     *  So it will return the title from the `content`, or
+     *  the value of the field specified in `aliases.title`,
+     *  or the _id of the model
+     */
+    title: function(key, value) {
+
+        // getter
+        if (arguments.length === 1) {
+            var _title;
+
+            /** check if an alias exists for `title` in the structure
+             *  if yes, then use the fieldName set for the title value
+             */
+            var alias = this.get('meta.aliases.title');
+            if (alias) {
+                _title = this.get(alias);
+            }
+            return _title || this.get('content.title') || this.get('content._id');
+
+        // setter only if `title` is defined in structure
+        } else if (this.get('titleField')) {
+            this.set('content.title', value);
+        }
+    }.property('meta.aliases.title', 'content.title', 'content._id'),
 
 
     delete: function() {
@@ -205,7 +222,7 @@ export default Ember.ObjectProxy.extend({
             that.set('content.'+fieldTitle, oldValue);
         });
         this._resetContentChanges();
-        // this._triggerReloadFields();
+        this._triggerReloadFields();
     },
 
 

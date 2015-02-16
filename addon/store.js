@@ -102,23 +102,36 @@ export default Ember.Object.extend({
     _buildComputedPropertiesFromStructure: function() {
         var computedProperties = {};
         var computedFunction;
+        var modelClass = this.get('modelClass');
         var that = this;
         this.get('modelMeta.fieldNames').forEach(function(fieldName) {
 
-            var fieldMeta = that.get('modelMeta.'+fieldName+'Field');
-
-            if (fieldMeta.get('isRelation')) {
-                computedFunction = _relationCPFunction(fieldMeta);
-            } else {
-                computedFunction = _regularCPFunction(fieldMeta);
+            /** check if the computed property has not already been
+             * defined by the developper.
+             */
+            var skip;
+            try {
+                skip = modelClass.metaForProperty(fieldName);
+            } catch (e) {
+                skip = false;
             }
 
             // set the function
-            computedProperties[fieldName] = computedFunction;
-        });
+            if (!skip) {
 
+                var fieldMeta = that.get('modelMeta.'+fieldName+'Field');
+
+                if (fieldMeta.get('isRelation')) {
+                    computedFunction = _relationCPFunction(fieldMeta);
+                } else {
+                    computedFunction = _regularCPFunction(fieldMeta);
+                }
+
+                computedProperties[fieldName] = computedFunction;
+            }
+        });
         // update the model class
-        this.get('modelClass').reopen(computedProperties);
+        modelClass.reopen(computedProperties);
     }.observes('modelClass').on('init'),
 
     resourceEndpoint: function() {
