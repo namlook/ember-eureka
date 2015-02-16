@@ -18,7 +18,7 @@ export default Ember.Object.extend({
      */
     _valuesObserver: function() {
         var values = this.get('values');
-        var fieldName = this.get('meta.title');
+        var fieldName = this.get('meta.name');
         var meta = this.get('meta');
         if (values.length && !meta.get('isRelation')) {
             values = values.mapBy('value').compact();

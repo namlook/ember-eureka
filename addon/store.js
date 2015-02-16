@@ -5,7 +5,7 @@ import ModelMeta from './model-meta';
  */
 var _relationCPFunction = function(fieldMeta) {
     var relationComputedFunction;
-    var fieldName = fieldMeta.get('title');
+    var fieldName = fieldMeta.get('name');
 
     // deals with multi relation field
     if (fieldMeta.get('isMulti')) {
@@ -58,7 +58,7 @@ var _regularCPFunction = function(fieldMeta) {
 
     // building the computed property function
     // "this" represents the model
-    var fieldName = fieldMeta.get('title');
+    var fieldName = fieldMeta.get('name');
     var isBoolean = fieldMeta.get('isBoolean');
     var fieldComputedFunction = function(key, value) {
 

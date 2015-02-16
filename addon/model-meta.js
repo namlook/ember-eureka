@@ -32,7 +32,7 @@ export default Ember.ObjectProxy.extend({
             var fieldName = key.slice(0, key.length - "Field".length);
             if (this.get('properties.'+fieldName)) {
                 return FieldMeta.create({
-                    title: fieldName,
+                    name: fieldName,
                     modelMeta: this
                 });
             }

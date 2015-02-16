@@ -18,7 +18,12 @@ export function initialize(container, application) {
         db:db,
         modelClass: Model,
         modelType: modelType,
-        modelStructure: modelStructure[modelType]
+        modelStructure: modelStructure[modelType],
+        /** we pass the container here so we can resolve
+         * the components and template path inside field and model's meta.
+         * For instance, the container is used in `FieldMeta.displayWidgetComponentName`
+         */
+        container: container
     });
   });
 

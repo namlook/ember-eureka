@@ -3,11 +3,19 @@
     <div class="panel-heading">{{modelType}}</div>
     <div class="panel-body">
 
-        <ul>
-        {{#each field in model._fields}}
-            <li>{{property-form field=field}}</li>
-        {{/each}}
-        </ul>
+        <form class="form-horizontal">
+            {{#each field in fields}}
+              <div class="form-group">
+                <label {{bind-attr for="field.meta.name"}} class="col-sm-2 control-label">
+                    {{field.meta.label}}
+                </label>
+                <div class="col-sm-10">
+                    {{dynamic-component
+                        type=field.meta.formWidgetComponentName
+                        field=field}}
+                </div>
+            {{/each}}
+        </div>
 
         {{#unless isEmbedded}}
             <button {{action 'cancel'}}>cancel</button>

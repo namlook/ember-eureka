@@ -7,6 +7,7 @@ export default ModelWidget.extend({
      */
     isEmbedded: false,
     model: Ember.computed.alias('routeModel'),
+    fields: Ember.computed.alias('model._fields'),
 
     actions: {
         save: function() {

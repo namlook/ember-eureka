@@ -1,13 +1,9 @@
-
-<label>{{field.meta.label}}</label>
-
 {{#if field.meta.isRelation}}
     {{#if field.meta.isMulti}} {{!-- handle multi relation --}}
 
         {{#if field.value.isPending}}
             loading...
         {{else}}
-            <b>{{field.values.length}}</b>
             <ul>
                 {{#each relation in field.values}}
                     {{#if relation._ui.editing}}

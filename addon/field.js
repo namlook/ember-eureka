@@ -10,7 +10,7 @@ export default Ember.Object.extend({
      * model content if needed
      */
     _valueObserver: function() {
-        var fieldName = this.get('meta.title');
+        var fieldName = this.get('meta.name');
         var value = this.get('value');
         this.set('model.'+fieldName, value);
     }.observes('value'),

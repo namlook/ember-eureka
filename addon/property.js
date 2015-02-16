@@ -26,9 +26,11 @@ export default Ember.Component.extend({
     defaultLayout: Ember.computed(function() {
         var componentName = this.get('_componentName');
         var dasherizedModelType = this.get('modelType').dasherize();
-        var fieldType = this.get('fieldMeta.type');
-        if (this.container.resolve('template:components/'+dasherizedModelType+'-'+fieldType+'-'+componentName)) {
-            componentName = dasherizedModelType+'-'+fieldType+'-'+componentName;
+        var fieldName = this.get('fieldMeta.name');
+        console.log('>>', 'template:components/'+dasherizedModelType+'-'+fieldName+'-'+componentName);
+        if (this.container.resolve('template:components/'+dasherizedModelType+'-'+fieldName+'-'+componentName)) {
+            componentName = dasherizedModelType+'-'+fieldName+'-'+componentName;
+            console.log('yessss', componentName);
         } else if (this.container.resolve('template:components/'+dasherizedModelType+'-field-'+componentName)) {
             componentName = dasherizedModelType+'-field-'+componentName;
 

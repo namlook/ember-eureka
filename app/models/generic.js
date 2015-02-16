@@ -217,9 +217,9 @@ export default Ember.ObjectProxy.extend({
         var initialContent = this.get('_initialContent');
         var that = this;
         var oldValue;
-        this.get('meta.fieldNames').forEach(function(fieldTitle) {
-            oldValue = Ember.copy(initialContent[fieldTitle], true);
-            that.set('content.'+fieldTitle, oldValue);
+        this.get('meta.fieldNames').forEach(function(fieldName) {
+            oldValue = Ember.copy(initialContent[fieldName], true);
+            that.set('content.'+fieldName, oldValue);
         });
         this._resetContentChanges();
         this._triggerReloadFields();
@@ -233,15 +233,15 @@ export default Ember.ObjectProxy.extend({
          * field informations like schema or model relations.
          */
         if (endsWith(key, "Field")){
-            var fieldTitle = key.slice(0, key.length - "Field".length);
-            var fieldMeta = this.get('meta.'+fieldTitle+'Field');
+            var fieldName = key.slice(0, key.length - "Field".length);
+            var fieldMeta = this.get('meta.'+fieldName+'Field');
 
             if (fieldMeta.get('isMulti')) {
                 var values;
-                if (fieldMeta.get('isRelation') || !this.get(fieldTitle)) {
-                    values = this.get(fieldTitle);
+                if (fieldMeta.get('isRelation') || !this.get(fieldName)) {
+                    values = this.get(fieldName);
                 } else {
-                    values = this.get(fieldTitle).map(function(value) {
+                    values = this.get(fieldName).map(function(value) {
                         return Ember.Object.create({value: value});
                     });
                 }
@@ -254,7 +254,7 @@ export default Ember.ObjectProxy.extend({
                 return Field.create({
                     model: this,
                     meta: fieldMeta,
-                    value: this.get(fieldTitle)
+                    value: this.get(fieldName)
                 });
             }
         }
