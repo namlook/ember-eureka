@@ -3,7 +3,7 @@ import {
   test
 } from 'ember-qunit';
 
-moduleForComponent('property-form', 'PropertyFormComponent', {
+moduleForComponent('widget-property-date-display', 'WidgetPropertyDateDisplayComponent', {
   // specify the other units that are required for this test
   // needs: ['component:foo', 'helper:bar']
 });

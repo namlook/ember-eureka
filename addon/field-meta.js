@@ -17,49 +17,69 @@ export default Ember.ObjectProxy.extend({
     }.property('content.label', 'name'),
 
 
-    displayWidgetComponentName: function() {
+    /** returns the component name of the widget
+     * depending of `widgetType` (which can be `form` or `display`)
+     */
+    getWidgetComponentName: function(widgetType) {
+
         var container = this.get('modelMeta.store.container');
         var dasherizedModelType = this.get('modelMeta.modelType').dasherize();
-        var componentName = dasherizedModelType + '-' + this.get('name') + 'widget-property-display';
+        var componentName = dasherizedModelType + '-' + this.get('name') + '-widget-property-'+widgetType;
+
         if (!container.resolve('component:'+componentName)) {
             var propertyWidget = this.get('widget');
             if (propertyWidget) {
-                componentName = 'widget-property-' + propertyWidget + '-display';
+                componentName = 'widget-property-' + propertyWidget + '-'+widgetType;
+
                 if (!container.resolve('component:'+componentName)) {
-                    console.error('Error: cannot found the property widget', componentName, 'falling back to widget-property-display');
-                    componentName = 'widget-property-display';
+                    console.error('Error: cannot found the property widget', componentName, 'falling back to a generic one');
+                    componentName = null;
                 }
             } else {
-                componentName = 'widget-property-display';
+                componentName = null;
+            }
+        }
+
+        if (componentName === null) {
+            if (this.get('isRelation')) {
+
+                if (this.get('isMulti')) {
+                    componentName = 'widget-property-multi-relation-'+widgetType;
+                } else {
+                    componentName = 'widget-property-relation-'+widgetType;
+                }
+
+            } else {
+
+                if (this.get('isMulti')) {
+                    componentName = 'widget-property-multi-'+widgetType;
+                } else if (this.get('isText')) {
+                    componentName = 'widget-property-text-'+widgetType;
+                } else if (this.get('isNumber')) {
+                    componentName = 'widget-property-number-'+widgetType;
+                } else if (this.get('isBoolean')) {
+                    componentName = 'widget-property-bool-'+widgetType;
+                } else if (this.get('isDate')) {
+                    componentName = 'widget-property-date-'+widgetType;
+                } else if (this.get('isDateTime')) {
+                    componentName = 'widget-property-datetime-'+widgetType;
+                } else {
+                    componentName = 'widget-property-text-'+widgetType;
+                }
             }
         }
         return componentName;
+    },
+
+    displayWidgetComponentName: function() {
+        return this.getWidgetComponentName('display');
     }.property('name', 'modelType'),
 
 
     formWidgetComponentName: function() {
-        var container = this.get('modelMeta.store.container');
-        var dasherizedModelType = this.get('modelMeta.modelType').dasherize();
-        var componentName = dasherizedModelType + '-' + this.get('name') + 'widget-property-form';
-        console.log('1) -', componentName);
-        if (!container.resolve('component:'+componentName)) {
-            var propertyWidget = this.get('widget');
-            console.log('@@widget>', propertyWidget);
-            if (propertyWidget) {
-                componentName = 'widget-property-' + propertyWidget + '-form';
-                console.log('2) -', componentName);
-                if (!container.resolve('component:'+componentName)) {
-                    console.error('Error: cannot found the property widget', componentName, 'falling back to widget-property-form');
-                    componentName = 'widget-property-form';
-                }
-            } else {
-                componentName = 'widget-property-form';
-                console.log('3) -', componentName);
-            }
-        }
-        console.log('#) -', componentName);
-        return componentName;
+        return this.getWidgetComponentName('form');
     }.property('name', 'modelType'),
+
 
     isRelation: function() {
         var modelMeta = this.get('modelMeta');
@@ -69,6 +89,12 @@ export default Ember.ObjectProxy.extend({
 
 
     isMulti: Ember.computed.bool('content.multi'),
+
+    isDate: Ember.computed.equal('type', 'date'),
+
+    isDateTime: Ember.computed.equal('type', 'datetime'),
+
+    isTime: Ember.computed.equal('type', 'time'),
 
 
     isText: function() {

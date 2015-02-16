@@ -1,0 +1,25 @@
+{{#if field.value.isPending}}
+    loading...
+{{else}}
+    <ul>
+        {{#each relation in field.values}}
+            {{#if relation._ui.editing}}
+                <li>
+                    {{widget-model-form routeModel=relation isEmbedded=true}}
+                    {{#if relation._syncNeeded}}
+                        <button {{action 'cancelRelations' relation}}> cancel </button>
+                        <button {{action 'doneRelations' relation}}> save </button>
+                    {{else}}
+                        <button {{action 'doneRelations' relation}}> done </button>
+                    {{/if}}
+                </li>
+            {{else}}
+                <li>
+                    <button {{action 'edit' relation}}> {{relation.title}} </button><button {{action 'deleteRelations' relation}}>x</button>
+                </li>
+            {{/if}}
+        {{/each}}
+        <li>{{relation-autosuggest field=field}} <a {{action 'addRelations'}}> + </a>
+        </li>
+    </ul>
+{{/if}}

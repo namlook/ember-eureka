@@ -2,11 +2,11 @@
     <div class="panel-heading">{{model.title}}</div>
     <div class="panel-body">
         <dl class="dl-horizontal">
-        {{#each field in model._fields}}
+        {{#each field in fields}}
             <dt> {{field.meta.label}} </dt>
-            <dd> {{dynamic-component
-                    type=field.meta.displayWidgetComponentName
-                    field=field}} </dd>
+            <dd>
+                {{dynamic-component type=field.meta.displayWidgetComponentName field=field}}
+            </dd>
         {{/each}}
         </dl>
     </div>

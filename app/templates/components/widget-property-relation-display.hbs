@@ -1,0 +1,7 @@
+{{#if field.value}}
+    {{#if field.value.isPending}}
+        loading...
+    {{else}}
+        {{#link-to field.value.meta.modelIndexEmberPath field.value._id}}{{field.value.title}}{{/link-to}}
+    {{/if}}
+{{/if}}
