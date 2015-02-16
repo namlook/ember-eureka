@@ -2,9 +2,8 @@
     loading...
 {{else}}
     <ul>
-        <li>test</li>
         {{#each item in results}}
-            <li>{{#link-to item.meta.modelIndexEmberPath item._id}}{{item.title}}{{/link-to}}</li>
+            <li>{{#link-to item.meta.modelIndexEmberPath item._id}} {{item.title}} {{/link-to}}</li>
         {{/each}}
     </ul>
 {{/if}}
