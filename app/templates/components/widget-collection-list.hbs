@@ -1,9 +1,11 @@
 {{#if results.isPending}}
     loading...
 {{else}}
-    <ul>
+    <div class="list-group">
         {{#each item in results}}
-            <li>{{#link-to item.meta.modelIndexEmberPath item._id}} {{item.title}} {{/link-to}}</li>
+            {{#link-to item.meta.modelIndexEmberPath item._id class="list-group-item"}}
+                <h4 class="list-group-item-heading">{{item.title}}</h4>
+            {{/link-to}}
         {{/each}}
-    </ul>
+    </div>
 {{/if}}
