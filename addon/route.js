@@ -13,4 +13,5 @@ export default Ember.Route.extend({
         var modelType = this.get('modelType');
         return this.db[modelType];
     }.property('modelType')
+
 });

@@ -75,14 +75,14 @@ export default Resolver.extend({
 
         // var initialFullName = parsedName.fullNameWithoutType;
 
-        // fetch generic route.{index, edit, new}
+        // fetch generic eureka.generic.{model, collection}.{index, edit, new}
         if (!route) {
             var path = parsedName.fullNameWithoutType.split('/').slice(2).join('/');
             var fullName = ["route:eureka/generic", path].join('/');
             parsedName = this.parseName(fullName);
             route = this._super(parsedName);
 
-            // fetch the generic default one
+            // fetch the generic default one: eureka.generic.{model, collection}.default
             if (!route) {
                 fullName = ['route:eureka/generic'];
                 var routeType = parsedName.fullNameWithoutType.split('/')[2];
@@ -153,4 +153,6 @@ export default Resolver.extend({
 
         return controller.extend();
     }
+
+
 });
