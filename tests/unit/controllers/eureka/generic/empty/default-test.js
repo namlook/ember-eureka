@@ -3,7 +3,7 @@ import {
   test
 } from 'ember-qunit';
 
-moduleFor('controller:eureka/generic/model/edit', 'EurekaGenericModelEditController', {
+moduleFor('controller:eureka/generic/empty/default', 'EurekaGenericEmptyDefaultController', {
   // Specify the other units that are required for this test.
   // needs: ['controller:foo']
 });

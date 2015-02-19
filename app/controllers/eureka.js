@@ -1,11 +1,8 @@
-
 import Ember from 'ember';
+import Controller from 'ember-eureka/controller';
 
-export default Ember.Controller.extend({
-    needs: ['application'],
-
-    applicationController: Ember.computed.alias('controllers.application'),
-    currentRouteName: Ember.computed.alias('applicationController.currentRouteName'),
+export default Controller.extend({
 
     meta: Ember.computed.alias('applicationController.meta.views')
+
 });

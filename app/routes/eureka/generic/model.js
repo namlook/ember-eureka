@@ -7,7 +7,7 @@ export default Route.extend({
         // var populate = App.getModelMeta(_type).get('editViewPopulate');
         if (!modelId) {
             console.log('XXX no id');
-            return this.get('store').createRecord();
+            // return this.get('store').createRecord();
         }
         var query = {_id: modelId};
         //     _populate: populate

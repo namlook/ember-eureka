@@ -2,17 +2,20 @@ import Ember from 'ember';
 import config from '../config/environment';
 
 var defaultViewConfiguration = {
+    empty: {
+        new: {
+            widgets: [
+                {type: 'model-form'}
+            ]
+        }
+    },
     model: {
         index: {
             widgets: [
                 {type: 'model-display'}
             ]
         },
-        new: {
-            widgets: [
-                {type: 'model-form'}
-            ]
-        },
+
         edit: {
             widgets: [
                 {type: 'model-form'}

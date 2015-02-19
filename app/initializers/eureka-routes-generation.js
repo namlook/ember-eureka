@@ -62,18 +62,37 @@ export function initialize(container, application) {
 
         var underscoredType = modelType.underscore();
 
+        var emptyRouteNames = getRouteNames('empty', modelType);
         var modelRouteNames = getRouteNames('model', modelType);
         var collectionRouteNames = getRouteNames('collection', modelType);
 
 
         /**** collect model and collection route full name ***/
-        if (modelRouteNames.length && collectionRouteNames.length) {
+        if (modelRouteNames.length && collectionRouteNames.length && emptyRouteNames.length) {
             eurekaRoutes.pushObject({
                 modelType: modelType,
                 name: 'eureka.'+underscoredType,
                 inner: true
             });
         }
+
+        /*** empty routes ***/
+        if (emptyRouteNames.length) {
+            eurekaRoutes.pushObject({
+                type: 'empty',
+                modelType: modelType,
+                name: 'eureka.'+underscoredType+'.empty',
+                inner: true
+            });
+        }
+
+        eurekaRoutes.pushObjects(emptyRouteNames.map(function(route) {
+            return {
+                type: 'empty',
+                modelType: modelType,
+                name: 'eureka.'+underscoredType+'.empty.'+route
+            };
+        }));
 
         /*** model routes ***/
         if (modelRouteNames.length) {
@@ -112,42 +131,43 @@ export function initialize(container, application) {
             };
         }));
 
-
-
         /**** router update ****/
         application.Router.map(function() {
             // typed routes
             this.route('eureka', {path: '/'}, function() {
                 this.route(underscoredType, function(){
+
+                    // collection
                     this.route('collection', {path: '/'}, function() {
                         this.route('index', {path: '/'});
 
                         // generate the routes from `views.collection`
                         var that = this;
                         collectionRouteNames.forEach(function(route) {
-                            if (route === 'default') {
-                                console.error('Eureka: using "default" as route is not supported (reserved keyword)');
-
-                            // if the route is index, skip it ! (we already added it)
-                            } else if (route === 'index') {
+                            if (route === 'index') {
                                 return;
                             }
                             that.route(route, {path: '/i/'+route});
                         });
                     });
 
-                    this.route('model.new', {path: '/new'});
+                    // empty
+                    this.route('empty', {path: '/_'}, function() {
+                        // generate the routes from `views.empty`
+                        var that = this;
+                        emptyRouteNames.forEach(function(route) {
+                            that.route(route, {path: '/'+route});
+                        });
+                    });
+
+                    // model
                     this.route('model', {path: '/:id'}, function() {
                         this.route('index', {path: '/'});
 
                         // generate the routes from `views.model`
                         var that = this;
                         modelRouteNames.forEach(function(route) {
-                            if (route === 'default') {
-                                console.error('Eureka: using "default" as route is not supported (reserved keyword)');
-
-                            // if the route is index, skip it ! (we already added it)
-                            } else if (route === 'index') {
+                            if (route === 'index' || route === 'new') {
                                 return;
                             }
                             that.route(route, {path: '/'+route});
