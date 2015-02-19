@@ -29,7 +29,7 @@ var getRouteNames = function(routeType, modelType) { // model or collection
         }
     }
 
-    routes.removeObjects(['default', 'basic', 'application', 'widgets', 'object', 'collection', 'model']);
+    routes.removeObjects(['default', 'basic', 'application', 'widgets', 'object', 'collection', 'model', 'outlet']);
     return routes;
 };
 

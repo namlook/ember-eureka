@@ -1,35 +1,6 @@
 import Ember from 'ember';
 import config from '../config/environment';
 
-var defaultViewConfiguration = {
-    empty: {
-        new: {
-            widgets: [
-                {type: 'model-form'}
-            ]
-        }
-    },
-    model: {
-        index: {
-            widgets: [
-                {type: 'model-display'}
-            ]
-        },
-
-        edit: {
-            widgets: [
-                {type: 'model-form'}
-            ]
-        }
-    },
-    collection: {
-        index: {
-            widgets: [
-                {type: 'collection-list'}
-            ]
-        }
-    }
-};
 
 /** fill the generic controllers and routes with meta informations from structure
  */
@@ -41,17 +12,10 @@ export function initialize(container) {
     container.resolve('eurekaRoutes:main').forEach(function(routeInfo) {
         if (routeInfo.modelType) {
             if (routeInfo.inner) {
-                viewConfig = {
-                    widgets: Ember.get(structure.models, routeInfo.modelType+'.views.'+routeInfo.type+'.widgets')
-                };
+                viewConfig = Ember.get(structure.models, routeInfo.modelType+'.views.'+routeInfo.type+'.outlet');
             } else {
                 viewPath = routeInfo.name.split('.').slice(2).join('.');
                 viewConfig = Ember.get(structure.models, routeInfo.modelType+'.views.'+viewPath);
-
-                // if the viewConfig is 'auto', then fill the config with the default values
-                if (viewConfig === 'auto') {
-                    viewConfig = Ember.get(defaultViewConfiguration, viewPath);
-                }
             }
         } else {
             viewConfig = Ember.get(structure, 'application.views.'+routeInfo.name.split('.').slice(1).join('.'));
