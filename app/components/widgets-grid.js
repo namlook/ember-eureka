@@ -1,45 +1,17 @@
-
 import Ember from 'ember';
-
-var defaultWidgetConfiguration = {
-    model: {
-        index: {
-            widgets: [
-                {type: 'model-display'}
-            ]
-        },
-        new: {
-            widgets: [
-                {type: 'model-form'}
-            ]
-        },
-        edit: {
-            widgets: [
-                {type: 'model-form'}
-            ]
-        }
-    },
-    collection: {
-        index: {
-            widgets: [
-                {type: 'collection-list'}
-            ]
-        }
-    }
-};
 
 export default Ember.Component.extend({
 
     routeModel: null,
-    application: null,
+    currentController: null,
 
-
-    /** the routeName is used to fetch the related widget
-     * configuration from the structure (si `_widgetsConfig`)
-     */
-    routeName: null,
     modelMeta: Ember.computed.alias('routeModel.meta'),
     modelType: Ember.computed.alias('modelMeta.modelType'),
+
+    /** if true, it means that we are into the application level,
+     * not the model level
+     */
+    isApplicationWidgetGrid: Ember.computed.not('modelType'),
 
     /** if true, and the grid don't have a `widget-outlet` (`hasOutlet` is `false`)
      * then the grid will append an outlet
@@ -60,36 +32,28 @@ export default Ember.Component.extend({
      *    - use `widget-model-form`
      */
     getWidgetComponentName: function(widgetName) {
-        var dasherizedModelType = this.get('modelType').dasherize();
-        var componentName = dasherizedModelType+'-widget-'+widgetName;
+        var componentName;
 
-        if (!this.container.resolve('component:'+componentName)) {
+        if (this.get('isApplicationWidgetGrid')) {
+
             componentName = 'widget-'+widgetName;
+
+        } else {
+
+            if (!this.get('modelType')) {return console.error('unkown modelType', this.get('routeModel'));}
+
+            var dasherizedModelType = this.get('modelType').dasherize();
+            componentName = dasherizedModelType+'-widget-'+widgetName;
+
+            if (!this.container.resolve('component:'+componentName)) {
+                componentName = 'widget-'+widgetName;
+            }
         }
 
         if (!this.container.resolve('component:'+componentName)) {
             console.error('component', componentName, 'not found, please create it.');
         }
-
         return componentName;
-    },
-
-    _getWidgetsConfigList: function() {
-
-        // we need the "widget's path" from the routeName:
-        // user.model.index -> model.index
-        var path = this.get('routeName').split('.').slice(1).join('.');
-
-        // get the widgets configuration from the structure
-        var widgetsConfig = this.get('modelMeta.views.'+path);
-
-        // if no configurations are found, take the default one
-        if (!widgetsConfig) {
-            widgetsConfig = Ember.get(defaultWidgetConfiguration, path);
-        }
-
-        var widgetsConfigList = Ember.get(widgetsConfig, 'widgets');
-        return Ember.A(widgetsConfigList);
     },
 
 
@@ -97,7 +61,7 @@ export default Ember.Component.extend({
         var results = Ember.A();
         var that = this;
 
-        var _widgetsConfig = this._getWidgetsConfigList();
+        var _widgetsConfig = Ember.A(this.get('currentController.meta.widgets'));
 
         _widgetsConfig.forEach(function(widget) {
 
@@ -113,7 +77,7 @@ export default Ember.Component.extend({
             results.pushObject(widgetConf);
         });
         return results;
-    }.property('routeName'),
+    }.property('currentController.meta.widgets'),
 
 
     actions: {

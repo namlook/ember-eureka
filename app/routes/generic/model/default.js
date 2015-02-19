@@ -4,7 +4,7 @@ export default Route.extend({
 
     model: function() {
         var dasherizedModelType = this.get('modelType').dasherize();
-        return this.modelFor(dasherizedModelType+'.model');
+        return this.modelFor('eureka.'+dasherizedModelType+'.model');
     }
 
 });

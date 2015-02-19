@@ -1,6 +1,11 @@
 <ul>
     {{#each fieldValue in field.values}}
-        <li>{{dynamic-input fieldMeta=field.meta fieldValue=fieldValue.value}}<button {{action 'removeValue' fieldValue}}>x</button></li>
+        <li> TODO
+{{!--             {{dynamic-component
+                type=field.meta.formWidgetComponentName
+                field=field}} --}}
+            <button {{action 'removeValue' fieldValue}}>x</button>
+        </li>
     {{/each}}
 </ul>
 <button {{action 'addValue'}}> + </button>

@@ -9,9 +9,9 @@
         {{else}}
             {{dynamic-component
                 type=widgetConf.componentName
-                application=application
                 routeModel=routeModel
                 config=widgetConf
+                currentController=currentController
                 toControllerAction="toControllerAction"}}
         {{/if}}
     {{/each}}

@@ -15,7 +15,9 @@ export default Ember.Component.extend({
     config: null,
 
     routeModel: null,
-    application: null,
+    currentController: null,
+    applicationController: Ember.computed.alias('currentController.applicationController'),
+    currentRouteName: Ember.computed.alias('currentController.currentRouteName'),
 
     modelMeta: Ember.computed.alias('routeModel.meta'),
     modelStore: Ember.computed.alias('modelMeta.store'),

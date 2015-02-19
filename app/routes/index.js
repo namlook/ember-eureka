@@ -7,13 +7,13 @@ export default Route.extend({
      * then make a redirection to the route
      */
     redirect: function() {
-        var redirection = Ember.get(this.config, 'structure.application.views.index');
+        var redirection = Ember.get(this.appConfig, 'structure.application.views.index');
         if (typeof(redirection) === 'string') {
             this.transitionTo(redirection);
         }
     },
 
-    model: function(params) {
+    model: function() {
         return this.modelFor('application');
     }
 

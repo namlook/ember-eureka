@@ -4,10 +4,10 @@ import Database from 'ember-eureka/database';
 import Store from 'ember-eureka/store';
 
 export function initialize(container, application) {
-  var config = container.resolve('config:main');
+  var appConfig = container.resolve('appConfig:main');
 
-  var db = Database.create({endpoint: config.apiEndpoint});
-  var modelStructure = config.structure.models;
+  var db = Database.create({endpoint: appConfig.apiEndpoint});
+  var modelStructure = appConfig.structure.models;
 
   Ember.keys(modelStructure).forEach(function(modelType) {
     var Model = container.resolve('model:'+modelType.dasherize());

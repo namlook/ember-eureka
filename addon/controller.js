@@ -3,19 +3,17 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
     needs: ['application'],
 
-    application: Ember.computed.alias('controllers.application'),
-    currentRouteName: Ember.computed.alias('application.currentRouteName'),
+    applicationController: Ember.computed.alias('controllers.application'),
+    currentRouteName: Ember.computed.alias('applicationController.currentRouteName'),
 
-    /** returns the parent of the route :
-     * if the currentRouteName is `user.model.edit`,
-     * the currentRouteParentName is `user.model`
-     *
-     * This is used to load the correct widgets:
-     *  `user.model.widgets` or user.mode.edit.widgets`
-     */
-    currentRouteParentName: function() {
-        return this.get('currentRouteName').split('.').slice(0, -1).join('.');
-    }.property('currentRouteName'),
+
+    queryParams: function() {
+        var params = this.get('meta.queryParams');
+        if (params) {
+            return params;
+        }
+        return Ember.A();
+    }.property('meta'),
 
 
     actions: {
@@ -33,6 +31,6 @@ export default Ember.Controller.extend({
                 this.send(action);
             }
         }
-    }
+    },
 
 });

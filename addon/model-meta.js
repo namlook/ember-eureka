@@ -52,7 +52,7 @@ export default Ember.ObjectProxy.extend({
         if (endsWith(key, "EmberPath")){
             var emberPath = key.slice(0, key.length - "EmberPath".length);
             var dasherizedModelType = this.get('modelType').dasherize();
-            emberPath = dasherizedModelType+'.'+emberPath.decamelize().split('_').join('.');
+            emberPath = 'eureka.'+dasherizedModelType+'.'+emberPath.decamelize().split('_').join('.');
             return emberPath;
         }
         return this.get('content.'+key);
