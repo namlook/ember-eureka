@@ -41,10 +41,19 @@ module.exports = {
         {name: 'namlook/eurekapi'},
         {name: 'ember-typeahead-input'},
         {name: 'ember-dynamic-component'},
-        {name: 'ember-bootstrap'}
+        {name: 'ember-bootstrap-hurry'},
+        {name: 'ember-moment'},
+        {name: 'eureka-widget-application-header'},
+        {name: 'eureka-widget-application-menu'},
+        {name: 'eureka-widget-model-navbar'},
+        {name: 'eureka-widget-model-display'},
+        {name: 'eureka-widget-model-form'},
+        {name: 'eureka-widget-model-relations-list'},
+        {name: 'eureka-widget-collection-navbar'},
+        {name: 'eureka-widget-collection-display'}
     ]).then(function() {
-        ui.writeLine('  Running ember-bootstrap blueprints');
-        options.args = ['ember-bootstrap'];
+        ui.writeLine('  Running ember-bootstrap-hurry blueprints');
+        options.args = ['ember-bootstrap-hurry'];
         return blueprintTask.run(options);
     }).then(function() {
         ui.writeLine('  Running ember-typeahead-input blueprints');
