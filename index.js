@@ -13,5 +13,11 @@ module.exports = {
             }
         }
         return baseConfig;
+    },
+
+    included: function included(app) {
+        this._super.included(app);
+        app.import('vendor/styles.css');
+
     }
 };
