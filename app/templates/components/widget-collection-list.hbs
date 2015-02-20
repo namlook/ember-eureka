@@ -1,11 +1,14 @@
+{{!-- <div class="panel panel-default"> --}}
+    {{!-- <div class="panel-heading">{{modelType}}</div> --}}
 {{#if results.isPending}}
     loading...
 {{else}}
     <div class="list-group">
         {{#each item in collection}}
-            {{#link-to item.meta.modelIndexEmberPath item._id class="list-group-item"}}
+            {{#link-to item.meta.modelIndexViewPath item._id class="list-group-item"}}
                 <h4 class="list-group-item-heading">{{item.title}}</h4>
             {{/link-to}}
         {{/each}}
     </div>
 {{/if}}
+{{!-- </div> --}}

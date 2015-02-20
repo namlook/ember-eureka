@@ -4,7 +4,7 @@
         <li>loading...</li>
     {{else}}
         {{#each relation in field.values}}
-            <li>{{#link-to relation.meta.modelIndexEmberPath relation._id}}{{relation.title}} ({{relation._id}}){{/link-to}}</li>
+            <li>{{#link-to relation.meta.modelIndexViewPath relation._id}}{{relation.title}} ({{relation._id}}){{/link-to}}</li>
         {{/each}}
     {{/if}}
 </ul>

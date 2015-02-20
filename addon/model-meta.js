@@ -39,18 +39,18 @@ export default Ember.ObjectProxy.extend({
         }
 
         /*
-         * If a property name ends with 'EmberPath', then the corresponding
+         * If a property name ends with 'ViewPath', then the corresponding
          * route name is returned. This is useful when using link-to.
          * The following example will create a link to 'user.model.index
          * (assuming the model is a user) :
          *
-         *    {{#link-to model.meta.modelIndexEmberPath}}list{{/link-to}}
+         *    {{#link-to model.meta.modelIndexViewPath}}list{{/link-to}}
          *
-         * blogPostModel.meta.collectionFavoritesEmberPath will return:
-         *    'blog-post.collection.favorites'
+         * blogPostModel.meta.collectionFavoritesViewPath will return:
+         *    'eureka.blog-post.collection.favorites'
          */
-        if (endsWith(key, "EmberPath")){
-            var emberPath = key.slice(0, key.length - "EmberPath".length);
+        if (endsWith(key, "ViewPath")){
+            var emberPath = key.slice(0, key.length - "ViewPath".length);
             var dasherizedModelType = this.get('modelType').dasherize();
             emberPath = 'eureka.'+dasherizedModelType+'.'+emberPath.decamelize().split('_').join('.');
             return emberPath;
