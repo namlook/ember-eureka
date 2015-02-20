@@ -28,7 +28,7 @@ var defaultViewConfiguration = {
     collection: {
         index: {
             widgets: [
-                {type: 'collection-list'}
+                {type: 'collection-display'}
             ]
         }
     }
