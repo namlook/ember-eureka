@@ -8,7 +8,8 @@ export default Route.extend({
         var meta = this.get('store.modelMeta');
         return Ember.Object.create({
             params: transition.queryParams,
-            meta: meta
+            meta: meta,
+            query: {}
         });
     }
 

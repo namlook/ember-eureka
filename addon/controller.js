@@ -9,7 +9,15 @@ export default Ember.Controller.extend({
 
     queryParams: function() {
         var params = this.get('meta.queryParams');
+        var that = this;
         if (params) {
+            if (!Ember.isArray(params)) {
+                console.error('at this moment, queryParams should be array');
+            }
+            // set the query
+            params.forEach(function(param) {
+                that.set(param, null);
+            });
             return params;
         }
         return Ember.A();
