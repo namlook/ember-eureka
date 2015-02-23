@@ -1,6 +1,48 @@
 import Ember from 'ember';
 import config from '../config/environment';
 
+/** build the route's queryParams from structure's config
+ */
+var getRouteQueryParams = function(viewConfig) {
+    if (viewConfig === undefined) {
+        return null;
+    }
+
+    var queryParams = Ember.get(viewConfig, 'queryParams');
+
+    var results = {};
+    if (queryParams) {
+        if (!Ember.isArray(queryParams)) {
+            console.error("Eureka: structure's queryParams should be an array");
+        }
+
+        var paramName, config;
+        queryParams.forEach(function(param) {
+
+            if (typeof(param) !== 'string') {
+                paramName = Ember.keys(param)[0];
+                config = param[paramName];
+
+                if (Ember.get(config, 'as')) {
+                    paramName = Ember.get(config, 'as');
+                }
+
+                if (Ember.get(config, 'replace') === true) {
+                    results[paramName] = {replace: true};
+                } else {
+                    results[paramName] = {replace: false};
+                }
+            }
+
+        });
+    }
+
+    if (Ember.keys(results).length) {
+        return results;
+    }
+    return null;
+};
+
 
 /** fill the generic controllers and routes with meta informations from structure
  */
@@ -35,7 +77,8 @@ export function initialize(container) {
             modelType: routeInfo.modelType,
             routeType: routeInfo.type,
             fqvn: routeInfo.name,
-            meta: Ember.Object.create(viewConfig)
+            meta: Ember.Object.create(viewConfig),
+            queryParams: getRouteQueryParams(viewConfig)
         });
 
     });

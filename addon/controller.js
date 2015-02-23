@@ -8,20 +8,33 @@ export default Ember.Controller.extend({
 
 
     queryParams: function() {
-        var params = this.get('meta.queryParams');
+        var queryParams = this.get('meta.queryParams');
         var that = this;
-        if (params) {
-            if (!Ember.isArray(params)) {
-                console.error('at this moment, queryParams should be array');
+        if (queryParams) {
+            if (!Ember.isArray(queryParams)) {
+                console.error("Eureka: structure's queryParams should be an array");
             }
-            // set the query
-            params.forEach(function(param) {
-                that.set(param, null);
+
+            // set the params on the controller
+            var paramName, config, defaultValue;
+            queryParams.forEach(function(param) {
+
+                if (typeof(param) === 'string') {
+                    paramName = param;
+                    defaultValue = null;
+                } else {
+                    paramName = Ember.keys(param)[0];
+                    config = param[paramName];
+                    defaultValue = Ember.getWithDefault(config, 'defaultValue', null);
+                }
+
+                that.set(paramName, defaultValue);
             });
-            return params;
+
+            return queryParams;
         }
         return Ember.A();
-    }.property('meta'),
+    }.property('meta.queryParams'),
 
 
     actions: {
