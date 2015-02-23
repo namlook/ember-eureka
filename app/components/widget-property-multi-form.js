@@ -3,6 +3,15 @@ import WidgetProperty from 'ember-eureka/widget-property';
 
 export default WidgetProperty.extend({
 
+    /** returns the component name of the non-multi field type
+     * so we can create the component dynamically
+     */
+    propertyComponentName: function() {
+        var fieldMeta = this.get('field.meta');
+        return fieldMeta.getWidgetComponentName('form', false);
+    }.property('field.meta.type'),
+
+
     actions: {
         addValue: function() {
             var field = this.get('field');

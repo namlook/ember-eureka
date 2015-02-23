@@ -242,7 +242,7 @@ export default Ember.ObjectProxy.extend({
                     values = this.get(fieldName);
                 } else {
                     values = this.get(fieldName).map(function(value) {
-                        return Ember.Object.create({value: value});
+                        return Ember.Object.create({meta: fieldMeta, value: value});
                     });
                 }
                 return MultiField.create({

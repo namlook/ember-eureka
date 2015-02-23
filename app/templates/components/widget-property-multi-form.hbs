@@ -1,10 +1,10 @@
 <ul>
-    {{#each fieldValue in field.values}}
-        <li> TODO
-{{!--             {{dynamic-component
-                type=field.meta.formWidgetComponentName
-                field=field}} --}}
-            <button {{action 'removeValue' fieldValue}}>x</button>
+    {{#each field in field.values}}
+        <li>
+            {{dynamic-component
+                type=propertyComponentName
+                field=field}}
+            <button {{action 'removeValue' field}}>x</button>
         </li>
     {{/each}}
 </ul>

@@ -20,7 +20,7 @@ export default Ember.ObjectProxy.extend({
     /** returns the component name of the widget
      * depending of `widgetType` (which can be `form` or `display`)
      */
-    getWidgetComponentName: function(widgetType) {
+    getWidgetComponentName: function(widgetType, isMulti) {
 
         var container = this.get('modelMeta.store.container');
         var dasherizedModelType = this.get('modelMeta.modelType').dasherize();
@@ -43,7 +43,7 @@ export default Ember.ObjectProxy.extend({
         if (componentName === null) {
             if (this.get('isRelation')) {
 
-                if (this.get('isMulti')) {
+                if (isMulti) {
                     componentName = 'widget-property-multi-relation-'+widgetType;
                 } else {
                     componentName = 'widget-property-relation-'+widgetType;
@@ -51,7 +51,7 @@ export default Ember.ObjectProxy.extend({
 
             } else {
 
-                if (this.get('isMulti')) {
+                if (isMulti) {
                     componentName = 'widget-property-multi-'+widgetType;
                 } else if (this.get('isText')) {
                     componentName = 'widget-property-text-'+widgetType;
@@ -72,12 +72,14 @@ export default Ember.ObjectProxy.extend({
     },
 
     displayWidgetComponentName: function() {
-        return this.getWidgetComponentName('display');
+        var isMulti = this.get('isMulti');
+        return this.getWidgetComponentName('display', isMulti);
     }.property('name', 'modelType'),
 
 
     formWidgetComponentName: function() {
-        return this.getWidgetComponentName('form');
+        var isMulti = this.get('isMulti');
+        return this.getWidgetComponentName('form', isMulti);
     }.property('name', 'modelType'),
 
 
