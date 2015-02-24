@@ -28,9 +28,15 @@ var getRouteQueryParams = function(viewConfig) {
                 }
 
                 if (Ember.get(config, 'replace') === true) {
-                    results[paramName] = {replace: true};
+                    Ember.set(results, paramName+'.replace', true);
                 } else {
-                    results[paramName] = {replace: false};
+                    Ember.set(results, paramName+'.replace', false);
+                }
+
+                if (Ember.get(config, 'refreshModel') === true) {
+                    Ember.set(results, paramName+'.refreshModel', true);
+                } else {
+                    Ember.set(results, paramName+'.refreshModel', false);
                 }
             }
 
