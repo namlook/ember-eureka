@@ -10,11 +10,11 @@ export default Controller.extend({
         var query = this.get('model.query');
         var queryQP;
         if (!isEmpty(query)) {
-            queryQP = this.get('model.query').toJSON();
+            queryQP = this.get('model.query.json');
         } else {
             queryQP = null;
         }
         this.set('query', queryQP);
-    }.observes('model.query.@each.field'),
+    }.observes('model.query.json'),
 
 });

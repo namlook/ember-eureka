@@ -6,16 +6,30 @@ export default Ember.ArrayProxy.extend({
         this.set('content', Ember.A());
     }.on('init'),
 
+
+    hasChanged: 0,
+
+    queryChangedObserver: function() {
+        this.incrementProperty('hasChanged');
+    }.observes('content.@each'),
+
+
     raw: function(key, value) {
         if (arguments.length === 1) {
-            return this.toObject();
+            return this._toObject();
         } else {
-            this.update(value);
+            this._update(value);
             return value;
         }
-    }.property('content.@each.field'),
+    }.property('hasChanged'),
 
-    update: function(query) {
+
+    json: function() {
+        return JSON.stringify(this.get('raw'));
+    }.property('hasChanged'),
+
+
+    _update: function(query) {
         var queryList = Ember.A();
         var item;
         Ember.keys(query).forEach(function(key) {
@@ -31,16 +45,12 @@ export default Ember.ArrayProxy.extend({
         return queryList;
     },
 
-    toObject: function() {
+    _toObject: function() {
         var query = {};
         this.get('content').forEach(function(item) {
             query[item.get('field')] = item.get('value');
         });
         return query;
-    },
-
-    toJSON: function() {
-        return JSON.stringify(this.get('raw'));
     }
 
 });
