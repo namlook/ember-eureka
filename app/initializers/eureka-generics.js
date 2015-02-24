@@ -21,6 +21,7 @@ var getRouteQueryParams = function(viewConfig) {
 
             if (typeof(param) !== 'string') {
                 paramName = Ember.keys(param)[0];
+                results[paramName] = {};
                 config = param[paramName];
 
                 if (Ember.get(config, 'as')) {
