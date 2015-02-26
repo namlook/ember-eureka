@@ -1,0 +1,16 @@
+{{#each widgetConfigurations in rows}}
+    {{#widget-container-row widgetConfigurations=widgetConfigurations
+        routeModel=routeModel
+        currentController=currentController
+        toControllerAction="toControllerAction"
+        yieldOutlet=yieldOutlet}}
+            {{yield}}
+    {{/widget-container-row}}
+{{/each}}
+
+
+{{#if yieldOutlet}}
+    {{#unless hasOutlet}}
+        <div class="row">{{yield}}</div>
+    {{/unless}}
+{{/if}}

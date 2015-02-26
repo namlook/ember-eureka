@@ -1,0 +1,24 @@
+{{#each widgetConf in widgetConfigurations}}
+    {{#if widgetConf.isOutlet}}
+        {{#if yieldOutlet}}
+            {{#widget-outlet config=widgetConf}}
+                <div class="row">{{yield}}</div>
+            {{/widget-outlet}}
+        {{/if}}
+    {{else}}
+        {{dynamic-component
+            type=widgetConf.componentName
+            routeModel=routeModel
+            config=widgetConf
+            currentController=currentController
+            toControllerAction="toControllerAction"}}
+    {{/if}}
+{{/each}}
+
+{{#if yieldOutlet}}
+    {{#unless hasOutlet}}
+        {{!-- {{#widget-outlet config=widgetConf}} --}}
+            <div class="row">{{yield}}</div>
+        {{!-- {{/widget-outlet}} --}}
+    {{/unless}}
+{{/if}}

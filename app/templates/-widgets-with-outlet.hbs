@@ -1,7 +1,8 @@
-{{#widgets-grid
+{{#widget-container
     routeModel=model
     currentController=controller
+    widgetConfigurations=controller.meta.widgets
     toControllerAction="toControllerAction"
     yieldOutlet=true}}
         {{outlet}}
-{{/widgets-grid}}
+{{/widget-container}}

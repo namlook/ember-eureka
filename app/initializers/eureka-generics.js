@@ -19,7 +19,7 @@ var getRouteQueryParams = function(viewConfig) {
         var paramName, config;
         queryParams.forEach(function(param) {
 
-            if (typeof(param) !== 'string') {
+            if (typeof(param) !== 'string' && param) {
                 paramName = Ember.keys(param)[0];
                 results[paramName] = {};
                 config = param[paramName];
@@ -58,10 +58,25 @@ export function initialize(container) {
     var structure = config.APP.structure;
 
     var viewPath, controller, route, viewConfig;
+    var widgets;
     container.resolve('eurekaRoutes:main').forEach(function(routeInfo) {
         if (routeInfo.modelType) {
             if (routeInfo.inner) {
                 viewConfig = Ember.get(structure.models, routeInfo.modelType+'.views.'+routeInfo.type+'.outlet');
+
+                // the "outlet view" should at least has an outlet widget.
+                if (!viewConfig) {
+                    viewConfig = {};
+                }
+                if (!viewConfig.widgets) {
+                    viewConfig.widgets = [];
+                }
+                widgets = Ember.A(viewConfig.widgets);
+
+                // if there is no "outlet" widget, we add it at the end
+                if (!widgets.findBy('type', 'outlet')) {
+                    viewConfig.widgets.push({type: 'outlet'});
+                }
             } else {
                 viewPath = routeInfo.name.split('.').slice(2).join('.');
                 viewConfig = Ember.get(structure.models, routeInfo.modelType+'.views.'+viewPath);

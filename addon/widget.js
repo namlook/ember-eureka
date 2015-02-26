@@ -7,12 +7,18 @@ import Ember from 'ember';
  */
 export default Ember.Component.extend({
     classNames: ['eureka-widget'],
-    classNameBindings: ['bsColumns'],
+    classNameBindings: ['bsColumns', 'config.type'],
 
     /** the configuration of the widget take from the structure
      * and passed by the widgets-grid
      */
     config: null,
+
+    /** return the scope of the widget ("application" or the modelType)
+     */
+    scope: function() {
+        return this.get('modelType') || 'application';
+    }.property('modelType'),
 
     routeModel: null,
     currentController: null,
