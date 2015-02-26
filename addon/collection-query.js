@@ -32,6 +32,7 @@ export default Ember.ArrayProxy.extend({
     _update: function(query) {
         var queryList = Ember.A();
         var item;
+        query = query || {};
         Ember.keys(query).forEach(function(key) {
             var value = query[key];
             if (value !== undefined) {

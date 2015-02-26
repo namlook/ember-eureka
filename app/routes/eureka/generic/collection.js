@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import Query from 'ember-eureka/query';
+import Query from 'ember-eureka/collection-query';
 import Route from 'ember-eureka/route';
 
 export default Route.extend({
