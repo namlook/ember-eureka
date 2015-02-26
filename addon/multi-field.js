@@ -13,6 +13,9 @@ export default Ember.Object.extend({
     }.on('init'),
 
 
+    hasValue: Ember.computed.notEmpty('values'),
+
+
     /** observes the values and update the model content
      * if needed
      */
