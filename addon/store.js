@@ -219,6 +219,37 @@ export default Ember.Object.extend({
         });
     },
 
+    facets: function(facetField, query) {
+        if (!facetField) {
+            console.error('facetField is required');
+        }
+
+        if(!query) {
+            query = {};
+        }
+        var resourceEndpoint = this.get('resourceEndpoint')+'/facets/'+facetField;
+
+        var that = this;
+        var promise = new Ember.RSVP.Promise(function(resolve, reject) {
+            Ember.$.getJSON(resourceEndpoint, query).done(function(data){
+                var results = Ember.A(); // TODO switch to Collection.create(data);
+                // var record;
+                data.results.forEach(function(item) {
+                    // record = that.first({_id: item.facet});
+                    // record.then(function(arf) {
+                    //     console.log(arf);
+                    // });
+                    results.pushObject(item);
+                });
+                return resolve(results);
+            });
+        });
+
+        return Ember.ArrayProxy.extend(Ember.PromiseProxyMixin).create({
+            promise: promise
+        });
+    },
+
     sync: function(pojo) {
         var resourceEndpoint = this.get('resourceEndpoint');
         var postData = {payload: JSON.stringify(pojo)};
