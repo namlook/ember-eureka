@@ -1,5 +1,5 @@
-{{#each widgetConfigurations in rows}}
-    {{#widget-container-row widgetConfigurations=widgetConfigurations
+{{#each widgetConfigurationsRow in rows}}
+    {{#widget-container-row widgetConfigurations=widgetConfigurationsRow
         routeModel=routeModel
         currentController=currentController
         toControllerAction="toControllerAction"
@@ -11,6 +11,8 @@
 
 {{#if yieldOutlet}}
     {{#unless hasOutlet}}
-        <div class="row">{{yield}}</div>
+        <div class="row">
+            {{yield}}
+        </div>
     {{/unless}}
 {{/if}}

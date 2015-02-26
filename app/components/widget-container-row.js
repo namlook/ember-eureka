@@ -1,10 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-    classNames: ['row'],
+    classNames: ['row', 'eureka-widget-container-row'],
 
     widgetConfigurations: null,
-
 
     /** pass throw the controller and the model */
     currentController: null,

@@ -2,7 +2,9 @@
     {{#if widgetConf.isOutlet}}
         {{#if yieldOutlet}}
             {{#widget-outlet config=widgetConf}}
-                <div class="row">{{yield}}</div>
+                <div class="row">
+                    {{yield}}
+                </div>
             {{/widget-outlet}}
         {{/if}}
     {{else}}
@@ -17,8 +19,8 @@
 
 {{#if yieldOutlet}}
     {{#unless hasOutlet}}
-        {{!-- {{#widget-outlet config=widgetConf}} --}}
-            <div class="row">{{yield}}</div>
-        {{!-- {{/widget-outlet}} --}}
+        <div class="row">
+            {{yield}}
+        </div>
     {{/unless}}
 {{/if}}

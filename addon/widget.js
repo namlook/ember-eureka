@@ -7,7 +7,7 @@ import Ember from 'ember';
  */
 export default Ember.Component.extend({
     classNames: ['eureka-widget'],
-    classNameBindings: ['bsColumns', 'config.type'],
+    classNameBindings: ['bsColumns', 'config.componentName'],
 
     /** the configuration of the widget take from the structure
      * and passed by the widgets-grid
