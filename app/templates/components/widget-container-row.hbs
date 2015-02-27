@@ -1,26 +1,29 @@
 {{#each widgetConf in widgetConfigurations}}
     {{#if widgetConf.isOutlet}}
-        {{#if yieldOutlet}}
-            {{#widget-outlet config=widgetConf}}
-                <div class="row">
-                    {{yield}}
-                </div>
-            {{/widget-outlet}}
-        {{/if}}
-    {{else}}
-        {{dynamic-component
-            type=widgetConf.componentName
-            routeModel=routeModel
+        {{#dynamic-widget
             config=widgetConf
+            routeModel=routeModel
             currentController=currentController
-            toControllerAction="toControllerAction"}}
+            toControllerAction="toControllerAction"
+            yieldOutlet=true}}
+                {{yield}}
+        {{/dynamic-widget}}
+    {{else}}
+        {{#if widgetConf.isContainer}}
+            {{!-- we have to pass the widget-container directly
+            to avoid the creation of dynamic-component
+            (which will create a second col-* without row) --}}
+            {{widget-container
+                config=widgetConf
+                routeModel=routeModel
+                currentController=currentController
+                toControllerAction="toControllerAction"}}
+        {{else}}
+            {{dynamic-widget
+                config=widgetConf
+                routeModel=routeModel
+                currentController=currentController
+                toControllerAction="toControllerAction"}}
+        {{/if}}
     {{/if}}
 {{/each}}
-
-{{#if yieldOutlet}}
-    {{#unless hasOutlet}}
-        <div class="row">
-            {{yield}}
-        </div>
-    {{/unless}}
-{{/if}}

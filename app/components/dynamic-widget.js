@@ -1,23 +1,15 @@
-import Ember from 'ember';
+import Widget from 'ember-eureka/widget';
 
-export default Ember.Object.extend({
+export default Widget.extend({
+    classNames: ['eureka-dynamic-widget'],
+    classNameBindings: ['componentName', 'bsColumns', 'controller.routeName'], // TODO handle routeName correctly
 
-    /** we need the container in order to resolve the componentName
-     */
-    _container: null,
+    /** required attributes */
+    config: null,
+    routeModel: null,
+    currentController: null,
 
-    /** if the widget is an "application widget", the
-     * scope is `application`, `model` otherwise.
-     */
-    _scope: null,
-
-    /** a widget takes 12 columns by default
-     */
-    columns: 12,
-
-    /** returns true if the widget is an outlet
-     */
-    isOutlet: Ember.computed.equal('type', 'outlet'),
+    yieldOutlet: false,
 
     /** return the name of the widget composant.
      * It not composant is found for a specific model,
@@ -29,9 +21,9 @@ export default Ember.Object.extend({
      */
     componentName: function() {
         var componentName;
-        var widgetName = this.get('type');
-        var scope = this.get('_scope');
-        var container = this.get('_container');
+        var widgetName = this.get('config.type');
+        var scope = this.get('scope');
+        var container = this.container;
 
         if (scope === 'application') {
 
@@ -54,5 +46,13 @@ export default Ember.Object.extend({
             console.error('component', componentName, 'not found, please create it.');
         }
         return componentName;
-    }.property('_scope', 'type')
+    }.property('scope', 'config.type'),
+
+
+    actions: {
+        // forwards the actions to the parent component (until the controller)
+        toControllerAction: function(actionName) {
+            this.sendAction('toControllerAction', actionName);
+        }
+    }
 });

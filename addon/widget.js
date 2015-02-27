@@ -7,12 +7,15 @@ import Ember from 'ember';
  */
 export default Ember.Component.extend({
     classNames: ['eureka-widget'],
-    classNameBindings: ['bsColumns', 'config.componentName'],
 
-    /** the configuration of the widget take from the structure
-     * and passed by the widgets-grid
-     */
-    config: null,
+    /** required attributes */
+    config: null, // the widget configuration described in structure
+    routeModel: null,
+    currentController: null,
+
+    columns: function() {
+        return this.getWithDefault('config.columns', 12);
+    }.property('config.columns'),
 
     /** return the scope of the widget ("application" or the modelType)
      */
@@ -20,8 +23,7 @@ export default Ember.Component.extend({
         return this.get('modelType') || 'application';
     }.property('modelType'),
 
-    routeModel: null,
-    currentController: null,
+
     applicationController: Ember.computed.alias('currentController.applicationController'),
     currentRouteName: Ember.computed.alias('currentController.currentRouteName'),
 
@@ -31,8 +33,7 @@ export default Ember.Component.extend({
 
 
     bsColumns: function() {
-        var columns = this.get('config.columns') || '12';
-        return 'col-sm-'+columns;
-    }.property('config.columns')
+        return 'col-sm-' + this.get('columns');
+    }.property('columns')
 
 });

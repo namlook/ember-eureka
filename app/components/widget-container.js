@@ -1,45 +1,22 @@
 import Ember from 'ember';
 import Widget from 'ember-eureka/widget';
-import WidgetConfiguration from 'ember-eureka/widget-configuration';
 
-export default Widget.extend({ // should has a <div class="row"> as parent...
+export default Widget.extend({
     classNames: ['widget-container'],
+    classNameBindings: ['bsColumns'],
 
-    hasOutlet: function() {
-        return this.get('_widgetConfigurationObjects').mapBy('isOutlet').compact().length > 0;
-    }.property('_widgetConfigurationObjects.@each.isOutlet'),
 
-    /** if true, and the grid don't have a `widget-outlet` (`hasOutlet` is `false`)
-     * then the grid will append an outlet
-     */
+    /** required attributes */
+    config: null,
+    routeModel: null,
+    currentController: null,
+
+
+    /** set it to `true` if the container has an outlet to yield */
     yieldOutlet: false,
 
-
-    /** the widget configurations passed to the container
-     */
-     widgetConfigurations: null,
-
-    _widgetConfigurationObjects: function() {
-       var widgetConfigurations = this.get('widgetConfigurations');
-        // if no widgets configuration are specified, use the configuration of the widget
-        if (!widgetConfigurations) {
-            widgetConfigurations = this.get('config.widgets');
-        }
-
-        widgetConfigurations = Ember.A(widgetConfigurations);
-        var that = this;
-        return widgetConfigurations.map(function(conf) {
-            var widgetConf = WidgetConfiguration.create(conf);
-            widgetConf.set('_scope', that.get('scope'));
-            widgetConf.set('_container', that.container);
-            return widgetConf;
-        });
-    }.property('widgetConfigurations.@each', 'config.widgets.@each'),
-
-
-
     rows: function() {
-        var widgetConfigurations = this.get('_widgetConfigurationObjects');
+        var widgetConfigurations = Ember.A(this.get('config.widgets'));
 
         var nbRows = 0;
         var rows = Ember.A();
@@ -49,15 +26,17 @@ export default Widget.extend({ // should has a <div class="row"> as parent...
 
             row.pushObject(widgetConf);
 
-            nbRows += widgetConf.get('columns');
+            nbRows += Ember.getWithDefault(widgetConf, 'columns', 12);
             if (nbRows === 12) {
                 rows.pushObject(row);
                 row = Ember.A();
                 nbRows = 0;
             }
         });
+
         return rows;
-    }.property('_widgetConfigurationObjects.@each'),
+    }.property('config.widgets.@each'),
+
 
     actions: {
         // forwards the actions to the parent component (until the controller)

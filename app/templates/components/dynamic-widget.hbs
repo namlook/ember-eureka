@@ -1,0 +1,12 @@
+{{#if yieldOutlet}}
+    <div class="row">
+        {{yield}}
+    </div>
+{{else}}
+    {{dynamic-component
+        type=componentName
+        config=config
+        routeModel=routeModel
+        currentController=currentController
+        toControllerAction="toControllerAction"}}
+{{/if}}

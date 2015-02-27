@@ -1,7 +1,8 @@
+{{controller.routeName}}
 {{#widget-container
+    config=controller.meta
     routeModel=model
     currentController=controller
-    widgetConfigurations=controller.meta.widgets
     toControllerAction="toControllerAction"
     yieldOutlet=true}}
         {{outlet}}

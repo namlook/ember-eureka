@@ -7,12 +7,3 @@
             {{yield}}
     {{/widget-container-row}}
 {{/each}}
-
-
-{{#if yieldOutlet}}
-    {{#unless hasOutlet}}
-        <div class="row">
-            {{yield}}
-        </div>
-    {{/unless}}
-{{/if}}
