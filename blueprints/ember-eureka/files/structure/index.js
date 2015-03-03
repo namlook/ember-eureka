@@ -6,9 +6,19 @@ module.exports = {
     application: {
         name: "<%= applicationName %>"
     },
-    models: {
+    resources: {
         /*
-        <ModelName>: {
+        <Resource>: {
+            views: {
+                <viewName>: {
+                    outlet: {
+                        widgets: []
+                    },
+                    <subViewName>: {
+                        widgets: []
+                    }
+                }
+            },
             properties: {
                 <fieldName>: {
                     type: 'string'

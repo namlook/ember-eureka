@@ -51,7 +51,7 @@ var getRouteQueryParams = function(viewConfig) {
 };
 
 var applicationStructure = config.APP.structure.application;
-var resourcesStructure = config.APP.structure.models; // XXX
+var resourcesStructure = config.APP.structure.resources;
 
 var getViewConfig = function(routeInfo) {
 
