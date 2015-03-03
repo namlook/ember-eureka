@@ -25,15 +25,14 @@ export default Widget.extend({
     componentName: function() {
         var componentName;
         var widgetName = this.get('config.type');
-        var scope = this.get('scope');
+        var resource = this.get('resource');
         var container = this.container;
 
-        if (scope === 'application') {
+        if (!resource) {
 
             componentName = 'widget-'+widgetName;
 
         } else {
-            var resource = scope;
 
             if (!resource) {return console.error('unkown resource', this.get('routeModel'));}
 
@@ -48,8 +47,9 @@ export default Widget.extend({
         if (!container.resolve('component:'+componentName)) {
             console.error('component', componentName, 'not found, please create it.');
         }
+
         return componentName;
-    }.property('scope', 'config.type'),
+    }.property('resource', 'config.type'),
 
 
     actions: {

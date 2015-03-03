@@ -13,24 +13,17 @@ export default Ember.Component.extend({
     routeModel: null,
     currentController: null,
 
+    applicationController: Ember.computed.alias('currentController.applicationController'),
+    currentRouteName: Ember.computed.alias('currentController.currentRouteName'),
+    fqvn: Ember.computed.alias('currentController.fqvn'),
+
+    modelMeta: Ember.computed.alias('routeModel.meta'),
+    store: Ember.computed.alias('modelMeta.store'),
+    resource: Ember.computed.alias('modelMeta.resource'),
+
     columns: function() {
         return this.getWithDefault('config.columns', 12);
     }.property('config.columns'),
-
-    /** return the scope of the widget ("application" or the resource)
-     */
-    scope: function() {
-        return this.get('resource') || 'application';
-    }.property('resource'),
-
-
-    applicationController: Ember.computed.alias('currentController.applicationController'),
-    currentRouteName: Ember.computed.alias('currentController.currentRouteName'),
-
-    modelMeta: Ember.computed.alias('routeModel.meta'),
-    modelStore: Ember.computed.alias('modelMeta.store'),
-    resource: Ember.computed.alias('modelMeta.resource'),
-
 
     bsColumns: function() {
         return 'col-sm-' + this.get('columns');
