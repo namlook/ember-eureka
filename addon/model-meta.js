@@ -48,12 +48,28 @@ export default Ember.ObjectProxy.extend({
          *
          * blogPostModel.meta.collectionFavoritesViewPath will return:
          *    'eureka.blog-post.collection.favorites'
+         *
+         *
+         * If an alias is specified for the viewPath in `structure`, the
+         * property will resolve in priority the alias. For instance:
+         *
+         *  {
+         *       BlogPost: {
+         *           aliases: {
+         *               viewPath: {
+         *                   modelIndex: 'eureka.blog-post.path.to.model.index'
+         *               }
+         *           }
+         *       }
+         *  }
+         *
+         *  `blogPost.meta.modelIndexViewPath` will return `eureka.blog-post.path.to.model.index`
          */
         if (endsWith(key, "ViewPath")){
-            var emberPath = key.slice(0, key.length - "ViewPath".length);
+            var viewPath = key.slice(0, key.length - "ViewPath".length);
             var dasherizedModelType = this.get('modelType').dasherize();
-            emberPath = 'eureka.'+dasherizedModelType+'.'+emberPath.decamelize().split('_').join('.');
-            return emberPath;
+            var eurekaViewPath = 'eureka.'+dasherizedModelType+'.'+viewPath.decamelize().split('_').join('.');
+            return this.getWithDefault('aliases.viewPaths.'+viewPath, eurekaViewPath);
         }
         return this.get('content.'+key);
     }

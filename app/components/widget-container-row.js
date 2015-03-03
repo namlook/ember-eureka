@@ -24,12 +24,6 @@ export default Ember.Component.extend({
     routeModel: null,
     currentController: null,
 
-    /** if true, and the grid don't have a `widget-outlet` (`hasOutlet` is `false`)
-     * then the grid will append an outlet
-     */
-    yieldOutlet: false,
-
-
     actions: {
         // forwards the actions to the parent component (until the controller)
         toControllerAction: function(actionName) {

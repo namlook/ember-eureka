@@ -2,184 +2,138 @@
 import Ember from 'ember';
 import config from '../config/environment';
 
-/** returns the route from the structure's views.
- * `routeType` should be `model` or `collection`
- * if `modelType` is null, then this function returns
- * the application routes (if any)
+/** recursive function to that build the Ember's router.
+ *
+ * There is a default configuration for the view "model" and "collection":
+ *
+ * - if the view name is "model", then the default url config is:
+ *
+ *    {root: '/:id'}
+ *
+ * - if the view name is "collection", then the default url config is:
+ *
+ *    {root: '/', prefix: '/i'}
+ *
  */
-var getRouteNames = function(routeType, modelType) { // model or collection
-    var routes = [];
-    var views = {};
+var convertResourceViewToRoute = function(router, resourceViews, prefix) {
+    var urlPrefix, urlRoot, viewConfig;
 
-    // if it's a model view
-    if (modelType) {
-        views = config.APP.structure.models[modelType].views;
-        if (views) {
-            var routeTypeView = Ember.get(views, routeType);
-            if (routeTypeView) {
-                routes = Ember.keys(routeTypeView);
+    Ember.keys(resourceViews).forEach(function(viewName) {
+
+        viewConfig = resourceViews[viewName];
+
+        if (viewConfig.outlet) {
+            urlRoot = Ember.get(viewConfig, 'outlet.url.root');
+            urlPrefix = Ember.get(viewConfig, 'outlet.url.prefix');
+
+            /** set default url config */
+            if (viewName === 'model') {
+                if (!urlRoot) {
+                    urlRoot = '/:id';
+                }
+            } else if (viewName === 'collection') {
+                if (!urlRoot) {
+                    urlRoot = '/';
+                }
+                if (!urlPrefix) {
+                    urlPrefix = '/i';
+                }
+            } else {
+                if (!urlRoot) {
+                    urlRoot = '/'+viewName;
+                }
+                if (!urlPrefix) {
+                    urlPrefix = '';
+                }
+            }
+
+            /** build the router recursively */
+            router.route(viewName, {path: urlRoot}, function() {
+                convertResourceViewToRoute(this, viewConfig, urlPrefix);
+            });
+        } else {
+            if (viewName !== 'outlet') {
+                if (viewName === 'index') {
+                    return;
+                }
+                prefix = prefix || '';
+                router.route(viewName, {path: prefix+'/'+viewName});
             }
         }
+    });
+};
 
-    // otherwise, it's an application view
-    } else {
-        views = config.APP.structure.application.views;
-        if (views) {
-            routes = Ember.keys(views);
-        }
+
+/** collection recursively all the route infos from the resource's view structure */
+var collectResourceViews = function(resource, resourceViews, collection, root) {
+    root = root || resource.dasherize();
+
+    collection = collection || [{resource: resource, inner: true, path: root}];
+
+    /* load inner index route: ('blog.index' for the blog resource) */
+    if (root) {
+        collection.push({resource: resource, name: 'index', path: root+'.index'});
     }
 
-    routes.removeObjects(['default', 'basic', 'application', 'widgets', 'object', 'collection', 'model', 'outlet']);
-    return routes;
+    var item;
+    Ember.keys(resourceViews).forEach(function(viewName) {
+        item = {resource: resource, name: viewName};
+
+        if (root) {
+            item.path = root+'.'+viewName;
+        } else {
+            item.path = viewName;
+        }
+
+
+        if (resourceViews[viewName].outlet) {
+            item.inner = true;
+            collection.push(item);
+            collectResourceViews(resource, resourceViews[viewName], collection, item.path);
+            var innerIndexItem = {resource: resource, name: 'index', path: item.path+'.index'};
+            collection.push(innerIndexItem);
+        } else {
+            if (viewName !== 'outlet') {
+                collection.push(item);
+            }
+        }
+    });
+    return collection;
 };
 
 
 export function initialize(container, application) {
 
+    var eurekaResourceRoutes = Ember.A();
 
-    /*** generate application routes ***/
-    var applicationRouteNames = getRouteNames('application');
+    var applicationViews = Ember.getWithDefault(config, 'APP.structure.application.views', {});
+    eurekaResourceRoutes.pushObjects(collectResourceViews('', applicationViews));
 
-    // general application routes
-    applicationRouteNames.forEach(function(route) {
-        application.Router.map(function() {
-            this.route('eureka', {path: '/'}, function() {
-                this.route(route, {path: '/'+route});
-            });
-        });
-    });
+    var resources = Ember.keys(config.APP.structure.models);
 
+    var resourceViews, dasherizedResource;
+    resources.forEach(function(resource) {
+        resourceViews = config.APP.structure.models[resource].views;
 
-    var eurekaRoutes = Ember.A();
-    eurekaRoutes.pushObjects(applicationRouteNames.map(function(route) {
-        return {
-            name: 'eureka.'+route
-        };
-    }));
+        dasherizedResource = resource.dasherize();
 
-    /*** generate route for each model ***/
-    Ember.keys(config.APP.structure.models).forEach(function(modelType) {
+        if (resourceViews) {
+            eurekaResourceRoutes.pushObjects(collectResourceViews(resource, resourceViews));
 
-        var underscoredType = modelType.underscore();
-
-        var emptyRouteNames = getRouteNames('empty', modelType);
-        var modelRouteNames = getRouteNames('model', modelType);
-        var collectionRouteNames = getRouteNames('collection', modelType);
-
-
-        /**** collect model and collection route full name ***/
-        if (modelRouteNames.length && collectionRouteNames.length && emptyRouteNames.length) {
-            eurekaRoutes.pushObject({
-                modelType: modelType,
-                name: 'eureka.'+underscoredType,
-                inner: true
-            });
-        }
-
-        /*** empty routes ***/
-        if (emptyRouteNames.length) {
-            eurekaRoutes.pushObject({
-                type: 'empty',
-                modelType: modelType,
-                name: 'eureka.'+underscoredType+'.empty',
-                inner: true
-            });
-        }
-
-        eurekaRoutes.pushObjects(emptyRouteNames.map(function(route) {
-            return {
-                type: 'empty',
-                modelType: modelType,
-                name: 'eureka.'+underscoredType+'.empty.'+route
-            };
-        }));
-
-        /*** model routes ***/
-        if (modelRouteNames.length) {
-            eurekaRoutes.pushObject({
-                type: 'model',
-                modelType: modelType,
-                name: 'eureka.'+underscoredType+'.model',
-                inner: true
-            });
-        }
-
-        eurekaRoutes.pushObjects(modelRouteNames.map(function(route) {
-            return {
-                type: 'model',
-                modelType: modelType,
-                name: 'eureka.'+underscoredType+'.model.'+route
-            };
-        }));
-
-
-        /*** collection routes ***/
-        if (collectionRouteNames.length) {
-            eurekaRoutes.pushObject({
-                type: 'collection',
-                modelType: modelType,
-                name: 'eureka.'+underscoredType+'.collection',
-                inner: true
-            });
-        }
-
-        eurekaRoutes.pushObjects(collectionRouteNames.map(function(route) {
-            return {
-                type: 'collection',
-                modelType: modelType,
-                name: 'eureka.'+underscoredType+'.collection.'+route
-            };
-        }));
-
-        /**** router update ****/
-        application.Router.map(function() {
-            // typed routes
-            this.route('eureka', {path: '/'}, function() {
-                this.route(underscoredType, function(){
-
-                    // collection
-                    this.route('collection', {path: '/'}, function() {
-                        this.route('index', {path: '/'});
-
-                        // generate the routes from `views.collection`
-                        var that = this;
-                        collectionRouteNames.forEach(function(route) {
-                            if (route === 'index') {
-                                return;
-                            }
-                            that.route(route, {path: '/i/'+route});
-                        });
-                    });
-
-                    // empty
-                    this.route('empty', {path: '/_'}, function() {
-                        // generate the routes from `views.empty`
-                        var that = this;
-                        emptyRouteNames.forEach(function(route) {
-                            that.route(route, {path: '/'+route});
-                        });
-                    });
-
-                    // model
-                    this.route('model', {path: '/:id'}, function() {
-                        this.route('index', {path: '/'});
-
-                        // generate the routes from `views.model`
-                        var that = this;
-                        modelRouteNames.forEach(function(route) {
-                            if (route === 'index' || route === 'new') {
-                                return;
-                            }
-                            that.route(route, {path: '/'+route});
-                        });
+            application.Router.map(function() {
+                this.route('eureka', {path: '/'}, function() {
+                    this.route(dasherizedResource, {path: '/'+dasherizedResource}, function() {
+                        convertResourceViewToRoute(this, resourceViews);
                     });
                 });
             });
-        });
+        }
+
+
     });
 
     /**** inject the routes list into application ****/
-    application.register('eurekaRoutes:main', eurekaRoutes, {instantiate: false, singleton: true});
+    application.register('eurekaResourceRoutes:main', eurekaResourceRoutes, {instantiate: false, singleton: true});
 }
 
 export default {

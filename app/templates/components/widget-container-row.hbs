@@ -1,23 +1,25 @@
 {{#each widgetConf in widgetConfigurations}}
-    {{#if widgetConf.isOutlet}}
-        {{#dynamic-widget
+    {{#if widgetConf.isContainer}}
+        {{!-- we have to pass the widget-container directly
+        to avoid the creation of dynamic-component
+        (which will create a second col-* without row) --}}
+        {{widget-container
             config=widgetConf
             routeModel=routeModel
             currentController=currentController
-            toControllerAction="toControllerAction"
-            yieldOutlet=true}}
-                {{yield}}
-        {{/dynamic-widget}}
+            toControllerAction="toControllerAction"}}
     {{else}}
-        {{#if widgetConf.isContainer}}
-            {{!-- we have to pass the widget-container directly
-            to avoid the creation of dynamic-component
-            (which will create a second col-* without row) --}}
-            {{widget-container
+        {{#if widgetConf.isOutlet}}
+            {{!-- It is the dynamic-widget that is "columns aware"
+            That why we don't create the widget-outlet directly here --}}
+            {{#dynamic-widget
                 config=widgetConf
                 routeModel=routeModel
                 currentController=currentController
-                toControllerAction="toControllerAction"}}
+                toControllerAction="toControllerAction"
+                yieldOutlet=true}}
+                    {{yield}}
+            {{/dynamic-widget}}
         {{else}}
             {{dynamic-widget
                 config=widgetConf

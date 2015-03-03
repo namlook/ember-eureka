@@ -9,6 +9,9 @@ export default Widget.extend({
     routeModel: null,
     currentController: null,
 
+    /** if true, just yield the content (it should be
+     * the outlet passed to the widget-container
+     */
     yieldOutlet: false,
 
     /** return the name of the widget composant.

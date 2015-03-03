@@ -1,5 +1,15 @@
-{{widget-container
-    config=controller.meta
-    routeModel=model
-    currentController=controller
-    toControllerAction="toControllerAction"}}
+{{#if controller.meta.isOutlet}}
+    {{#widget-container
+        config=controller.meta
+        routeModel=model
+        currentController=controller
+        toControllerAction="toControllerAction"}}
+            {{outlet}}
+    {{/widget-container}}
+{{else}}
+    {{widget-container
+        config=controller.meta
+        routeModel=model
+        currentController=controller
+        toControllerAction="toControllerAction"}}
+{{/if}}

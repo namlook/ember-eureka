@@ -3,7 +3,7 @@ import Widget from 'ember-eureka/widget';
 
 export default Widget.extend({
     classNames: ['widget-container'],
-    classNameBindings: ['bsColumns'],
+    classNameBindings: ['bsColumns', 'dahserizedFqvn'],
 
 
     /** required attributes */
@@ -36,6 +36,14 @@ export default Widget.extend({
 
         return rows;
     }.property('config.widgets.@each'),
+
+
+    dahserizedFqvn: function() {
+        var fqvn = this.get('currentController.fqvn');
+        if (fqvn) {
+            return fqvn.camelize().dasherize()+'-controller';
+        }
+    }.property('currentController.fqvn'),
 
 
     actions: {

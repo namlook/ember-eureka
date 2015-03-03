@@ -51,6 +51,18 @@ export default Ember.Controller.extend({
             } else {
                 this.send(action);
             }
+        },
+
+        /** allow to make a route transition from a widget */
+        transitionTo: function(payload) {
+            if (payload.model) {
+                var modelId = payload.model.get('_id');
+                if (modelId) {
+                    this.transitionToRoute(payload.routePath, modelId);
+                    return;
+                }
+            }
+            this.transitionToRoute(payload.routePath);
         }
     },
 

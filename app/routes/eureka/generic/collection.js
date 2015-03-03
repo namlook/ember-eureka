@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import Query from 'ember-eureka/collection-query';
 import Route from 'ember-eureka/route';
+import Query from 'ember-eureka/collection-query';
 
 export default Route.extend({
 
@@ -22,5 +22,4 @@ export default Route.extend({
             query: query
         });
     }
-
 });

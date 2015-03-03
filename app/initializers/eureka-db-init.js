@@ -36,6 +36,6 @@ export function initialize(container, application) {
 
 export default {
   name: 'eureka-db-init',
-  after: 'eureka-routes-generation',
+  after: 'eureka-generic-routes-controllers',
   initialize: initialize
 };
