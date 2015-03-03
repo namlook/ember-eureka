@@ -41,21 +41,35 @@ export default Resolver.extend({
 
             // fetch generic default template
             if (!template) {
-                fullName = ['template:eureka/generic'];
-                var routeType = parsedName.fullNameWithoutType.split('/')[2];
-                if (routeType) {
-                    fullName.push(routeType);
-                }
-                fullName.push('default');
-                fullName = fullName.join('/');
+                // fullName = ['template:eureka/generic'];
+                // var routeType = parsedName.fullNameWithoutType.split('/')[2];
+                // if (routeType) {
+                //     fullName.push(routeType);
+                // }
+                // fullName.push('default');
+                // fullName = fullName.join('/');
+                path = parsedName.fullNameWithoutType.split('/').slice(2).join('/');
+                fullName = ["route:eureka/generic", path].join('/');
                 parsedName = this.parseName(fullName);
 
                 template = this._super(parsedName);
 
 
-                // fetch the generic default one: eureka.generic.default
+                // fetch the generic default one: eureka.generic.{collection, model}
                 if (!template) {
-                    fullName = 'template:eureka/generic/default';
+                    if (initialFullName.match(/\/model$/)) {
+                        fullName = 'template:eureka/generic/model';
+                    } else if (initialFullName.match(/\/model\//)) {
+                        fullName = 'template:eureka/generic/model/default';
+                    } else if (initialFullName.match(/\/new$/)) {
+                        fullName = 'template:eureka/generic/new';
+                    } else if (initialFullName.match(/\/new\//)) {
+                        fullName = 'template:eureka/generic/new/default';
+                    } else if (initialFullName.split('/').length === 2) { // eureka.<resource>
+                        fullName = 'template:eureka/generic/collection';
+                    } else {
+                        fullName = 'template:eureka/generic/collection/default';
+                    }
                     parsedName = this.parseName(fullName);
 
                     template = this._super(parsedName);

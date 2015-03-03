@@ -43,7 +43,7 @@ module.exports = {
         {name: 'ember-dynamic-component'},
         {name: 'ember-bootstrap-hurry'},
         {name: 'ember-moment'},
-        {name: 'eureka-widget-application-header'},
+        {name: 'eureka-widget-application-navbar'},
         {name: 'eureka-widget-application-menu'},
         {name: 'eureka-widget-model-navbar'},
         {name: 'eureka-widget-model-display'},
