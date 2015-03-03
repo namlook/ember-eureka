@@ -91,9 +91,9 @@ var _regularCPFunction = function(fieldMeta) {
  */
 export default Ember.Object.extend({
     db: null,
-    modelType: null,
+    resource: null,
     modelClass: null,
-    modelStructure: null,
+    resourceStructure: null,
 
     /** build computed property for all structure's fields
      * If the field is a relation field, the computed property will
@@ -136,20 +136,20 @@ export default Ember.Object.extend({
 
     resourceEndpoint: function() {
         var db = this.get('db');
-        var modelType = this.get('modelType');
-        var underscoredModelType = modelType.underscore();
+        var resource = this.get('resource');
+        var underscoredModelType = resource.underscore();
         return db.get('endpoint')+'/'+underscoredModelType;
-    }.property('modelType'),
+    }.property('resource'),
 
     modelMeta: function() {
-        var modelType = this.get('modelType');
-        var modelStructure = this.get('modelStructure');
+        var resource = this.get('resource');
+        var resourceStructure = this.get('resourceStructure');
         return ModelMeta.create({
-            modelType: modelType,
+            resource: resource,
             store: this,
-            content: modelStructure
+            content: resourceStructure
         });
-    }.property('modelType'),
+    }.property('resource'),
 
     createRecord: function(record) {
         if (record === undefined) {

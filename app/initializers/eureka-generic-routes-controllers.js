@@ -129,7 +129,7 @@ export function initialize(container, application) {
         // route
         route = container.resolve('route:'+resolvePath);
         route.reopen({
-            modelType: routeInfo.resource,
+            resource: routeInfo.resource,
             routeType: routeInfo.name,
             fqvn: routeInfo.path,
             meta: Ember.Object.create(viewConfig),
@@ -139,7 +139,7 @@ export function initialize(container, application) {
         // controller
         controller = container.resolve('controller:'+resolvePath);
         controller.reopen({
-            modelType: routeInfo.resource,
+            resource: routeInfo.resource,
             fqvn: routeInfo.path,
             meta: Ember.Object.create(viewConfig)
         });

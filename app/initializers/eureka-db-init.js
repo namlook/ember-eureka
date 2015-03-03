@@ -17,8 +17,8 @@ export function initialize(container, application) {
     db[resource] = Store.create({
         db:db,
         modelClass: Model,
-        modelType: resource,
-        modelStructure: resourcesStructure[resource],
+        resource: resource,
+        resourceStructure: resourcesStructure[resource],
         /** we pass the container here so we can resolve
          * the components and template path inside field and model's meta.
          * For instance, the container is used in `FieldMeta.displayWidgetComponentName`

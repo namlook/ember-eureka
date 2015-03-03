@@ -1,6 +1,6 @@
 
 /** A database is a singleton in which multiple stores are attached
- * (one store by model type)
+ * (one store by resource)
  */
 
 import Ember from 'ember';

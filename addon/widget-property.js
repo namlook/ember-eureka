@@ -11,6 +11,6 @@ export default Ember.Component.extend({
 
     fieldMeta: Ember.computed.alias('field.meta'),
     modelMeta: Ember.computed.alias('fieldMeta.modelMeta'),
-    modelType: Ember.computed.alias('modelMeta.modelType')
+    resource: Ember.computed.alias('modelMeta.resource')
 
 });

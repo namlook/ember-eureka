@@ -97,7 +97,7 @@ export default Ember.ObjectProxy.extend({
             results.pushObject(that.get(fieldTitle+'Field'));
         });
         return results;
-    }.property('meta.modelType', '_reloadFields'),
+    }.property('meta.resource', '_reloadFields'),
 
 
     /** the title computed property is a little special,

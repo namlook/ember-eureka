@@ -4,12 +4,12 @@ import FieldMeta from './field-meta';
 import endsWith from './utils/ends-with';
 
 export default Ember.ObjectProxy.extend({
-    modelType: null,
+    resource: null,
     store: null,
 
     fieldNames: function() {
         return Ember.keys(this.get('properties'));
-    }.property('modelType'),
+    }.property('resource'),
 
     relationFieldNames: function() {
         var results = Ember.A();
@@ -67,7 +67,7 @@ export default Ember.ObjectProxy.extend({
          */
         if (endsWith(key, "ViewPath")){
             var viewPath = key.slice(0, key.length - "ViewPath".length);
-            var dasherizedModelType = this.get('modelType').dasherize();
+            var dasherizedModelType = this.get('resource').dasherize();
             var eurekaViewPath = 'eureka.'+dasherizedModelType+'.'+viewPath.decamelize().split('_').join('.');
             return this.getWithDefault('aliases.viewPaths.'+viewPath, eurekaViewPath);
         }

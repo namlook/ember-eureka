@@ -1,12 +1,5 @@
 import Ember from 'ember';
 
-/** An Eureka route takes the form of :
- *
- *   eureka.<modelType>.*
- *   eureka.<modelType>.<routeType>.*
- *
- * where `routeType` is ether `model` or `collection`
- */
 export default Ember.Route.extend({
 
     /** if `redirect` is present in meta, then redirect to the
@@ -20,8 +13,8 @@ export default Ember.Route.extend({
     },
 
     store: function() {
-        var modelType = this.get('modelType');
-        return this.db[modelType];
-    }.property('modelType')
+        var resource = this.get('resource');
+        return this.db[resource];
+    }.property('resource')
 
 });

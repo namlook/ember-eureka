@@ -23,7 +23,7 @@ export default Ember.ObjectProxy.extend({
     getWidgetComponentName: function(widgetType, isMulti) {
 
         var container = this.get('modelMeta.store.container');
-        var dasherizedModelType = this.get('modelMeta.modelType').dasherize();
+        var dasherizedModelType = this.get('modelMeta.resource').dasherize();
         var componentName = dasherizedModelType + '-' + this.get('name') + '-widget-property-'+widgetType;
 
         if (!container.resolve('component:'+componentName)) {
@@ -74,13 +74,13 @@ export default Ember.ObjectProxy.extend({
     displayWidgetComponentName: function() {
         var isMulti = this.get('isMulti');
         return this.getWidgetComponentName('display', isMulti);
-    }.property('name', 'modelType'),
+    }.property('name', 'resource'),
 
 
     formWidgetComponentName: function() {
         var isMulti = this.get('isMulti');
         return this.getWidgetComponentName('form', isMulti);
-    }.property('name', 'modelType'),
+    }.property('name', 'resource'),
 
 
     isRelation: function() {

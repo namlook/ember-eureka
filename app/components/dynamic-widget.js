@@ -33,11 +33,11 @@ export default Widget.extend({
             componentName = 'widget-'+widgetName;
 
         } else {
-            var modelType = scope;
+            var resource = scope;
 
-            if (!modelType) {return console.error('unkown modelType', this.get('routeModel'));}
+            if (!resource) {return console.error('unkown resource', this.get('routeModel'));}
 
-            var dasherizedModelType = modelType.dasherize();
+            var dasherizedModelType = resource.dasherize();
             componentName = dasherizedModelType+'-widget-'+widgetName;
 
             if (!container.resolve('component:'+componentName)) {

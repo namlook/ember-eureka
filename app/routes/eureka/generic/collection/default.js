@@ -3,7 +3,7 @@ import Route from 'ember-eureka/route';
 export default Route.extend({
 
     model: function() {
-        var dasherizedModelType = this.get('modelType').dasherize();
+        var dasherizedModelType = this.get('resource').dasherize();
         return this.modelFor('eureka.'+dasherizedModelType);
     }
 });

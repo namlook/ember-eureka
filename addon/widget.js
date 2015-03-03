@@ -17,11 +17,11 @@ export default Ember.Component.extend({
         return this.getWithDefault('config.columns', 12);
     }.property('config.columns'),
 
-    /** return the scope of the widget ("application" or the modelType)
+    /** return the scope of the widget ("application" or the resource)
      */
     scope: function() {
-        return this.get('modelType') || 'application';
-    }.property('modelType'),
+        return this.get('resource') || 'application';
+    }.property('resource'),
 
 
     applicationController: Ember.computed.alias('currentController.applicationController'),
@@ -29,7 +29,7 @@ export default Ember.Component.extend({
 
     modelMeta: Ember.computed.alias('routeModel.meta'),
     modelStore: Ember.computed.alias('modelMeta.store'),
-    modelType: Ember.computed.alias('modelMeta.modelType'),
+    resource: Ember.computed.alias('modelMeta.resource'),
 
 
     bsColumns: function() {
