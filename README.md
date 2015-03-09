@@ -1,6 +1,6 @@
 # Ember-eureka
 
-This README outlines the details of collaborating on this Ember addon.
+Eureka for Ember applications.
 
 ## Installation
 
