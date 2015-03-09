@@ -50,8 +50,8 @@ var getRouteQueryParams = function(viewConfig) {
     return null;
 };
 
-var applicationStructure = config.APP.structure.application;
-var resourcesStructure = config.APP.structure.resources;
+var eurekaApplication = config.APP.eureka;
+var eurekaResources = config.APP.eureka.resources;
 
 var getViewConfig = function(routeInfo) {
 
@@ -71,9 +71,9 @@ var getViewConfig = function(routeInfo) {
 
     var viewConfig;
     if (!routeInfo.resource) {
-        viewConfig = Ember.getWithDefault(applicationStructure, fullViewPath, {});
+        viewConfig = Ember.getWithDefault(eurekaApplication, fullViewPath, {});
     } else {
-        viewConfig = Ember.getWithDefault(resourcesStructure, fullViewPath, {});
+        viewConfig = Ember.getWithDefault(eurekaResources, fullViewPath, {});
     }
 
     if (viewConfig.outlet) {

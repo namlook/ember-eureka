@@ -1,4 +1,3 @@
-
 import Resolver from 'ember/resolver';
 
 var ENABLE_LOG = false;

@@ -17,6 +17,8 @@ export default Ember.Component.extend({
     currentRouteName: Ember.computed.alias('currentController.currentRouteName'),
     fqvn: Ember.computed.alias('currentController.fqvn'),
 
+    eurekaConfig: Ember.computed.alias('currentController.appConfig.eureka'),
+
     modelMeta: Ember.computed.alias('routeModel.meta'),
     store: Ember.computed.alias('modelMeta.store'),
     resource: Ember.computed.alias('modelMeta.resource'),
@@ -25,6 +27,7 @@ export default Ember.Component.extend({
         return this.getWithDefault('config.columns', 12);
     }.property('config.columns'),
 
+    /** bootstrap's grid class **/
     bsColumns: function() {
         return 'col-sm-' + this.get('columns');
     }.property('columns')

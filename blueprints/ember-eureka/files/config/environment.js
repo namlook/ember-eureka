@@ -1,8 +1,10 @@
 /* jshint node: true */
 
+var eurekaStructure = require('ember-eureka/config/structure');
+
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'newproject',
+    modulePrefix: '<%= dasherizedPackageName %>',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',
@@ -16,6 +18,7 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+      eureka: eurekaStructure
     }
   };
 

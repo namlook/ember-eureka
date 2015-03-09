@@ -6,6 +6,7 @@ import endsWith from './utils/ends-with';
 export default Ember.ObjectProxy.extend({
     resource: null,
     store: null,
+    // content: the resource structure in eureka's config
 
     fieldNames: function() {
         return Ember.keys(this.get('properties'));
@@ -69,7 +70,7 @@ export default Ember.ObjectProxy.extend({
             var viewPath = key.slice(0, key.length - "ViewPath".length);
             var dasherizedModelType = this.get('resource').dasherize();
             var eurekaViewPath = 'eureka.'+dasherizedModelType+'.'+viewPath.decamelize().split('_').join('.');
-            return this.getWithDefault('aliases.viewPaths.'+viewPath, eurekaViewPath);
+            return this.getWithDefault('aliases.views.'+viewPath, eurekaViewPath);
         }
         return this.get('content.'+key);
     }

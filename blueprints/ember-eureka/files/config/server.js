@@ -1,12 +1,14 @@
 /* jshint node: true */
 
 var pkg = require('../package.json');
+var resources = require('ember-eureka/config/structure').resources;
 
 module.exports = {
     name: pkg.name,
     version: 1,
     port: 4000,
     enableCORS: true,
+    schemas: resources,
     database: {
         adapter: 'rdf',
         config: {

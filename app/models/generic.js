@@ -103,7 +103,7 @@ export default Ember.ObjectProxy.extend({
     /** the title computed property is a little special,
      *  it is used to represent each model of the system.
      *  So it will return the title from the `content`, or
-     *  the value of the field specified in `aliases.title`,
+     *  the value of the field specified in `aliases.properties.title`,
      *  or the _id of the model
      */
     title: function(key, value) {
@@ -115,7 +115,7 @@ export default Ember.ObjectProxy.extend({
             /** check if an alias exists for `title` in the structure
              *  if yes, then use the fieldName set for the title value
              */
-            var alias = this.get('meta.aliases.title');
+            var alias = this.get('meta.aliases.properties.title');
             if (alias) {
                 _title = this.get(alias);
             }
@@ -125,7 +125,7 @@ export default Ember.ObjectProxy.extend({
         } else if (this.get('titleField')) {
             this.set('content.title', value);
         }
-    }.property('meta.aliases.title', 'content.title', 'content._id'),
+    }.property('meta.aliases.properties.title', 'content.title', 'content._id'),
 
 
     delete: function() {
@@ -236,6 +236,10 @@ export default Ember.ObjectProxy.extend({
             var fieldName = key.slice(0, key.length - "Field".length);
             var fieldMeta = this.get('meta.'+fieldName+'Field');
 
+            if (!fieldMeta) {
+                console.error('Eureka: unknown field', fieldName, 'in', this.get('meta.resource'));
+            }
+
             if (fieldMeta.get('isMulti')) {
                 var values;
                 if (fieldMeta.get('isRelation') || !this.get(fieldName)) {
@@ -258,6 +262,7 @@ export default Ember.ObjectProxy.extend({
                 });
             }
         }
+        // XXX handle aliases
         return this.get('content.'+key);
     }
 

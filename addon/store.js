@@ -120,7 +120,6 @@ export default Ember.Object.extend({
             if (!skip) {
 
                 var fieldMeta = that.get('modelMeta.'+fieldName+'Field');
-
                 if (fieldMeta.get('isRelation')) {
                     computedFunction = _relationCPFunction(fieldMeta);
                 } else {
@@ -132,7 +131,7 @@ export default Ember.Object.extend({
         });
         // update the model class
         modelClass.reopen(computedProperties);
-    }.observes('modelClass').on('init'),
+    },
 
     resourceEndpoint: function() {
         var db = this.get('db');

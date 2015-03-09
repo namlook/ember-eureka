@@ -2,20 +2,10 @@
 import Ember from 'ember';
 import config from '../config/environment';
 
-var resourceReservedKeyword = ['default', 'basic', 'application', 'widgets', 'object', 'collection', 'model', 'resource', 'outlet'];
-
 /** check reserved keywords and fill
  *  'auto' views with default configuration
  */
 export function initialize(container, application) {
-
-    /*** check reserved resource keywords ***/
-    var resources = config.APP.structure.resources;
-    Ember.keys(resources).forEach(function(resource) {
-        if (resourceReservedKeyword.indexOf(resource.toLowerCase()) > -1) {
-            throw("Eureka: '"+resource+"' is a reserved keyword. Don't use it as resource");
-        }
-    });
 
     var appConfig = Ember.Object.create(config.APP);
 

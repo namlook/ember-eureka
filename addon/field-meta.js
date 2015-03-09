@@ -84,10 +84,9 @@ export default Ember.ObjectProxy.extend({
 
 
     isRelation: function() {
-        var modelMeta = this.get('modelMeta');
         var fieldType = this.get('content.type');
-        return !!modelMeta.get('store.db')[fieldType];
-    }.property('content.type'),
+        return !!this.get('modelMeta.store.db')[fieldType];
+    }.property('content.type', 'modelMeta.store.db'),
 
 
     isMulti: Ember.computed.bool('content.multi'),

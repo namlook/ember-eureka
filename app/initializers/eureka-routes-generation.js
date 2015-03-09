@@ -106,14 +106,14 @@ export function initialize(container, application) {
 
     var eurekaResourceRoutes = Ember.A();
 
-    var applicationViews = Ember.getWithDefault(config, 'APP.structure.application.views', {});
+    var applicationViews = Ember.getWithDefault(config, 'APP.eureka.views', {});
     eurekaResourceRoutes.pushObjects(collectResourceViews('', applicationViews));
 
-    var resources = Ember.keys(config.APP.structure.resources);
+    var resources = Ember.keys(config.APP.eureka.resources);
 
     var resourceViews, dasherizedResource;
     resources.forEach(function(resource) {
-        resourceViews = config.APP.structure.resources[resource].views;
+        resourceViews = config.APP.eureka.resources[resource].views;
 
         dasherizedResource = resource.dasherize();
 

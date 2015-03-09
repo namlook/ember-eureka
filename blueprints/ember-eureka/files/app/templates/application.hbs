@@ -1,1 +1,16 @@
-{{outlet}}
+<div class="container">
+    <div class="row">
+
+        {{!-- remove the following block when you do not need it anymore --}}
+        <div class="well well-lg" style="margin-top:15px;">
+            <h2 id="title">Welcome to Eureka.js</h2>
+            <p>Now, add some resources:</p>
+            <pre>ember generate eureka-resource my-resource</pre>
+            <p>and edit its properties in <pre>config/eureka/resources/my-resource/properties.js</pre></p>
+            <p>restart the server and the backend</p>
+            <p><small>To remove this message, edit <code>app/templates/application.hbs</code></small></p>
+        </div>
+
+        {{outlet}}
+    </div>
+</div>
