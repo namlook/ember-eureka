@@ -3,7 +3,7 @@ export default {
         {
             type: 'collection-navbar',
             actions: [
-                {label: 'create', route: 'eureka.<%= resource %>.new'}
+                {label: 'create', icon: 'glyphicon glyphicon-plus', route: 'eureka.<%= resource %>.new'}
             ]
         }
     ]
