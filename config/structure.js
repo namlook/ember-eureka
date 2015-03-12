@@ -1,7 +1,9 @@
 /* jshint node: true */
 
 /** this allows to require es6 modules **/
-require('6to5/register');
+require('babel/register')({
+    only: /config\/eureka/, // prevent to pollute the node_modules
+});
 
 var dirmapper = require('dirmapper');
 var _ = require('lodash');
@@ -68,5 +70,3 @@ var buildEurekaConfig = function(eurekaConfigPath) {
 };
 
 module.exports = buildEurekaConfig(path.resolve('.') + '/config/eureka');
-
-
