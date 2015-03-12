@@ -9,13 +9,14 @@ module.exports = {
     port: 4000,
     enableCORS: true,
     schemas: resources,
+    publicDirectory: '/dist',
     database: {
         adapter: 'rdf',
         config: {
             store: 'virtuoso',
             host: process.env.DB_PORT_8890_TCP_ADDR,
             port: process.env.DB_PORT_8890_TCP_PORT,
-            graphURI: 'http://'+pkg.name+'.com'
+            graphURI: 'http://<%= dasherizedPackageName %>.com'
         }
     }
 };
