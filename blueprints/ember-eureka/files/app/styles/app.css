@@ -1,0 +1,19 @@
+html, body {
+  margin: 0;
+}
+
+.widget-model-navbar .navbar-default,
+.widget-collection-navbar .navbar-default {
+  background-color: #fff;
+  border-color: #fff;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.widget-model-navbar, .widget-collection-navbar {
+  margin-top: 30px;
+}
+
+.widget-model-navbar .navbar-default .navbar-brand,
+.widget-collection-navbar .navbar-default .navbar-brand {
+  font-size: 42px;
+}

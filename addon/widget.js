@@ -7,6 +7,8 @@ import Ember from 'ember';
  */
 export default Ember.Component.extend({
     classNames: ['eureka-widget'],
+    classNameBindings: ['cssStyle'],
+
 
     /** required attributes */
     config: null, // the widget configuration described in structure
@@ -30,6 +32,10 @@ export default Ember.Component.extend({
     /** bootstrap's grid class **/
     bsColumns: function() {
         return 'col-sm-' + this.get('columns');
-    }.property('columns')
+    }.property('columns'),
+
+    cssStyle: function() {
+        return this.get('config.style');
+    }.property('config.style')
 
 });
