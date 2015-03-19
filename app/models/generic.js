@@ -121,9 +121,13 @@ export default Ember.ObjectProxy.extend({
             }
             return _title || this.get('content.title') || this.get('content._id');
 
-        // setter only if `title` is defined in structure
-        } else if (this.get('titleField')) {
-            this.set('content.title', value);
+        /* setter only if `title` is defined in structure
+         * we don't need to handle aliases in setter (we have to set
+         * the correct field(s) instead)
+         */
+        } else if (this.get('meta.titleField')) {
+            this.setField('title', value);
+            return value;
         }
     }.property('meta.aliases.properties.title', 'content.title', 'content._id'),
 
