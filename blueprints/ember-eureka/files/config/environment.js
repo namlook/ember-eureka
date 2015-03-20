@@ -1,6 +1,7 @@
 /* jshint node: true */
 
 var eurekaStructure = require('ember-eureka/config/structure');
+var serverConfig = require('./server');
 
 module.exports = function(environment) {
   var ENV = {
@@ -28,14 +29,16 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
-    ENV.APP.apiEndpoint = '/api/1';
+
+    ENV.APP.backendUrl = 'http://'+serverConfig.host+':'+serverConfig.port;
+    ENV.APP.apiEndpoint = ENV.APP.backendUrl+'/api/1';
 
     ENV.contentSecurityPolicy = {
       'default-src': "'none'",
       'script-src': "'self'",
       'font-src': "'self'",
-      'connect-src': "'self'",
-      'img-src': "'self'",
+      'connect-src': "'self' "+ENV.APP.backendUrl,
+      'img-src': "'self' data: "+ENV.APP.backendUrl,
       'style-src': "'self' 'unsafe-inline'",
       'media-src': "'self'"
     };
@@ -55,14 +58,14 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    // ENV.APP.apiEndpoint = 'http://path/to/the/api';
+    ENV.APP.apiEndpoint = '/api/1';
 
      ENV.contentSecurityPolicy = {
       'default-src': "'none'",
       'script-src': "'self'",
       'font-src': "'self'",
-      'connect-src': "'self' http://localhost:4000",
-      'img-src': "'self' data: www.gravatar.com",
+      'connect-src': "'self'",
+      'img-src': "'self' data:",
       'style-src': "'self' 'unsafe-inline'",
       'media-src': "'self'"
     };
