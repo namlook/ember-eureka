@@ -16,6 +16,16 @@ export default Ember.ObjectProxy.extend({
         return this.get('content.label') || this.get('name'); // TODO check i18n
     }.property('content.label', 'name'),
 
+    widgetConfig: function() {
+        var config = this.get('widget');
+        if (config) {
+            if (typeof(config) === 'string') {
+                config = {type: config};
+            }
+            return config;
+        }
+    }.property('widget'),
+
 
     /** returns the component name of the widget
      * depending of `widgetType` (which can be `form` or `display`)
@@ -27,9 +37,13 @@ export default Ember.ObjectProxy.extend({
         var componentName = dasherizedModelType + '-' + this.get('name') + '-widget-property-'+widgetType;
 
         if (!container.resolve('component:'+componentName)) {
-            var propertyWidget = this.get('widget');
-            if (propertyWidget) {
-                componentName = 'widget-property-' + propertyWidget + '-'+widgetType;
+            var widget = this.get('widgetConfig');
+            if (widget) {
+                var multi = '';
+                if (this.get('isMulti')) {
+                    multi = '-multi';
+                }
+                componentName = 'widget-property'+ multi + '-' + widget.type + '-'+widgetType;
 
                 if (!container.resolve('component:'+componentName)) {
                     console.error('Error: cannot found the property widget', componentName, 'falling back to a generic one');
