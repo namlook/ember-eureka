@@ -2,6 +2,10 @@ html, body {
   margin: 0;
 }
 
+.eureka-application {
+    margin-top: 25px;
+}
+
 .widget-model-navbar .navbar-default,
 .widget-collection-navbar .navbar-default {
   background-color: #fff;

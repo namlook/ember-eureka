@@ -1,0 +1,6 @@
+
+/* better typeahead styling */
+.typeahead, .tt-query, .tt-hint {
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
