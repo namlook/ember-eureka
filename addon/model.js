@@ -6,6 +6,47 @@ import MultiField from 'ember-eureka/multi-field';
 
 export default Ember.ObjectProxy.extend({
 
+    _init: function() {
+        this.set('__scheduledFn', Ember.A());
+    }.on('init'),
+
+    /** schedule a function when a specific action will be run
+     *
+     * action: the action performed (ex: 'save')
+     * name: the name of the scheduled action (ex: 'uploadFile')
+     * scheduledFn: the javascript function to be scheduled. This
+     *    function should return a promise.
+     *
+     */
+    _scheduleFor: function(action, name, scheduledFn) {
+        var scheduled = Ember.Object.create({
+            action: action,
+            name: name,
+            scheduledFn: scheduledFn
+        });
+        this.get('__scheduledFn').pushObject(scheduled);
+    },
+
+    /** remove a scheduled action **/
+    _removeScheduledFor: function(action, name) {
+        var scheduledFn = this.get('__scheduledFn');
+        var scheduledToRemove = scheduledFn.filter(function(object){
+            if (object.get('action') === action && object.get('name') === name) {
+                return object;
+            }
+        });
+        scheduledFn.removeObjects(scheduledToRemove);
+    },
+
+    /** process all scheduled function for a specific action **/
+    _processScheduledFor: function(action) {
+        var scheduledFn = this.get('__scheduledFn');
+        var scheduledToProcess = scheduledFn.filterBy('action', action);
+        var promises = Ember.RSVP.all(scheduledToProcess.invoke('scheduledFn'));
+        scheduledFn.removeObjects(scheduledToProcess);
+        return promises;
+    },
+
     /** This variable is incremented by the fields each time
      * their value has changed. This is used to update the model
      * content when saving it
@@ -138,10 +179,16 @@ export default Ember.ObjectProxy.extend({
 
 
     save: function() {
-        this._resetContentChanges();
-        this._fillInitialContent();
-        var pojo = this.toPojo();
-        return this.get('meta.store').sync(pojo);
+        var that = this;
+        // return this.__beforeSave().then(function() {
+        return this._processScheduledFor('save').then(function() {
+            var pojo = that.toPojo();
+            return that.get('meta.store').sync(pojo);
+        }).then(function(savedModel) {
+            that._resetContentChanges();
+            that._fillInitialContent();
+            return savedModel;
+        });
     },
 
     toPojo: function() {
