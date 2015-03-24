@@ -6,10 +6,12 @@ var resources = require('ember-eureka/config/structure').resources;
 module.exports = {
     name: pkg.name,
     version: 1,
+    host: 'localhost',
     port: 4000,
     enableCORS: true,
     schemas: resources,
-    publicDirectory: '/dist',
+    publicDirectory: 'dist',
+    uploadDirectory: 'uploads',
     database: {
         adapter: 'rdf',
         config: {
