@@ -12,19 +12,19 @@ var _relationCPFunction = function(fieldMeta) {
 
         // "this" represents the model
         relationComputedFunction = function(key, value) {
-            // getter
-            if (arguments.length === 1) {
-                var db = this.get('meta.store.db');
-                var val = this.get('content.'+fieldName);
-                if (val && val.length) {
-                    var relationIds = this.get('content.'+fieldName).mapBy('_id');
-                    var relationType = this.get('meta.'+fieldName+'Field.type');
-                    return db[relationType].find({_id: {$in: relationIds}});
-                }
-
             // setter
-            } else {
+            if (arguments.length === 2) {
                 this.setField(fieldName, value);
+                return value;
+            }
+
+            // getter
+            var db = this.get('meta.store.db');
+            var val = this.get('content.'+fieldName);
+            if (val && val.length) {
+                var relationIds = this.get('content.'+fieldName).mapBy('_id');
+                var relationType = this.get('meta.'+fieldName+'Field.type');
+                return db[relationType].find({_id: {$in: relationIds}});
             }
         }.property('content.'+fieldName);
 
@@ -34,17 +34,17 @@ var _relationCPFunction = function(fieldMeta) {
         relationComputedFunction = function(key, value) {
 
             // getter
-            if (arguments.length === 1) {
-                var db = this.get('meta.store.db');
-                var relationId = this.get('content.'+fieldName+'._id');
-                if (relationId) {
-                    var relationType = this.get('meta.'+fieldName+'Field.type');
-                    return db[relationType].first({_id: relationId});
-                }
-
-            // setter
-            } else {
+            if (arguments.length === 2) {
                 this.setField(fieldName, value);
+                return value;
+            }
+
+            // getter
+            var db = this.get('meta.store.db');
+            var relationId = this.get('content.'+fieldName+'._id');
+            if (relationId) {
+                var relationType = this.get('meta.'+fieldName+'Field.type');
+                return db[relationType].first({_id: relationId});
             }
         }.property('content.'+fieldName);
     }
@@ -262,6 +262,24 @@ export default Ember.Object.extend({
         return Ember.ObjectProxy.extend(Ember.PromiseProxyMixin).create({
             promise: promise
         });
+    },
+
+    delete: function(recordId) {
+        var resourceEndpoint = this.get('resourceEndpoint');
+        var promise = new Ember.RSVP.Promise(function(resolve, reject) {
+            Ember.$.ajax({
+                url: resourceEndpoint+'/'+recordId,
+                type: 'delete',
+                success: function(data) {
+                    resolve(data);
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
+                }
+            });
+        });
+        return promise;
     }
 
 });

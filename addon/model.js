@@ -174,13 +174,12 @@ export default Ember.ObjectProxy.extend({
 
 
     delete: function() {
-        // TODO
+        return this.get('meta.store').delete(this.get('_id'));
     },
 
 
     save: function() {
         var that = this;
-        // return this.__beforeSave().then(function() {
         return this._processScheduledFor('save').then(function() {
             var pojo = that.toPojo();
             return that.get('meta.store').sync(pojo);
