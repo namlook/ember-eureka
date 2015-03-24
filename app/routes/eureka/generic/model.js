@@ -12,6 +12,12 @@ export default Route.extend({
         var query = {_id: modelId};
         //     _populate: populate
         return this.get('store').first(query);
+    },
+
+    actions: {
+        refreshModel: function() {
+            this.refresh();
+        }
     }
 
 });
