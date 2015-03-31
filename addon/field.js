@@ -6,7 +6,7 @@ export default Ember.Object.extend({
     value: null,
     model: null,
 
-    hasValue: Ember.computed.notEmpty('value'),
+    hasValue: Ember.computed.alias('value'),
 
     /** observes the value and update the
      * model content if needed
