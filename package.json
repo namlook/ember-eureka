@@ -1,6 +1,6 @@
 {
   "name": "ember-eureka",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Eureka for Ember applications",
   "directories": {
     "doc": "doc",
