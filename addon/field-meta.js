@@ -13,7 +13,7 @@ export default Ember.ObjectProxy.extend({
 
 
     label: function() {
-        return this.get('content.label') || this.get('name'); // TODO check i18n
+        return this.get('content.label') || this.get('name').dasherize().split('-').join(' '); // TODO check i18n
     }.property('content.label', 'name'),
 
     widgetConfig: function() {
