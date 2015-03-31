@@ -7,19 +7,24 @@
                 <li>
                     {{widget-model-form routeModel=relation isEmbedded=true}}
                     {{#if relation._syncNeeded}}
-                        <button {{action 'cancelRelations' relation}}> cancel </button>
-                        <button {{action 'doneRelations' relation}}> save </button>
+                        <div class="btn-group">
+                            <button class="btn btn-default" {{action 'cancelRelations' relation}}> cancel </button>
+                            <button class="btn btn-primary" {{action 'doneRelations' relation}}> save </button>
+                        </div>
                     {{else}}
-                        <button {{action 'doneRelations' relation}}> done </button>
+                        <button class="btn btn-primary" {{action 'doneRelations' relation}}> done </button>
                     {{/if}}
                 </li>
             {{else}}
                 <li>
-                    <button {{action 'edit' relation}}> {{relation.title}} </button><button {{action 'deleteRelations' relation}}>x</button>
+                    <div class="btn-group">
+                        <button class="btn btn-default" {{action 'edit' relation}}> {{relation.title}} </button>
+                        <button class="btn btn-danger" {{action 'deleteRelations' relation}}>&times;</button>
+                    </div>
                 </li>
             {{/if}}
         {{/each}}
-        <li>{{relation-autosuggest field=field}} <a {{action 'addRelations'}}> + </a>
+        <li>{{relation-autosuggest field=field}} <a class="btn btn-default" {{action 'addRelations'}}> + </a>
         </li>
     </ul>
 {{/if}}

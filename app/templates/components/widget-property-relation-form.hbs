@@ -5,15 +5,20 @@
         {{#if field.editing}}
             {{widget-model-form routeModel=field.value isEmbedded=true}}
             {{#if field.value._syncNeeded}}
-                <button {{action 'cancelRelation'}}> cancel </button>
-                <button {{action 'doneRelation'}}> save </button>
+                <div class="btn-group">
+                    <button class="btn btn-default" {{action 'cancelRelation'}}> cancel </button>
+                    <button class="btn btn-primary" {{action 'doneRelation'}}> save </button>
+                </div>
             {{else}}
-                <button {{action 'doneRelation'}}> done </button>
+                <button class="btn btn-primary" {{action 'doneRelation'}}> done </button>
             {{/if}}
         {{else}}
-            <button {{action 'edit'}}> {{field.value.title}}</button><button {{action 'deleteRelation'}}>x</button>
+            <div class="btn-group">
+                <button class="btn btn-default" {{action 'edit'}}> {{field.value.title}}</button>
+                <button class="btn btn-danger" {{action 'deleteRelation'}}>&times;</button>
+            </div>
         {{/if}}
     {{/if}}
 {{else}}
-   {{relation-autosuggest field=field}}  <a {{action 'addRelation'}}> + </a>
+   {{relation-autosuggest field=field}}  <a class="btn btn-default" {{action 'addRelation'}}> + </a>
 {{/if}}
