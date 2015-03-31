@@ -61,11 +61,9 @@ var adjustResources = function(eurekaStructure) {
 };
 
 var buildEurekaConfig = function(eurekaConfigPath) {
-    console.log('building eureka structure...');
     var eurekaDirectories = dirmapper(eurekaConfigPath).eureka;
     var eurekaStructure = walkEurekaConfig(eurekaDirectories, eurekaConfigPath);
     var eurekaConfig = adjustResources(eurekaStructure);
-    console.log('done');
     return eurekaConfig;
 };
 
