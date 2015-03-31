@@ -2,22 +2,66 @@ html, body {
   margin: 0;
 }
 
-.eureka-application {
-    margin-top: 25px;
+.widget-application-menu {
+    padding-top: 25px;
 }
+
+.widget-outlet.main-content {
+    background-color: #fff;
+    padding-top: 25px;
+    min-height: 500px;
+}
+
+
+.widget-application-menu .nav-pills > li.active > a,
+.widget-application-menu .nav-pills > li > a:hover {
+    color: #333;
+    background-color: #fff;
+    margin-right: -20px;
+    border-radius: 0;
+}
+
 
 .widget-model-navbar .navbar-default,
 .widget-collection-navbar .navbar-default {
   background-color: #fff;
   border-color: #fff;
+  border-radius: 0;
   border-bottom: 1px solid #e7e7e7;
-}
-
-.widget-model-navbar, .widget-collection-navbar {
-  margin-top: 30px;
 }
 
 .widget-model-navbar .navbar-default .navbar-brand,
 .widget-collection-navbar .navbar-default .navbar-brand {
   font-size: 42px;
+}
+
+.empty-placeholder {
+  padding: 20px;
+  text-align: center;
+}
+
+
+/*** table ***/
+
+.widget-model-display .table > tbody > tr > th,
+.widget-model-display .table > tbody > tr > td {
+    border: 0;
+    padding: 0;
+    padding-left: 15px;
+    width: 50%;
+}
+
+th {
+    text-align: right;
+}
+
+td: {
+    text-align: left;
+}
+
+/*** panel ***/
+
+.panel {
+    border-radius: 0;
+    box-shadow: none;
 }
