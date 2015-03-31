@@ -12,6 +12,7 @@ module.exports = {
     schemas: resources,
     publicDirectory: 'dist',
     uploadDirectory: 'uploads',
+    logLevel: 'info',
     database: {
         adapter: 'rdf',
         config: {
