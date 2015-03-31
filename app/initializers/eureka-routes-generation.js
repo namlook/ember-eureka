@@ -107,6 +107,25 @@ export function initialize(container, application) {
     var eurekaResourceRoutes = Ember.A();
 
     var applicationViews = Ember.getWithDefault(config, 'APP.eureka.views', {});
+
+    /** register application routes. Example:
+     *
+     *  $ ember g eureka-view about
+     *
+     *  edit config/eureka/views/about.js
+     *
+     *  then go to http://localhost:4200/i/about
+     *
+     */
+    // XXX TODO handle nested routes
+    Ember.keys(applicationViews).forEach(function(view) {
+        application.Router.map(function() {
+            this.route('eureka', {path: '/i'}, function() {
+                this.route(view, {path: '/'+view});
+            });
+        });
+    });
+
     eurekaResourceRoutes.pushObjects(collectResourceViews('', applicationViews));
 
     var resources = Ember.keys(config.APP.eureka.resources);
@@ -128,8 +147,6 @@ export function initialize(container, application) {
                 });
             });
         }
-
-
     });
 
     /**** inject the routes list into application ****/
