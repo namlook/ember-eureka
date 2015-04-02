@@ -1,6 +1,9 @@
 /* jshint node: true */
 
-var eurekaStructure = require('ember-eureka/config/structure');
+var eurekaStructureBuilder = require('eurekajs/structure-builder');
+var eurekaConfigPath = require('path').resolve('.') + '/config/eureka';
+var eurekaStructure = eurekaStructureBuilder(eurekaConfigPath);
+
 var serverConfig = require('./server');
 
 module.exports = function(environment) {
