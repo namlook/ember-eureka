@@ -34,6 +34,10 @@ export default Widget.extend({
             }
         });
 
+        if (nbRows > 0) {
+            console.error('WARNING: the grid columns doesnt match 12 in', this.get('config'));
+        }
+
         return rows;
     }.property('config.widgets.@each'),
 
