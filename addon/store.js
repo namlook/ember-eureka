@@ -174,19 +174,26 @@ export default Ember.Object.extend({
         var resourceEndpoint = this.get('resourceEndpoint');
 
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
-            Ember.$.getJSON(resourceEndpoint, query, function(data){
-                var record;
-                var content = {};
-                // if there is a match, we wrap all relations with Model objects
-                if (data.results.length > 0) {
-                    content = data.results[0];
+            Ember.$.ajax({
+                dataType: "json",
+                url: resourceEndpoint,
+                async: true,
+                data: query,
+                success: function(data){
+                    var record;
+                    var content = {};
+                    // if there is a match, we wrap all relations with Model objects
+                    if (data.results.length > 0) {
+                        content = data.results[0];
+                    }
+                    // build the model
+                    record = that.createRecord(content);
+                    return resolve(record);
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
                 }
-                // build the model
-                record = that.createRecord(content);
-                return resolve(record);
-            }, function(infos) {
-                console.log('XXXX', infos);
-                return reject(infos);
             });
         });
         return Ember.ObjectProxy.extend(Ember.PromiseProxyMixin).create({
@@ -202,14 +209,24 @@ export default Ember.Object.extend({
         var that = this;
 
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
-            Ember.$.getJSON(resourceEndpoint, query).done(function(data){
-                var results = Ember.A(); // TODO switch to Collection.create(data);
-                var record;
-                data.results.forEach(function(item) {
-                    record = that.createRecord(item);
-                    results.pushObject(record);
-                });
-                return resolve(results);
+            Ember.$.ajax({
+                dataType: "json",
+                url: resourceEndpoint,
+                async: true,
+                data: query,
+                success: function(data) {
+                    var results = Ember.A(); // TODO switch to Collection.create(data);
+                    var record;
+                    data.results.forEach(function(item) {
+                        record = that.createRecord(item);
+                        results.pushObject(record);
+                    });
+                    return resolve(results);
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
+                }
             });
         });
 
@@ -230,17 +247,27 @@ export default Ember.Object.extend({
 
         var that = this;
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
-            Ember.$.getJSON(resourceEndpoint, query).done(function(data){
-                var results = Ember.A(); // TODO switch to Collection.create(data);
-                // var record;
-                data.results.forEach(function(item) {
-                    // record = that.first({_id: item.facet});
-                    // record.then(function(arf) {
-                    //     console.log(arf);
-                    // });
-                    results.pushObject(item);
-                });
-                return resolve(results);
+            Ember.$.ajax({
+                dataType: "json",
+                url: resourceEndpoint,
+                async: true,
+                data: query,
+                success: function(data) {
+                    var results = Ember.A(); // TODO switch to Collection.create(data);
+                    // var record;
+                    data.results.forEach(function(item) {
+                        // record = that.first({_id: item.facet});
+                        // record.then(function(arf) {
+                        //     console.log(arf);
+                        // });
+                        results.pushObject(item);
+                    });
+                    return resolve(results);
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
+                }
             });
         });
 
@@ -254,9 +281,20 @@ export default Ember.Object.extend({
         var postData = {payload: JSON.stringify(pojo)};
         var that = this;
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
-            Ember.$.post(resourceEndpoint, postData, function(data) {
-                var record = that.createRecord(data.object);
-                resolve(record);
+            Ember.$.ajax({
+                dataType: "json",
+                url: resourceEndpoint,
+                type: 'post',
+                async: true,
+                data: postData,
+                success: function(data) {
+                    var record = that.createRecord(data.object);
+                    resolve(record);
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
+                }
             });
         });
         return Ember.ObjectProxy.extend(Ember.PromiseProxyMixin).create({
@@ -270,6 +308,7 @@ export default Ember.Object.extend({
             Ember.$.ajax({
                 url: resourceEndpoint+'/'+recordId,
                 type: 'delete',
+                async: true,
                 success: function(data) {
                     resolve(data);
                 },
