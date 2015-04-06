@@ -1,5 +1,5 @@
 {{#if field.value.isPending}}
-    loading...
+    {{partial 'eureka-loading'}}
 {{else}}
     <ul>
         {{#each relation in field.values}}

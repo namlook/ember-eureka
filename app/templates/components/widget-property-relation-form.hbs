@@ -1,6 +1,6 @@
 {{#if field.value}}
     {{#if field.value.isPending}}
-        loading...
+        {{partial 'eureka-loading'}}
     {{else}}
         {{#if field.editing}}
             {{widget-model-form routeModel=field.value isEmbedded=true}}

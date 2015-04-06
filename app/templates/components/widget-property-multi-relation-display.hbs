@@ -1,6 +1,6 @@
 <ul>
     {{#if field.values.isPending}}
-        <li>loading...</li>
+        <li>{{partial 'eureka-loading'}}</li>
     {{else}}
         {{#each relation in field.values}}
             <li>{{#link-to relation.meta.modelIndexViewPath relation._id}}{{relation.title}}{{/link-to}}</li>
