@@ -1,11 +1,17 @@
 import Route from 'ember-eureka/route';
 
+/** This route is used for nested form (or step wizards)
+ *
+ *  /new/user-infos
+ *  /new/contacts
+ *  /new/done
+ */
+
 export default Route.extend({
 
     model: function() {
-        var resource = this.get('resource');
-        var modelRoute = this.container.resolve('eurekaResourceRoutes:new')[resource];
-        return this.modelFor(modelRoute);
+        var resourceRoute = this.get('fqvn').split('.new.')[0]+'.new';
+        return this.modelFor(resourceRoute);
     },
 
     actions: {

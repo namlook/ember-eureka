@@ -2,6 +2,58 @@ import Resolver from 'ember/resolver';
 
 var ENABLE_LOG = false;
 
+
+// /** build the route's queryParams from structure's config
+//  */
+// var getRouteQueryParams = function(viewConfig) {
+//     if (viewConfig === undefined) {
+//         return null;
+//     }
+
+//     var queryParams = Ember.get(viewConfig, 'queryParams');
+
+//     var results = {};
+//     if (queryParams) {
+//         if (!Ember.isArray(queryParams)) {
+//             console.error("Eureka: structure's queryParams should be an array");
+//         }
+
+//         var paramName, config;
+//         queryParams.forEach(function(param) {
+
+//             if (typeof(param) !== 'string' && param) {
+//                 paramName = Ember.keys(param)[0];
+//                 results[paramName] = {};
+//                 config = param[paramName];
+
+//                 if (Ember.get(config, 'as')) {
+//                     paramName = Ember.get(config, 'as');
+//                 }
+
+//                 if (Ember.get(config, 'replace') === true) {
+//                     Ember.set(results, paramName+'.replace', true);
+//                 } else {
+//                     Ember.set(results, paramName+'.replace', false);
+//                 }
+
+//                 if (Ember.get(config, 'refreshModel') === true) {
+//                     Ember.set(results, paramName+'.refreshModel', true);
+//                 } else {
+//                     Ember.set(results, paramName+'.refreshModel', false);
+//                 }
+//             }
+
+//         });
+//     }
+
+//     if (Ember.keys(results).length) {
+//         return results;
+//     }
+//     return null;
+// };
+
+
+
 /** if the route/controller/template doesn't exists,
  * resolve to the generic one. Example:
  *
@@ -97,7 +149,9 @@ export default Resolver.extend({
 
         /** resolve to a regular route for "eureka" **/
         if (parsedName.fullNameWithoutType === 'eureka') {
-            return route;
+            return route.extend({
+                eurekaViewPath: 'eureka'
+            });
         }
 
         var initialFullName = parsedName.fullNameWithoutType;
@@ -139,7 +193,10 @@ export default Resolver.extend({
             }
         }
 
-        return route.extend();
+        return route.extend({
+            eurekaViewPath: initialFullName
+            // queryParams: getRouteQueryParams(viewConfig) XXX TODO, find the viewConfig (currently in init)
+        });
     },
 
     resolveController: function(parsedName) {
@@ -152,7 +209,9 @@ export default Resolver.extend({
 
         /** resolve to a regular controller for "eureka" **/
         if (parsedName.fullNameWithoutType === 'eureka') {
-            return controller;
+            return controller.extend({
+                eurekaViewPath: 'eureka'
+            });
         }
 
         var initialFullName = parsedName.fullNameWithoutType;
@@ -192,7 +251,9 @@ export default Resolver.extend({
             }
         }
 
-        return controller.extend();
+        return controller.extend({
+            eurekaViewPath: initialFullName
+        });
     }
 
 

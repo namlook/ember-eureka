@@ -7,7 +7,7 @@ import config from '../config/environment';
  */
 export function initialize(container, application) {
 
-    var appConfig = Ember.Object.create(config.APP);
+    var appConfig = Ember.Object.create(JSON.parse(JSON.stringify(config.APP)));
 
     application.register('appConfig:main', appConfig, {instantiate: false, singleton: true});
     application.inject('route', 'appConfig', 'appConfig:main');

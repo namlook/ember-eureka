@@ -1,10 +1,11 @@
 
 import Ember from 'ember';
+import config from '../config/environment';
 import Database from 'ember-eureka/database';
 import Store from 'ember-eureka/store';
 
 export function initialize(container, application) {
-  var appConfig = container.resolve('appConfig:main');
+  var appConfig = JSON.parse(JSON.stringify(config.APP));
 
   var db = Database.create({endpoint: appConfig.apiEndpoint});
   var eurekaResources = appConfig.eureka.resources;
@@ -46,6 +47,5 @@ export function initialize(container, application) {
 
 export default {
   name: 'eureka-db-init',
-  after: 'eureka-generic-routes-controllers',
   initialize: initialize
 };

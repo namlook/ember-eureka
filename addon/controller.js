@@ -7,6 +7,21 @@ export default Ember.Controller.extend({
     currentRouteName: Ember.computed.alias('applicationController.currentRouteName'),
 
 
+    init: function() {
+        this._super.apply(this, arguments);
+        var eurekaViewPath = this.get('eurekaViewPath');
+        var eurekaViewConfig = this.EUREKA_VIEWS_CONFIG.get(eurekaViewPath);
+        if (eurekaViewConfig) {
+            this.set('fqvn', eurekaViewConfig.get('info.path'));
+            this.set('resource', eurekaViewConfig.get('info.resource'));
+            this.set('routeType', eurekaViewConfig.get('info.name'))
+            this.set('meta', eurekaViewConfig.get('config'));
+        } else {
+            console.log('no config for', eurekaViewPath);
+        }
+    },
+
+
     queryParams: function() {
         var queryParams = this.get('meta.queryParams');
         var that = this;

@@ -3,9 +3,8 @@ import Route from 'ember-eureka/route';
 export default Route.extend({
 
     model: function() {
-        var resource = this.get('resource');
-        var modelRoute = this.container.resolve('eurekaResourceRoutes:model')[resource];
-        return this.modelFor(modelRoute);
+        var resourceRoute = this.get('fqvn').split('.model.')[0]+'.model';
+        return this.modelFor(resourceRoute);
     },
 
     actions: {
