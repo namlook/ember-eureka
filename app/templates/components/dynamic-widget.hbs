@@ -3,8 +3,7 @@
         {{yield}}
     </div>
 {{else}}
-    {{dynamic-component
-        type=componentName
+    {{component componentName
         config=config
         routeModel=routeModel
         currentController=currentController

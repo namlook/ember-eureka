@@ -1,9 +1,7 @@
 <ul>
     {{#each field in field.values}}
         <li>
-            {{dynamic-component
-                type=propertyComponentName
-                field=field}}
+            {{component propertyComponentName field=field}}
             <button {{action 'removeValue' field}}>x</button>
         </li>
     {{/each}}
