@@ -1,6 +1,6 @@
 # Ember-eureka
 
-Eureka for Ember applications.
+Ember client for Eureka applications.
 
 ## Installation
 
