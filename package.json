@@ -1,6 +1,6 @@
 {
   "name": "ember-eureka",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Ember client for Eureka applications",
   "directories": {
     "doc": "doc",
