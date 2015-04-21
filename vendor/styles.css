@@ -6,7 +6,10 @@
 }
 
 
-/*** loading spinner ***/
+/** loading spinner
+ * taken from http://tobiasahlin.com/spinkit/
+ **/
+
 .eureka-loading-spinner {
   margin: 50px auto 50px;
   width: 70px;
