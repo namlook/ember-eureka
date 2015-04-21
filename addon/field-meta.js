@@ -5,6 +5,17 @@ export default Ember.ObjectProxy.extend({
     name: null,
     modelMeta: null,
 
+    /** if the field type is a relation, then
+     * returns the modelMeta of this relation
+     */
+    relationModelMeta: function() {
+        var fieldType = this.get('content.type');
+        var relationResource = this.get('modelMeta.store.db')[fieldType]
+        if (relationResource) {
+            return relationResource.get('modelMeta');
+        }
+    }.property('modelMeta.store.db', 'content.type'),
+
     content: function() {
         var name = this.get('name');
         var modelMeta = this.get('modelMeta');
