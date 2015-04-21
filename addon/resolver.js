@@ -166,16 +166,20 @@ export default Resolver.extend({
 
             // fetch the generic default one: eureka.generic.{collection, model}
             if (!route) {
-                if (initialFullName.match(/\/model$/)) {
-                    fullName = 'route:eureka/generic/model';
+                if (initialFullName.match(/\/loading$/)) {
+                    fullName = 'route:eureka/generic/_loading';
+                } else if (initialFullName.match(/\/error$/)) {
+                    fullName = 'route:eureka/generic/_error';
+                } else if (initialFullName.match(/\/model$/)) {
+                    fullName = 'route:eureka/generic/_model';
                 } else if (initialFullName.match(/\/model\//)) {
                     fullName = 'route:eureka/generic/model/default';
                 } else if (initialFullName.match(/\/new$/)) {
-                    fullName = 'route:eureka/generic/new';
+                    fullName = 'route:eureka/generic/_new';
                 } else if (initialFullName.match(/\/new\//)) {
                     fullName = 'route:eureka/generic/new/default';
                 } else if (initialFullName.split('/').length === 2) { // eureka.<resource>
-                    fullName = 'route:eureka/generic/collection';
+                    fullName = 'route:eureka/generic/_collection';
                 } else {
                     fullName = 'route:eureka/generic/collection/default';
                 }
@@ -225,16 +229,20 @@ export default Resolver.extend({
 
             // fetch the generic default one: eureka.generic.default
             if (!controller) {
-                if (initialFullName.match(/\/model$/)) {
-                    fullName = 'controller:eureka/generic/model';
+                if (initialFullName.match(/\/loading$/)) {
+                    fullName = 'controller:eureka/generic/_loading';
+                } else if (initialFullName.match(/\/error$/)) {
+                    fullName = 'controller:eureka/generic/_error';
+                } else if (initialFullName.match(/\/model$/)) {
+                    fullName = 'controller:eureka/generic/_model';
                 } else if (initialFullName.match(/\/model\//)) {
                     fullName = 'controller:eureka/generic/model/default';
                 } else if (initialFullName.match(/\/new$/)) {
-                    fullName = 'controller:eureka/generic/new';
+                    fullName = 'controller:eureka/generic/_new';
                 } else if (initialFullName.match(/\/new\//)) {
                     fullName = 'controller:eureka/generic/new/default';
                 } else if (initialFullName.split('/').length === 2) { // eureka.<resource>
-                    fullName = 'controller:eureka/generic/collection';
+                    fullName = 'controller:eureka/generic/_collection';
                 } else {
                     fullName = 'controller:eureka/generic/collection/default';
                 }
