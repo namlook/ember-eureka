@@ -23,33 +23,34 @@ export default Widget.extend({
      *    - use `widget-model-form`
      */
     componentName: function() {
-        var componentName;
+        // var componentName;
         var widgetName = this.get('config.type');
-        var resource = this.get('resource');
-        var container = this.container;
+        // var resource = this.get('resource');
+        // var container = this.container;
 
-        if (!resource) {
+        // if (!resource) {
 
-            componentName = 'widget-'+widgetName;
+        //     componentName = 'widget-'+widgetName;
 
-        } else {
+        // } else {
 
-            if (!resource) {return console.error('unkown resource', this.get('routeModel'));}
+        //     if (!resource) {return console.error('unkown resource', this.get('routeModel'));}
 
-            var dasherizedModelType = resource.dasherize();
-            componentName = dasherizedModelType+'-widget-'+widgetName;
+        //     var dasherizedModelType = resource.dasherize();
+        //     componentName = dasherizedModelType+'-widget-'+widgetName;
 
-            if (!container.resolve('component:'+componentName)) {
-                componentName = 'widget-'+widgetName;
-            }
-        }
+        //     if (!container.has('component:'+componentName)) {
+        //         componentName = 'widget-'+widgetName;
+        //     }
+        // }
 
-        if (!container.resolve('component:'+componentName)) {
-            console.error('component', componentName, 'not found, please create it.');
-        }
+        // if (!container.has('component:'+componentName)) {
+        //     console.error('component', componentName, 'not found, please create it.');
+        // }
 
-        return componentName;
-    }.property('resource', 'config.type'),
+        // return componentName;
+        return 'widget-'+widgetName;
+    }.property(/*'resource', */'config.type'),
 
 
     actions: {
