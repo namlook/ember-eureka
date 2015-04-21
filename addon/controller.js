@@ -23,33 +23,56 @@ export default Ember.Controller.extend({
 
 
     queryParams: function() {
-        var queryParams = this.get('meta.queryParams');
-        var that = this;
-        if (queryParams) {
-            if (!Ember.isArray(queryParams)) {
-                console.error("Eureka: structure's queryParams should be an array");
-            }
-
-            // set the params on the controller
-            var paramName, config, defaultValue;
-            queryParams.forEach(function(param) {
-
-                if (typeof(param) === 'string') {
-                    paramName = param;
-                    defaultValue = null;
-                } else {
-                    paramName = Ember.keys(param)[0];
-                    config = param[paramName];
-                    defaultValue = Ember.getWithDefault(config, 'defaultValue', null);
-                }
-
-                that.set(paramName, defaultValue);
-            });
-
-            return queryParams;
+        if (this.get('_queryParams')) {
+            return this.get('_queryParams');
         }
-        return Ember.A();
-    }.property('meta.queryParams'),
+
+        /** fetch the query params from the config **/
+        var eurekaViewPath = this.get('eurekaViewPath');
+        var eurekaViewConfig = this.EUREKA_VIEWS_CONFIG.getWithDefault(eurekaViewPath, {});
+        var queryParams = Ember.getWithDefault(eurekaViewConfig, 'config.queryParams', []);
+
+        /** set the default values of the query params **/
+        var defaultValue;
+        var that = this;
+        queryParams.forEach(function(param) {
+            defaultValue = Ember.getWithDefault(queryParams, param+'.defaultValue', null);
+            that.set(param, defaultValue);
+        });
+
+        this.set('_queryParams', queryParams);
+        return queryParams;
+    }.property('eurekaViewPath'),
+
+
+    // queryParams: function() {
+    //     var queryParams = this.get('meta.queryParams');
+    //     var that = this;
+    //     if (queryParams) {
+    //         if (!Ember.isArray(queryParams)) {
+    //             console.error("Eureka: structure's queryParams should be an array");
+    //         }
+
+    //         // set the params on the controller
+    //         var paramName, config, defaultValue;
+    //         queryParams.forEach(function(param) {
+
+    //             if (typeof(param) === 'string') {
+    //                 paramName = param;
+    //                 defaultValue = null;
+    //             } else {
+    //                 paramName = Ember.keys(param)[0];
+    //                 config = param[paramName];
+    //                 defaultValue = Ember.getWithDefault(config, 'defaultValue', null);
+    //             }
+
+    //             that.set(paramName, defaultValue);
+    //         });
+
+    //         return queryParams;
+    //     }
+    //     return Ember.A();
+    // }.property('meta.queryParams'),
 
 
     actions: {
