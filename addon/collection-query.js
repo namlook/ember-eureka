@@ -11,21 +11,19 @@ export default Ember.ArrayProxy.extend({
 
     queryChangedObserver: function() {
         this.incrementProperty('hasChanged');
-    }.observes('content.@each'),
+    }.observes('content.@each.value'),
 
 
     raw: function(key, value) {
-        if (arguments.length === 1) {
-            return this._toObject();
-        } else {
+        if (arguments.length > 1) {
             this._update(value);
-            return value;
         }
+        return this._toObject();
     }.property('hasChanged'),
 
 
     json: function() {
-        return JSON.stringify(this.get('raw'));
+        return JSON.stringify(this._toObject());
     }.property('hasChanged'),
 
 
