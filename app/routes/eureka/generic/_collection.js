@@ -4,12 +4,6 @@ import Query from 'ember-eureka/collection-query';
 
 export default Route.extend({
 
-    // queryParams: {
-    //     'query': {
-    //         refreshModel: true
-    //     }
-    // },
-
     model: function(params, transition) {
         var meta = this.get('store.modelMeta');
         var query = Query.create();
@@ -17,7 +11,7 @@ export default Route.extend({
             query.set('raw', JSON.parse(transition.queryParams['query']));
         }
         return Ember.Object.create({
-            params: params,
+            params: transition.queryParams, // it should be transition.queryParams not params
             meta: meta,
             query: query
         });
