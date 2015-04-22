@@ -14,7 +14,7 @@ export default Ember.Controller.extend({
         if (eurekaViewConfig) {
             this.set('fqvn', eurekaViewConfig.get('info.path'));
             this.set('resource', eurekaViewConfig.get('info.resource'));
-            this.set('routeType', eurekaViewConfig.get('info.name'))
+            this.set('routeType', eurekaViewConfig.get('info.name'));
             this.set('meta', eurekaViewConfig.get('config'));
         } else {
             console.log('no config for', eurekaViewPath);
