@@ -1,0 +1,27 @@
+<div class="form-group">
+{{#each prop in properties}}
+    {{select-2
+        classNames="form-control"
+        content=prop.suggestions
+        value=prop.name
+        optionValuePath="content.id"
+        optionLabelPath="content.label"
+        placeholder="choose a property"}}
+{{/each}}
+</div>
+
+{{#if showCollapseButton}}
+    <div class="form-group">
+        <button class="btn btn-sm btn-default" style="border:0;padding:0" {{action 'collapseProperty'}}>
+            <i class="glyphicon glyphicon-chevron-left"></i>
+        </button>
+    </div>
+{{/if}}
+
+{{#if showExpandButton}}
+    <div class="form-group">
+        <button class="btn btn-sm btn-default" style="border:0;padding:0"  {{action 'expandProperty'}}>
+            <i class="glyphicon glyphicon-chevron-right"></i>
+        </button>
+    </div>
+{{/if}}

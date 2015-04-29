@@ -235,15 +235,15 @@ export default Ember.Object.extend({
         });
     },
 
-    facets: function(facetField, query) {
-        if (!facetField) {
-            console.error('facetField is required');
+    groupBy: function(field, query) {
+        if (!field) {
+            console.error('field is required');
         }
 
         if(!query) {
             query = {};
         }
-        var resourceEndpoint = this.get('resourceEndpoint')+'/facets/'+facetField;
+        var resourceEndpoint = this.get('resourceEndpoint')+'/facets/'+field;
 
         var that = this;
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
@@ -274,6 +274,31 @@ export default Ember.Object.extend({
         return Ember.ArrayProxy.extend(Ember.PromiseProxyMixin).create({
             promise: promise
         });
+    },
+
+    count: function(query) {
+        if (!query) {
+            query = {};
+        }
+        var resourceEndpoint = this.get('resourceEndpoint')+'/count';
+
+        var promise = new Ember.RSVP.Promise(function(resolve, reject) {
+            Ember.$.ajax({
+                dataType: "json",
+                url: resourceEndpoint,
+                async: true,
+                data: query,
+                success: function(data) {
+                    return resolve(data);
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        return promise;
     },
 
     sync: function(pojo) {
