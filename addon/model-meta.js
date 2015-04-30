@@ -3,6 +3,23 @@ import Ember from 'ember';
 import FieldMeta from './field-meta';
 import endsWith from './utils/ends-with';
 
+/** return the field meta of a the full property.
+ * The full property is passed as an array:
+ *     my.full.property -> ['my', 'full', 'property']
+ */
+export var getFieldMeta = function(propertyNames, modelMeta) {
+    var fieldMeta = modelMeta.get(propertyNames[0]+'Field');
+    propertyNames.shift();
+    if (propertyNames.length) {
+        let newModelMeta = fieldMeta.get('relationModelMeta');
+        if (newModelMeta && newModelMeta.get(propertyNames[0]+'Field')) {
+            return getFieldMeta(propertyNames, newModelMeta);
+        }
+    }
+    return fieldMeta;
+};
+
+
 export default Ember.ObjectProxy.extend({
     resource: null,
     store: null,
@@ -22,6 +39,13 @@ export default Ember.ObjectProxy.extend({
         });
         return results;
     }.property('fieldNames'),
+
+    /** return the field meta of a the full property. **/
+    getFieldMeta: function(fullProperty) {
+        if (fullProperty) {
+            return getFieldMeta(fullProperty.split('.'), this);
+        }
+    },
 
     unknownProperty: function(key) {
         /*

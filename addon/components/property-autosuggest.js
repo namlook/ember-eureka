@@ -1,22 +1,7 @@
 import Ember from 'ember';
 import layout from '../templates/components/property-autosuggest';
+import {getFieldMeta} from 'ember-eureka/model-meta';
 
-
-/** return the field meta of a the full property.
- * The full property is passed as an array:
- *     my.full.property -> ['my', 'full', 'property']
- */
-export var getFieldMeta = function(propertyNames, modelMeta) {
-    var fieldMeta = modelMeta.get(propertyNames[0]+'Field');
-    propertyNames.shift();
-    if (propertyNames.length) {
-        let newModelMeta = fieldMeta.get('relationModelMeta');
-        if (newModelMeta && newModelMeta.get(propertyNames[0]+'Field')) {
-            return getFieldMeta(propertyNames, newModelMeta);
-        }
-    }
-    return fieldMeta;
-};
 
 /** return the properties suggestion base on the model meta **/
 var getPropertiesSuggestion = function(modelMeta) {

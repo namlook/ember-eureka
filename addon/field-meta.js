@@ -10,7 +10,7 @@ export default Ember.ObjectProxy.extend({
      */
     relationModelMeta: function() {
         var fieldType = this.get('content.type');
-        var relationResource = this.get('modelMeta.store.db')[fieldType]
+        var relationResource = this.get('modelMeta.store.db')[fieldType];
         if (relationResource) {
             return relationResource.get('modelMeta');
         }
@@ -114,6 +114,25 @@ export default Ember.ObjectProxy.extend({
     }.property('content.type', 'modelMeta.store.db'),
 
 
+    typeCategory: Ember.computed('type', function() {
+        var type = this.get('type');
+        if (['text', 'string'].indexOf(type) > -1) {
+            return 'text';
+        } else if (['float', 'double', 'integer', 'number'].indexOf(type) > -1) {
+            return 'number';
+        } else if (['bool', 'boolean'].indexOf(type) > -1) {
+            return 'boolean';
+        } else if (type === 'date') {
+            return 'date';
+        } else if (type === 'datetime') {
+            return 'datetime';
+        } else if (type === 'time') {
+            return 'time';
+        } else if (this.get('isRelation')) {
+            return 'relation';
+        }
+    }),
+
     isMulti: Ember.computed.bool('content.multi'),
 
     isDate: Ember.computed.equal('type', 'date'),
@@ -122,18 +141,7 @@ export default Ember.ObjectProxy.extend({
 
     isTime: Ember.computed.equal('type', 'time'),
 
-
-    isText: function() {
-        return ['text', 'string'].indexOf(this.get('type')) > -1;
-    }.property('type'),
-
-
-    isNumber: function() {
-        return ['float', 'double', 'integer', 'number'].indexOf(this.get('type')) > -1;
-    }.property('type'),
-
-
-    isBoolean: function() {
-        return ['bool', 'boolean'].indexOf(this.get('type')) > -1;
-    }.property('type')
+    isText: Ember.computed.equal('typeCategory', 'text'),
+    isNumber: Ember.computed.equal('typeCategory', 'number'),
+    isBoolean: Ember.computed.equal('typeCategory', 'boolean')
 });
