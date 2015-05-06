@@ -4,14 +4,29 @@ import {getFieldMeta} from 'ember-eureka/model-meta';
 
 
 /** return the properties suggestion base on the model meta **/
-var getPropertiesSuggestion = function(modelMeta) {
-    var propertyNames = modelMeta.get('fieldNames');
-    return propertyNames.map(function(name) {
-        return {
-            id: name,
-            label: modelMeta.get(name+'Field.label'),
-        };
-    });
+var getPropertiesSuggestion = function(modelMeta, allowedProperties) {
+    var fullPathProperty = modelMeta.get('fieldNames');
+
+    if (allowedProperties && !allowedProperties.length) {
+        allowedProperties = null;
+    }
+
+    return fullPathProperty.map(function(name) {
+
+        let allowed = true;
+        if (allowedProperties && allowedProperties.indexOf(name) === -1) {
+            allowed = false;
+        }
+
+        if (allowed) {
+            return {
+                id: name,
+                label: modelMeta.get(name+'Field.label'),
+            };
+        }
+        return ''
+
+    }).without('');
 };
 
 export default Ember.Component.extend({
@@ -21,30 +36,35 @@ export default Ember.Component.extend({
     modelMeta: null,
     oldProperties: null,
 
+    fullPathProperty: null,
+
+    /** the properties allowed to be displayed in suggestions **/
     propertyNames: null,
 
     /** the selected properties.
      * each property contain the name of the property and
      * and a suggestion list computed from the (relation) model meta
      */
-    properties: Ember.computed('modelMeta', 'propertyNames.[]', function() {
+    properties: Ember.computed('modelMeta','fullPathProperty.[]', 'propertyNames.[]', function() {
         var properties = Ember.A();
-        var propertyNames = this.get('propertyNames') || Ember.A();
+        var fullPathProperty = this.get('fullPathProperty') || Ember.A();
         var modelMeta = this.get('modelMeta');
         var propertiesSuggestions;
 
+        var propertyNames = this.get('propertyNames');
+
         var name = '';
-        if (propertyNames.length) {
+        if (fullPathProperty.length) {
             var fieldMeta;
-            propertyNames.forEach(function(name, index) {
-                fieldMeta = getFieldMeta(propertyNames.slice(0, index+1), modelMeta);
-                var propertiesSuggestions = getPropertiesSuggestion(fieldMeta.get('modelMeta'));
+            fullPathProperty.forEach(function(name, index) {
+                fieldMeta = getFieldMeta(fullPathProperty.slice(0, index+1), modelMeta);
+                propertiesSuggestions = getPropertiesSuggestion(fieldMeta.get('modelMeta'), propertyNames);
                 properties.pushObject({name: name, suggestions: propertiesSuggestions});
             });
-            name = propertyNames.slice(-1)[0];
+            name = fullPathProperty.slice(-1)[0];
             modelMeta = fieldMeta.get('modelMeta');
         } else {
-            propertiesSuggestions = getPropertiesSuggestion(modelMeta);
+            propertiesSuggestions = getPropertiesSuggestion(modelMeta, propertyNames);
             properties.pushObject({name: name, suggestions: propertiesSuggestions});
         }
 
@@ -56,7 +76,7 @@ export default Ember.Component.extend({
     value: Ember.computed('properties.@each.name', function(key, val) {
         if (arguments.length > 1) {
             if (val) {
-                this.set('propertyNames', Ember.A(val.split('.')));
+                this.set('fullPathProperty', Ember.A(val.split('.')));
             }
             return val;
         }
@@ -84,8 +104,8 @@ export default Ember.Component.extend({
 
     /** return true if we should display the expand button **/
     showExpandButton: Ember.computed('relationModelMeta', 'properties.@each.name', function() {
-        var propertyNames = this.get('properties').mapBy('name');
-        if (this.get('relationModelMeta') && propertyNames.indexOf('') === -1) {
+        var fullPathProperty = this.get('properties').mapBy('name');
+        if (this.get('relationModelMeta') && fullPathProperty.indexOf('') === -1) {
             return true;
         }
         return false;
