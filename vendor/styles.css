@@ -17,7 +17,7 @@
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 
-.form-inline .form-control {
+.widget-collection-query .form-inline .form-control {
   height: 30px;
 }
 
