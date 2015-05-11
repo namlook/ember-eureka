@@ -30,7 +30,7 @@
     "ember-cli-uglify": "1.0.1",
     "ember-export-application-global": "^1.0.2",
     "ember-moment": "1.0.0",
-    "ember-typeahead-input": "0.0.2",
+    "ember-select2-hurry": "git://github.com/namlook/ember-select2-hurry.git#v0.0.3",
     "express": "^4.8.5",
     "glob": "^4.0.5"
   },
