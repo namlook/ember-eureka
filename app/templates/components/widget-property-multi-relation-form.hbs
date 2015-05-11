@@ -1,7 +1,7 @@
 {{#if field.value.isPending}}
     {{partial 'eureka-loading'}}
 {{else}}
-    <ul>
+    <ul class="list-unstyled">
         {{#each relation in field.values}}
             {{#if relation._ui.editing}}
                 <li>
@@ -24,7 +24,16 @@
                 </li>
             {{/if}}
         {{/each}}
-        <li>{{relation-autosuggest field=field}} <a class="btn btn-default" {{action 'addRelations'}}> + </a>
-        </li>
     </ul>
+
+    {{#unless autosuggestDisabled}}
+    <div class="form-inline">
+        <div class="form-group">
+           {{relation-autosuggest field=field ~}}
+            <a class="btn btn-default" {{action 'addRelations'}}><i class="glyphicon glyphicon-pencil"></i></a>
+        </div>
+    </div>
+    {{else}}
+        <a class="btn btn-default" {{action 'addRelations'}}><i class="glyphicon glyphicon-pencil"></i></a>
+    {{/unless}}
 {{/if}}

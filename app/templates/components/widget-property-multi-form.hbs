@@ -1,9 +1,11 @@
-<ul>
+<ul class="list-unstyled">
     {{#each field in field.values}}
-        <li>
-            {{component propertyComponentName field=field}}
-            <button {{action 'removeValue' field}}>x</button>
+        <li class="form-inline">
+            <div class="form-group">
+                {{component propertyComponentName field=field ~}}
+                <button class="btn btn-danger" {{action 'removeValue' field}}>&times;</button>
+            </div>
         </li>
     {{/each}}
 </ul>
-<button {{action 'addValue'}}> + </button>
+<button class="btn btn-default" {{action 'addValue'}}> &#43; </button>

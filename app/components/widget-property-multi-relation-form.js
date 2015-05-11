@@ -5,6 +5,10 @@ export default WidgetProperty.extend({
 
     editing: false,
 
+    autosuggestDisabled: Ember.computed('field.meta.autosuggest', function() {
+        return this.get('field.meta.autosuggest') === false;
+    }),
+
     toggleEditionMode: function(relation) {
         relation.toggleProperty('_ui.editing', true);
     },
