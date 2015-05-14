@@ -235,6 +235,39 @@ export default Ember.Object.extend({
         });
     },
 
+    /** stream
+     * Use `stream` if you want to fetch a lot of data.
+     * `stream` is like `find` but can fetch thousand of records
+     * while `find` is faster to retreive tens of records
+     */
+    stream: function(query) {
+        if (!query) {
+            query = {};
+        }
+        var resourceEndpoint = this.get('resourceEndpoint');
+        var that = this;
+
+        var promise = new Ember.RSVP.Promise(function(resolve, reject) {
+            Ember.$.ajax({
+                dataType: "json",
+                url: resourceEndpoint+'/export/json',
+                async: true,
+                data: query,
+                success: function(data) {
+                    return resolve(data);
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        return Ember.ArrayProxy.extend(Ember.PromiseProxyMixin).create({
+            promise: promise
+        });
+    },
+
     groupBy: function(field, query) {
         if (!field) {
             console.error('field is required');
