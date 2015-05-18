@@ -238,7 +238,8 @@ export default Ember.Object.extend({
     /** stream
      * Use `stream` if you want to fetch a lot of data.
      * `stream` is like `find` but can fetch thousand of records
-     * while `find` is faster to retreive tens of records
+     * while `find` is faster to retreive tens of records.
+     * Note that `stream` returns raw data and not Model objects.
      */
     stream: function(query) {
         if (!query) {
