@@ -30,17 +30,23 @@ export default WidgetProperty.extend({
         },
         cancelRelations: function(relation) {
             relation.rollback();
+            this.get('field.values').removeObject(relation);
             this.toggleEditionMode(relation);
         },
         doneRelations: function(relation) {
-            this.toggleEditionMode(relation);
-
             var relationContent = relation.get('content');
-            if (isEmpty(relationContent)) {
-                this.get('field.values').removeObject(relation);
-            } else if (relation.get('_syncNeeded')) {
-                relation.save();
-                console.log('relation saved!');
+             if (relation.get('_syncNeeded')) {
+                var that = this;
+                relation.save().then(function(savedRelation) {
+                    that.toggleEditionMode(relation);
+                    that.get('field.values').removeObject(relation);
+                    that.get('field.values').pushObject(savedRelation);
+                });
+            } else {
+                if (!relation.get('_id')) {
+                    this.get('field.values').removeObject(relation);
+                }
+                this.toggleEditionMode(relation);
             }
         }
     }

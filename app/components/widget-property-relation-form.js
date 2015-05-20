@@ -35,13 +35,18 @@ export default WidgetProperty.extend({
             }
 
             var relationContent = relation.get('content');
-            if (isEmpty(relationContent)) {
-                field.set('value', null);
-            } else if (relation.get('_syncNeeded')) {
-                relation.save();
-                console.log('relation saved!');
+            if (relation.get('_syncNeeded')) {
+                var that = this;
+                relation.save().then(function(savedRelation) {
+                    field.set('value', savedRelation);
+                    that.toggleEditionMode();
+                });
+            } else {
+                if (!relation.get('_id')) {
+                    field.set('value', null);
+                }
+                this.toggleEditionMode();
             }
-            this.toggleEditionMode();
         },
         cancelRelation: function() {
             var field = this.get('field');

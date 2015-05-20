@@ -75,7 +75,7 @@ export default Ember.ObjectProxy.extend({
      * (ie has an _id) and its content has changed
      */
     _syncNeeded: function() {
-        return this.get('_hasChanged') && !!this.get('content._id');
+        return this.get('_hasChanged');
     }.property('_hasChanged', 'content._id'),
 
 
@@ -92,10 +92,16 @@ export default Ember.ObjectProxy.extend({
      *   blogPost.set('author', 'Namlook');
      */
     setField: function(fieldName, value) {
-        this.set('content.'+fieldName, value);
-        this.set('_contentChanges.fieldName', fieldName);
-        this.set('_contentChanges.value', value);
-        this.incrementProperty('_contentChanges.count');
+        var oldValue = this.get('content.'+fieldName);
+        if (Ember.isEmpty(value)) {
+            value = undefined;
+        }
+        if (oldValue !== value) {
+            this.set('content.'+fieldName, value);
+            this.set('_contentChanges.fieldName', fieldName);
+            this.set('_contentChanges.value', value);
+            this.incrementProperty('_contentChanges.count');
+        }
     },
 
 
