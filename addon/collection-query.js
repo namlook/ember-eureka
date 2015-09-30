@@ -20,6 +20,7 @@ export default Ember.ArrayProxy.extend({
         },
         set: function(key, value) {
             this._update(value);
+            return this._toObject();
         }
     }),
 
