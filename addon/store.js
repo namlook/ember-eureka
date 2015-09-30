@@ -127,14 +127,14 @@ export default Ember.Object.extend({
         modelClass.reopen(computedProperties);
     },
 
-    resourceEndpoint: function() {
+    resourceEndpoint: Ember.computed('resource', function() {
         var db = this.get('db');
         var resource = this.get('resource');
         var underscoredModelType = resource.underscore();
         return db.get('endpoint')+'/'+underscoredModelType;
-    }.property('resource'),
+    }),
 
-    modelMeta: function() {
+    modelMeta: Ember.computed('resource', function() {
         var resource = this.get('resource');
         var resourceStructure = this.get('resourceStructure');
         return ModelMeta.create({
@@ -142,7 +142,7 @@ export default Ember.Object.extend({
             store: this,
             content: resourceStructure
         });
-    }.property('resource'),
+    }),
 
     createRecord: function(record) {
         if (record === undefined) {

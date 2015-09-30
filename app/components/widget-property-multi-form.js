@@ -6,10 +6,10 @@ export default WidgetProperty.extend({
     /** returns the component name of the non-multi field type
      * so we can create the component dynamically
      */
-    propertyComponentName: function() {
+    propertyComponentName: Ember.computed('field.meta.type', function() {
         var fieldMeta = this.get('field.meta');
         return fieldMeta.getWidgetComponentName('form', false);
-    }.property('field.meta.type'),
+    }),
 
 
     actions: {

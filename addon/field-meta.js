@@ -8,26 +8,26 @@ export default Ember.ObjectProxy.extend({
     /** if the field type is a relation, then
      * returns the modelMeta of this relation
      */
-    relationModelMeta: function() {
+    relationModelMeta: Ember.computed('modelMeta.store.db', 'content.type', function() {
         var fieldType = this.get('content.type');
         var relationResource = this.get('modelMeta.store.db')[fieldType];
         if (relationResource) {
             return relationResource.get('modelMeta');
         }
-    }.property('modelMeta.store.db', 'content.type'),
+    }),
 
-    content: function() {
+    content: Ember.computed('name', 'modelMeta', function() {
         var name = this.get('name');
         var modelMeta = this.get('modelMeta');
         return modelMeta.get('properties.'+name);
-    }.property('name', 'modelMeta'),
+    }),
 
 
-    label: function() {
+    label: Ember.computed('content.label', 'name', function() {
         return this.get('content.label') || this.get('name').dasherize().split('-').join(' '); // TODO check i18n
-    }.property('content.label', 'name'),
+    }),
 
-    widgetConfig: function() {
+    widgetConfig: Ember.computed('widget', function() {
         var config = this.get('widget');
         if (config) {
             if (typeof(config) === 'string') {
@@ -35,7 +35,7 @@ export default Ember.ObjectProxy.extend({
             }
             return config;
         }
-    }.property('widget'),
+    }),
 
 
     /** returns the component name of the widget
@@ -96,22 +96,22 @@ export default Ember.ObjectProxy.extend({
         return componentName;
     },
 
-    displayWidgetComponentName: function() {
+    displayWidgetComponentName: Ember.computed('name', 'resource', function() {
         var isMulti = this.get('isMulti');
         return this.getWidgetComponentName('display', isMulti);
-    }.property('name', 'resource'),
+    }),
 
 
-    formWidgetComponentName: function() {
+    formWidgetComponentName: Ember.computed('name', 'resource', function() {
         var isMulti = this.get('isMulti');
         return this.getWidgetComponentName('form', isMulti);
-    }.property('name', 'resource'),
+    }),
 
 
-    isRelation: function() {
+    isRelation: Ember.computed('content.type', 'modelMeta.store.db', function() {
         var fieldType = this.get('content.type');
         return !!this.get('modelMeta.store.db')[fieldType];
-    }.property('content.type', 'modelMeta.store.db'),
+    }),
 
 
     typeCategory: Ember.computed('type', function() {

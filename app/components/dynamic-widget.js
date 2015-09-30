@@ -22,7 +22,7 @@ export default Widget.extend({
      *    - if `user-widget-model-form` doesn't resolve
      *    - use `widget-model-form`
      */
-    componentName: function() {
+    componentName: Ember.computed(/*'resource', */'config.type', function() {
         // var componentName;
         var widgetName = this.get('config.type');
         // var resource = this.get('resource');
@@ -50,7 +50,7 @@ export default Widget.extend({
 
         // return componentName;
         return 'widget-'+widgetName;
-    }.property(/*'resource', */'config.type'),
+    }),
 
 
     actions: {

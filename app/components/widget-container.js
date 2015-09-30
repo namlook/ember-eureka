@@ -15,7 +15,7 @@ export default Widget.extend({
     /** set it to `true` if the container has an outlet to yield */
     yieldOutlet: false,
 
-    rows: function() {
+    rows: Ember.computed('config.widgets.@each', function() {
         var widgetConfigurations = Ember.A(this.get('config.widgets'));
 
         var nbRows = 0;
@@ -39,15 +39,15 @@ export default Widget.extend({
         }
 
         return rows;
-    }.property('config.widgets.@each'),
+    }),
 
 
-    dahserizedFqvn: function() {
+    dahserizedFqvn: Ember.computed('currentController.fqvn', function() {
         var fqvn = this.get('currentController.fqvn');
         if (fqvn) {
             return fqvn.camelize().dasherize()+'-controller';
         }
-    }.property('currentController.fqvn'),
+    }),
 
 
     actions: {

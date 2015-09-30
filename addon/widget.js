@@ -25,17 +25,17 @@ export default Ember.Component.extend({
     store: Ember.computed.alias('modelMeta.store'),
     resource: Ember.computed.alias('modelMeta.resource'),
 
-    columns: function() {
+    columns: Ember.computed('config.columns', function() {
         return this.getWithDefault('config.columns', 12);
-    }.property('config.columns'),
+    }),
 
     /** bootstrap's grid class **/
-    bsColumns: function() {
+    bsColumns: Ember.computed('columns', function() {
         return 'col-sm-' + this.get('columns');
-    }.property('columns'),
+    }),
 
-    cssStyle: function() {
+    cssStyle: Ember.computed('config.style', function() {
         return this.get('config.style');
-    }.property('config.style')
+    })
 
 });

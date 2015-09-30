@@ -25,11 +25,11 @@ export default Ember.ObjectProxy.extend({
     store: null,
     // content: the resource structure in eureka's config
 
-    fieldNames: function() {
+    fieldNames: Ember.computed('resource', function() {
         return Object.keys(this.get('properties'));
-    }.property('resource'),
+    }),
 
-    relationFieldNames: function() {
+    relationFieldNames: Ember.computed('fieldNames', function() {
         var results = Ember.A();
         var that = this;
         this.get('fieldNames').forEach(function(fieldName) {
@@ -38,7 +38,7 @@ export default Ember.ObjectProxy.extend({
             }
         });
         return results;
-    }.property('fieldNames'),
+    }),
 
     /** return the field meta of a the full property. **/
     getFieldMeta: function(fullProperty) {

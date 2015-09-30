@@ -26,9 +26,9 @@ export default Ember.Route.extend({
         }
     },
 
-    store: function() {
+    store: Ember.computed('resource', function() {
         var resource = this.get('resource');
         return this.db[resource];
-    }.property('resource')
+    })
 
 });

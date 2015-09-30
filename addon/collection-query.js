@@ -25,9 +25,9 @@ export default Ember.ArrayProxy.extend({
     }),
 
 
-    json: function() {
+    json: Ember.computed('hasChanged', function() {
         return JSON.stringify(this._toObject());
-    }.property('hasChanged'),
+    }),
 
 
     _update: function(query) {

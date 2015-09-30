@@ -1,9 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-    needs: ['application'],
 
-    applicationController: Ember.computed.alias('controllers.application'),
+    applicationController: Ember.inject.controller('application'),
+
     currentRouteName: Ember.computed.alias('applicationController.currentRouteName'),
 
 
@@ -22,7 +22,7 @@ export default Ember.Controller.extend({
     },
 
 
-    queryParams: function() {
+    queryParams: Ember.computed('eurekaViewPath', function() {
         if (this.get('_queryParams')) {
             return this.get('_queryParams');
         }
@@ -42,7 +42,7 @@ export default Ember.Controller.extend({
 
         this.set('_queryParams', queryParams);
         return queryParams;
-    }.property('eurekaViewPath'),
+    }),
 
 
     // queryParams: function() {
