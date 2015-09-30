@@ -11,42 +11,39 @@ var _relationCPFunction = function(fieldMeta) {
     if (fieldMeta.get('isMulti')) {
 
         // "this" represents the model
-        relationComputedFunction = function(key, value) {
-            // setter
-            if (arguments.length === 2) {
+        relationComputedFunction = Ember.computed(`content.${fieldName}`, {
+            get: function() {
+                var db = this.get('meta.store.db');
+                var val = this.get('content.'+fieldName);
+                if (val && val.length) {
+                    var relationIds = this.get('content.'+fieldName).mapBy('_id');
+                    var relationType = this.get('meta.'+fieldName+'Field.type');
+                    return db[relationType].find({_id: {$in: relationIds}});
+                }
+            },
+            set: function(key, value) {
                 this.setField(fieldName, value);
                 return value;
             }
-
-            // getter
-            var db = this.get('meta.store.db');
-            var val = this.get('content.'+fieldName);
-            if (val && val.length) {
-                var relationIds = this.get('content.'+fieldName).mapBy('_id');
-                var relationType = this.get('meta.'+fieldName+'Field.type');
-                return db[relationType].find({_id: {$in: relationIds}});
-            }
-        }.property('content.'+fieldName);
+        });
 
     } else {
 
         // "this" represents the model
-        relationComputedFunction = function(key, value) {
-
-            // getter
-            if (arguments.length === 2) {
+        relationComputedFunction = Ember.computed(`content.${fieldName}`, {
+            get: function() {
+                var db = this.get('meta.store.db');
+                var relationId = this.get('content.'+fieldName+'._id');
+                if (relationId) {
+                    var relationType = this.get('meta.'+fieldName+'Field.type');
+                    return db[relationType].first({_id: relationId});
+                }
+            },
+            set: function(key, value) {
                 this.setField(fieldName, value);
                 return value;
             }
-
-            // getter
-            var db = this.get('meta.store.db');
-            var relationId = this.get('content.'+fieldName+'._id');
-            if (relationId) {
-                var relationType = this.get('meta.'+fieldName+'Field.type');
-                return db[relationType].first({_id: relationId});
-            }
-        }.property('content.'+fieldName);
+        });
     }
     return relationComputedFunction;
 };
@@ -60,18 +57,15 @@ var _regularCPFunction = function(fieldMeta) {
     // "this" represents the model
     var fieldName = fieldMeta.get('name');
     var isBoolean = fieldMeta.get('isBoolean');
-    var fieldComputedFunction = function(key, value) {
-
-        // getter
-        if (arguments.length === 1) {
+    var fieldComputedFunction = Ember.computed(`content.${fieldName}`, {
+        get: function() {
             var val = this.get('content.'+fieldName);
             if (isBoolean) {
                 val = !!val;
             }
             return val;
-
-        // setter
-        } else {
+        },
+        set: function(key, value) {
             if (isBoolean) {
                 value = !!value;
             } else if (value === '') {
@@ -80,7 +74,7 @@ var _regularCPFunction = function(fieldMeta) {
             this.setField(fieldName, value);
             return value;
         }
-    }.property('content.'+fieldName);
+    });
 
     return fieldComputedFunction;
 };

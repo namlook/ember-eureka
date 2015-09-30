@@ -14,12 +14,14 @@ export default Ember.ArrayProxy.extend({
     }.observes('content.@each.value'),
 
 
-    raw: function(key, value) {
-        if (arguments.length > 1) {
+    raw: Ember.computed('hasChanged', {
+        get: function() {
+            return this._toObject();
+        },
+        set: function(key, value) {
             this._update(value);
         }
-        return this._toObject();
-    }.property('hasChanged'),
+    }),
 
 
     json: function() {

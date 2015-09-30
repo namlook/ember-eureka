@@ -153,12 +153,9 @@ export default Ember.ObjectProxy.extend({
      *  the value of the field specified in `aliases.properties.title`,
      *  or the _id of the model
      */
-    title: function(key, value) {
-
-        // getter
-        if (arguments.length === 1) {
+    title: Ember.computed('meta.aliases.properties.title', 'content.title', 'content._id', {
+        get: function() {
             var _title;
-
             /** check if an alias exists for `title` in the structure
              *  if yes, then use the fieldName set for the title value
              */
@@ -167,16 +164,18 @@ export default Ember.ObjectProxy.extend({
                 _title = this.get(alias);
             }
             return _title || this.get('content.title') || this.get('content._id');
-
-        /* setter only if `title` is defined in structure
-         * we don't need to handle aliases in setter (we have to set
-         * the correct field(s) instead)
-         */
-        } else if (this.get('meta.titleField')) {
-            this.setField('title', value);
-            return value;
+        },
+        set: function(key, value) {
+            /* setter only if `title` is defined in structure
+             * we don't need to handle aliases in setter (we have to set
+             * the correct field(s) instead)
+             */
+            if (this.get('meta.titleField')) {
+                this.setField('title', value);
+                return value;
+            }
         }
-    }.property('meta.aliases.properties.title', 'content.title', 'content._id'),
+    }),
 
 
     delete: function() {

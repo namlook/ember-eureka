@@ -1,5 +1,6 @@
 import WidgetProperty from 'ember-eureka/widget-property';
 import isEmpty from 'ember-eureka/utils/is-empty';
+import Ember from 'ember';
 
 export default WidgetProperty.extend({
 

@@ -2,12 +2,13 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-    value: function(key, value) {
-        if (arguments.length === 1) {
+    value: Ember.computed('field.value', {
+        get: function() {
             return moment(this.get('field.value')).format('YYYY-MM-DDThh:mm');
-        } else {
+        },
+        set: function(key, value) {
             this.set('field.value', new Date(value));
             return value;
         }
-    }.property('field.value')
+    })
 });

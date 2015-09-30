@@ -73,14 +73,16 @@ export default Ember.Component.extend({
     }),
 
     /** return the full property computed **/
-    value: Ember.computed('properties.@each.name', function(key, val) {
-        if (arguments.length > 1) {
+    value: Ember.computed('properties.@each.name', {
+        get: function() {
+            return this.get('properties').mapBy('name').without('').join('.');
+        },
+        set: function(key, val) {
             if (val) {
                 this.set('fullPathProperty', Ember.A(val.split('.')));
             }
             return val;
         }
-        return this.get('properties').mapBy('name').without('').join('.');
     }),
 
     /** monitor the changes in properties and slice it if needed **/
