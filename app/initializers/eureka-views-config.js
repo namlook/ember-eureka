@@ -15,7 +15,7 @@ var collectResourceViews = function(resource, resourceViews, collection, root) {
     }
 
     var item;
-    Ember.keys(resourceViews).forEach(function(viewName) {
+    Object.keys(resourceViews).forEach(function(viewName) {
         item = {resource: resource, name: viewName};
 
         if (root) {
@@ -54,7 +54,7 @@ var getEurekaRoutesInfo = function(eurekaConfig) {
 
     eurekaResourceRoutes.pushObjects(collectResourceViews('', applicationViews));
 
-    var resources = Ember.keys(eurekaConfig.resources);
+    var resources = Object.keys(eurekaConfig.resources);
 
     var resourceViews;
     resources.forEach(function(resource) {

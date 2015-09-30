@@ -61,7 +61,7 @@ export default Ember.Controller.extend({
     //                 paramName = param;
     //                 defaultValue = null;
     //             } else {
-    //                 paramName = Ember.keys(param)[0];
+    //                 paramName = Object.keys(param)[0];
     //                 config = param[paramName];
     //                 defaultValue = Ember.getWithDefault(config, 'defaultValue', null);
     //             }

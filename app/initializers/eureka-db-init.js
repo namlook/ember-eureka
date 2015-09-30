@@ -10,7 +10,7 @@ export function initialize(container, application) {
   var db = Database.create({endpoint: appConfig.apiEndpoint});
   var eurekaResources = appConfig.eureka.resources;
 
-  Ember.keys(eurekaResources).forEach(function(resource) {
+  Object.keys(eurekaResources).forEach(function(resource) {
     var Model = container.resolve('model:'+resource.dasherize());
     if (!Model) {
       Model = container.resolve('model:generic');
@@ -35,7 +35,7 @@ export function initialize(container, application) {
   /** build computed properties after the full resources registration
    * so we can build relation computed properties
    */
-  Ember.keys(eurekaResources).forEach(function(resource) {
+  Object.keys(eurekaResources).forEach(function(resource) {
     db[resource]._buildComputedPropertiesFromStructure();
   });
 

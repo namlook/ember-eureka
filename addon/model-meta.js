@@ -26,7 +26,7 @@ export default Ember.ObjectProxy.extend({
     // content: the resource structure in eureka's config
 
     fieldNames: function() {
-        return Ember.keys(this.get('properties'));
+        return Object.keys(this.get('properties'));
     }.property('resource'),
 
     relationFieldNames: function() {

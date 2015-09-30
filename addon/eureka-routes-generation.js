@@ -16,7 +16,7 @@ import Ember from 'ember';
 var convertResourceViewToRoute = function(router, resourceViews, prefix) {
     var urlPrefix, urlRoot, viewConfig;
 
-    Ember.keys(resourceViews).forEach(function(viewName) {
+    Object.keys(resourceViews).forEach(function(viewName) {
 
         viewConfig = resourceViews[viewName];
 
@@ -65,13 +65,13 @@ var convertResourceViewToRoute = function(router, resourceViews, prefix) {
 export default function(router, config) {
     var applicationViews = Ember.getWithDefault(config, 'APP.eureka.views', {});
 
-    Ember.keys(applicationViews).forEach(function(view) {
+    Object.keys(applicationViews).forEach(function(view) {
         router.route('eureka', {path: '/i'}, function() {
             router.route(view, {path: '/'+view});
         });
     });
 
-    var resources = Ember.keys(config.APP.eureka.resources);
+    var resources = Object.keys(config.APP.eureka.resources);
 
     var dasherizedResource, resourceViews;
     router.route('eureka', {path: '/'}, function() {

@@ -34,7 +34,7 @@ export default Ember.ArrayProxy.extend({
         var queryList = Ember.A();
         var item;
         query = query || {};
-        Ember.keys(query).forEach(function(key) {
+        Object.keys(query).forEach(function(key) {
             var value = query[key];
             if (value !== undefined) {
                 item = Ember.Object.create();

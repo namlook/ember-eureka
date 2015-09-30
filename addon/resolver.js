@@ -22,7 +22,7 @@ var ENABLE_LOG = false;
 //         queryParams.forEach(function(param) {
 
 //             if (typeof(param) !== 'string' && param) {
-//                 paramName = Ember.keys(param)[0];
+//                 paramName = Object.keys(param)[0];
 //                 results[paramName] = {};
 //                 config = param[paramName];
 
@@ -46,7 +46,7 @@ var ENABLE_LOG = false;
 //         });
 //     }
 
-//     if (Ember.keys(results).length) {
+//     if (Object.keys(results).length) {
 //         return results;
 //     }
 //     return null;
