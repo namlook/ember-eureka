@@ -1,4 +1,4 @@
-{{#each widgetConfigurationsRow in rows}}
+{{#each rows as |widgetConfigurationsRow|}}
     {{#widget-container-row widgetConfigurations=widgetConfigurationsRow
         routeModel=routeModel
         currentController=currentController

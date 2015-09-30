@@ -1,5 +1,5 @@
 <div class="form-group">
-{{#each prop in properties}}
+{{#each properties as |prop|}}
     {{select-2
         classNames="form-control"
         content=prop.suggestions

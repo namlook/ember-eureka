@@ -2,7 +2,7 @@
     {{partial 'eureka-loading'}}
 {{else}}
     <ul class="list-unstyled">
-        {{#each relation in field.values}}
+        {{#each field.values as |relation|}}
             {{#if relation._ui.editing}}
                 <li>
                     {{widget-model-form routeModel=relation isEmbedded=true}}

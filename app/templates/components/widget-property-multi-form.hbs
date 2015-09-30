@@ -1,5 +1,5 @@
 <ul class="list-unstyled">
-    {{#each field in field.values}}
+    {{#each field.values as |field|}}
         <li class="form-inline">
             <div class="form-group">
                 {{component propertyComponentName field=field ~}}

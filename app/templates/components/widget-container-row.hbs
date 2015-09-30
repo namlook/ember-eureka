@@ -1,4 +1,4 @@
-{{#each widgetConf in widgetConfigurations}}
+{{#each widgetConfigurations as |widgetConf|}}
     {{#if widgetConf.isContainer}}
         {{!-- we have to pass the widget-container directly
         to avoid the creation of dynamic-component

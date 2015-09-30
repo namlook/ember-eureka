@@ -1,5 +1,5 @@
 <ul>
-    {{#each fieldValue in field.values}}
+    {{#each field.values as |fieldValue|}}
         <li>{{fieldValue.value}}</li>
     {{/each}}
 </ul>
