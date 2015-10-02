@@ -15,7 +15,7 @@ export default Widget.extend({
     /** set it to `true` if the container has an outlet to yield */
     yieldOutlet: false,
 
-    rows: Ember.computed('config.widgets.@each', function() {
+    rows: Ember.computed('config.widgets.[]', function() {
         var widgetConfigurations = Ember.A(this.get('config.widgets'));
 
         var nbRows = 0;
