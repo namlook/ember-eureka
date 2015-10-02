@@ -1,7 +1,7 @@
 <div class="form-group">
 {{#each properties as |prop|}}
     {{select-2
-        classNames="form-control"
+        classNameBindings=":form-control"
         content=prop.suggestions
         value=prop.name
         optionValuePath="content.id"
