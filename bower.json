@@ -12,6 +12,8 @@
     "loader.js": "ember-cli/loader.js#3.2.0",
     "qunit": "~1.17.1",
     "typeahead.js": "~0.10.5",
-    "ember-cli-moment-shim": "~0.0.3"
+    "ember-cli-moment-shim": "~0.0.3",
+    "moment": ">= 2.8.0",
+    "moment-timezone": ">= 0.1.0"
   }
 }
