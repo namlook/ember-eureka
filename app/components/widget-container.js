@@ -3,7 +3,7 @@ import Widget from 'ember-eureka/widget';
 
 export default Widget.extend({
     classNames: ['widget-container'],
-    classNameBindings: ['bsColumns', 'dahserizedFqvn'],
+    classNameBindings: ['bsColumns', 'dasherizedFqvn'],
 
 
     /** required attributes */
@@ -42,7 +42,7 @@ export default Widget.extend({
     }),
 
 
-    dahserizedFqvn: Ember.computed('currentController.fqvn', function() {
+    dasherizedFqvn: Ember.computed('currentController.fqvn', function() {
         var fqvn = this.get('currentController.fqvn');
         if (fqvn) {
             return fqvn.camelize().dasherize()+'-controller';
