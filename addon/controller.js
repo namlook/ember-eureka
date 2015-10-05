@@ -19,6 +19,7 @@ export default Ember.Controller.extend({
         } else {
             console.log('no config for', eurekaViewPath);
         }
+        this.set('currentRouteController', this);
     },
 
 
