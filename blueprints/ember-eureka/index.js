@@ -38,35 +38,29 @@ module.exports = {
     //   disableAnalytics: false
     // };
 
+    // return this.addAddonsToProject({
+    //     packages: [
+    //         {name: 'ember-moment', target: '4.0.1'},
+    //         {name: 'emberx-select', target: '2.0.1'},
+    //         {name: 'emberek-selectize', target: 'git://github.com/namlook/emberek-selectize.git#v0.0.3'},
+    //         {name: 'eureka-mixin-actionable-widget', target: 'git://github.com/namlook/eureka-mixin-actionable-widget.git#v0.0.2'},
+    //         {name: 'eureka-mixin-query-parametrable-widget', target: 'git://github.com/namlook/eureka-mixin-query-parametrable-widget.git#v0.0.1'},
+    //         {name: 'eureka-widget-application-menu', target: 'git://github.com/namlook/eureka-widget-application-menu.git#v0.0.7'},
+    //         {name: 'eureka-widget-application-navbar', target: 'git://github.com/namlook/eureka-widget-application-navbar.git#v0.0.6'},
+    //         {name: 'eureka-widget-collection-display', target: 'git://github.com/namlook/eureka-widget-collection-display.git#v0.0.7'},
+    //         {name: 'eureka-widget-collection-navbar', target: 'git://github.com/namlook/eureka-widget-collection-navbar.git#v0.0.2'},
+    //         {name: 'eureka-widget-collection-query', target: 'git://github.com/namlook/eureka-widget-collection-query.git#v0.0.5'},
+    //         {name: 'eureka-widget-model-display', target: 'git://github.com/namlook/eureka-widget-model-display.git#v0.0.6'},
+    //         {name: 'eureka-widget-model-form', target: 'git://github.com/namlook/eureka-widget-model-form.git#v0.0.4'},
+    //         {name: 'eureka-widget-model-navbar', target: 'git://github.com/namlook/eureka-widget-model-navbar.git#v0.0.3'},
+    //         {name: 'ember-bootstrap-hurry', target: '0.0.1'}
+                // +
+                //     {name: 'ember-typeahead-input'}, ??
+    //     ]
+    // });
 
     // return this.addPackagesToProject([
     //     {name: 'namlook/eurekapi'},
-    //     {name: 'ember-typeahead-input'},
-    //     {name: 'ember-dynamic-component'},
-    //     {name: 'ember-bootstrap-hurry',},
-    //     {name: 'ember-moment',},
-    //     {name: "../../../eureka/eureka-mixin-actionable-widget"},
-    //     {name: "../../../eureka/eureka-mixin-query-parametrable-widget"},
-    //     {name: "../../../eureka/eureka-widget-application-menu"},
-    //     {name: "../../../eureka/eureka-widget-application-navbar"},
-    //     {name: "../../../eureka/eureka-widget-collection-display"},
-    //     {name: "../../../eureka/eureka-widget-collection-navbar"},
-    //     {name: "../../../eureka/eureka-widget-collection-query"},
-    //     {name: "../../../eureka/eureka-widget-model-display"},
-    //     {name: "../../../eureka/eureka-widget-model-form"},
-    //     {name: "../../../eureka/eureka-widget-model-navbar"}
-    // ]).then(function() {
-    //     ui.writeLine('  Running ember-bootstrap-hurry blueprints');
-    //     options.args = ['ember-bootstrap-hurry'];
-    //     return blueprintTask.run(options);
-    // }).then(function() {
-    //     ui.writeLine('  Running ember-typeahead-input blueprints');
-    //     options.args = ['ember-typeahead-input'];
-    //     return blueprintTask.run(options);
-    // }).then(function() {
-    //     ui.writeLine('  Running ember-moment blueprints');
-    //     options.args = ['ember-moment'];
-    //     return blueprintTask.run(options);
     // });
   }
 };

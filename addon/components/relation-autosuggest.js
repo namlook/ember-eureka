@@ -13,6 +13,12 @@ export default Ember.Component.extend({
 
     field: null,
 
+    isRelationSuggestionsLoading: false,
+
+    relationSuggestions: Ember.computed(function() {
+        return Ember.A();
+    }),
+
     fieldMeta: Ember.computed.alias('field.meta'),
     fieldType: Ember.computed.alias('fieldMeta.type'),
 
@@ -36,8 +42,6 @@ export default Ember.Component.extend({
 
     store: Ember.computed.alias('relationModelMeta.store'),
 
-    /*** relation related stuff ***/
-    url: Ember.computed.alias('store.resourceEndpoint'),
 
     /** Build the query from the term
      *
@@ -54,34 +58,40 @@ export default Ember.Component.extend({
      *   }
      *
      */
-    select2QueryParametersFn: Ember.computed('searchProperty', 'relationModelMeta', function(params) {
-        var searchProperty = this.get('searchProperty');
-        var isText = this.get('relationModelMeta.'+searchProperty+'Field.isText');
+    loadRelationSuggestions: Ember.on('init', Ember.observer('searchTerm', 'store', function() {
+        let searchTerm = this.get('searchTerm');
+        let store = this.get('store');
 
-        return function(params) {
-            var queryParameters = {};
-            if (params.term) {
-                if (isText) {
-                    queryParameters[searchProperty+"[$iregex]"] = '^'+params.term;
-                } else {
-                    queryParameters[searchProperty] = params.term;
-                }
+        let searchProperty = this.get('searchProperty');
+        let isText = this.get(`relationModelMeta.${searchProperty}Field.isText`);
+        let queryParameters = {};
+
+        if (store) {
+            this.set('isRelationSuggestionsLoading', true);
+
+            if (isText) {
+                queryParameters[`${searchProperty}[$irefex]`] = `^${searchTerm}`;
+            } else {
+                queryParameters[searchProperty] = searchTerm;
             }
-            return queryParameters;
-        };
-    }),
 
-    /** process the results **/
-    select2ProcessResultsFn: Ember.computed('displayProperty', function(data) {
-        var displayProperty = this.get('displayProperty');
+            let displayProperty = this.get('displayProperty');
 
-        return function(data) {
-            var results = data.results.map(function(item) {
-                return {id: item._id, text: item[displayProperty]};
+            store.find({title: {$iregex: searchTerm}}).then((data) => {
+                let results = data.map((item) => {
+                    return {id: item.content._id, label: item.content[displayProperty]};
+                });
+                this.set('isRelationSuggestionsLoading', false);
+                this.set('relationSuggestions', results);
             });
-            return {results: results};
-        };
-    }),
+        }
+    })),
+
+    actions: {
+        relationSearchFilter(searchTerm) {
+            this.set('searchTerm', searchTerm);
+        }
+    },
 
     _observeValue: Ember.observer('value', function() {
         var recordId = this.get('value');

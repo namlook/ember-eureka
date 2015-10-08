@@ -1,14 +1,12 @@
-<div class="form-group">
 {{#each properties as |prop|}}
-    {{select-2
-        classNameBindings=":form-control"
-        content=prop.suggestions
-        value=prop.name
-        optionValuePath="content.id"
-        optionLabelPath="content.label"
-        placeholder="choose a property"}}
+    <div class="form-group">
+        {{#ek-selectize value=prop.name placeholder="choose a property"}}
+            {{#each prop.suggestions as |suggestion|}}
+                <option value="{{suggestion.id}}"> {{suggestion.label}} </option>
+            {{/each}}
+        {{/ek-selectize}}
+    </div>
 {{/each}}
-</div>
 
 {{#if showCollapseButton}}
     <div class="form-group">

@@ -24,7 +24,7 @@ var getPropertiesSuggestion = function(modelMeta, allowedProperties) {
                 label: modelMeta.get(name+'Field.label'),
             };
         }
-        return ''
+        return '';
 
     }).without('');
 };
@@ -136,7 +136,7 @@ export default Ember.Component.extend({
 
     actions: {
         /** expand the property if it is a relation **/
-        expandProperty: function() {
+        expandProperty() {
             var relationModelMeta = this.get('relationModelMeta');
             var propertiesSuggestions = getPropertiesSuggestion(relationModelMeta);
             this.get('properties').pushObject({name: '', suggestions: propertiesSuggestions});
@@ -145,7 +145,7 @@ export default Ember.Component.extend({
         /** collapse the property. Mainly useful if a suggestion
          * input has been added and we don't need it anymore
          */
-        collapseProperty: function() {
+        collapseProperty() {
             return this.get('properties').popObject();
         }
     }

@@ -1,10 +1,8 @@
-{{select-2
-    classNameBindings=":form-control"
-    url=url
-    placeholder=placeholder
-    content=relationDefaultValue
-    dataFn=select2QueryParametersFn
-    processResultsFn=select2ProcessResultsFn
+{{ek-selectize
+    content=relationSuggestions
+    value=value
     optionValuePath="content.id"
     optionLabelPath="content.label"
-    value=value}}
+    onSearch="relationSearchFilter"
+    placeholder=placeholder
+    loading=isRelationSuggestionsLoading}}
