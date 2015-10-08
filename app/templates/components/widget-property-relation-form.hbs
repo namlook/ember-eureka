@@ -21,13 +21,17 @@
     {{/if}}
 {{else}}
     {{#unless autosuggestDisabled}}
-    <div class="form-inline">
-        <div class="form-group">
+        <div class="input-group">
            {{relation-autosuggest field=field ~}}
-            <a class="btn btn-default" {{action 'addRelation'}}><i class="glyphicon glyphicon-pencil"></i></a>
+            <div class="input-group-btn">
+                <a class="btn btn-default" {{action 'addRelation'}}>
+                    <i class="glyphicon glyphicon-plus"></i>
+                </a>
+            </div>
         </div>
-    </div>
     {{else}}
-        <a class="btn btn-default" {{action 'addRelation'}}><i class="glyphicon glyphicon-pencil"></i></a>
+        <a class="btn btn-default" {{action 'addRelation'}}>
+            <i class="glyphicon glyphicon-plus"></i>
+        </a>
     {{/unless}}
 {{/if}}
