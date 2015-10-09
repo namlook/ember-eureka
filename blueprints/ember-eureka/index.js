@@ -40,7 +40,7 @@ module.exports = {
 
     // return this.addAddonsToProject({
     //     packages: [
-    //         {name: 'ember-moment', target: '4.0.1'},
+    //         {name: 'ember-moment', target: '4.1.0'},
     //         {name: 'emberx-select', target: '2.0.1'},
     //         {name: 'emberek-selectize', target: 'git://github.com/namlook/emberek-selectize.git#v0.0.3'},
     //         {name: 'eureka-mixin-actionable-widget', target: 'git://github.com/namlook/eureka-mixin-actionable-widget.git#v0.0.2'},
