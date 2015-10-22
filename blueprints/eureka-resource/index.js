@@ -4,7 +4,8 @@ module.exports = {
   locals: function(options) {
     // Return custom template variables here.
     return {
-      resource: options.entity.name
+      resource: options.entity.name,
+      resourcePluralName: options.entity.name+'s'
     };
   }
 

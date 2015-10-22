@@ -1,5 +1,5 @@
 module.exports = {
-  description: 'generate the properties of an Eureka resource',
+  description: 'generate the schema of an Eureka resource',
 
   // locals: function(options) {
   //   // Return custom template variables here.

@@ -3,9 +3,9 @@ import Ember from 'ember';
 import config from '../config/environment';
 
 
-/** collection recursively all the route infos from the resource's view structure */
+/** collect recursively all the route infos from the resource's view structure */
 var collectResourceViews = function(resource, resourceViews, collection, root) {
-    root = root || resource.dasherize();
+    root = root || resource;//.dasherize();
 
     collection = collection || [{resource: resource, inner: true, path: root}];
 

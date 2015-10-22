@@ -51,7 +51,7 @@ module.exports = {
     //         {name: 'eureka-widget-collection-navbar', target: 'git://github.com/namlook/eureka-widget-collection-navbar.git#v0.0.2'},
     //         {name: 'eureka-widget-collection-query', target: 'git://github.com/namlook/eureka-widget-collection-query.git#v0.0.6'},
     //         {name: 'eureka-widget-model-display', target: 'git://github.com/namlook/eureka-widget-model-display.git#v0.0.6'},
-    //         {name: 'eureka-widget-model-form', target: 'git://github.com/namlook/eureka-widget-model-form.git#v0.0.4'},
+    //         {name: 'eureka-widget-model-form', target: 'git://github.com/namlook/eureka-widget-model-form.git#v0.0.5'},
     //         {name: 'eureka-widget-model-navbar', target: 'git://github.com/namlook/eureka-widget-model-navbar.git#v0.0.3'},
     //         {name: 'ember-bootstrap-hurry', target: '0.0.1'}
                 // +

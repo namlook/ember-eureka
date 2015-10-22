@@ -11,15 +11,18 @@ export function initialize(container, application) {
   var eurekaResources = appConfig.eureka.resources;
 
   Object.keys(eurekaResources).forEach(function(resource) {
-    var Model = container.resolve('model:'+resource.dasherize());
+    var Model = container.resolve('model:'+resource);
     if (!Model) {
       Model = container.resolve('model:generic');
     }
 
-    var store = Store.create({
+    let pluralName = eurekaResources[resource].meta.names.plural;
+    let classifiedResource = Ember.String.classify(resource);
+    let store = Store.create({
         db:db,
         modelClass: Model,
-        resource: resource,
+        resource: classifiedResource,
+        resourceEndpoint: `${db.get('endpoint')}/${pluralName}`,
         resourceStructure: eurekaResources[resource],
         /** we pass the container here so we can resolve
          * the components and template path inside field and model's meta.
@@ -28,15 +31,16 @@ export function initialize(container, application) {
         container: container
     });
 
-    db.set(resource, store);
-    db[resource] = store;
+    db.set(classifiedResource, store);
+    db[classifiedResource] = store;
   });
 
   /** build computed properties after the full resources registration
    * so we can build relation computed properties
    */
   Object.keys(eurekaResources).forEach(function(resource) {
-    db[resource]._buildComputedPropertiesFromStructure();
+    let classifiedResource = Ember.String.classify(resource);
+    db[classifiedResource]._buildComputedPropertiesFromStructure();
   });
 
   application.register('db:main', db, {instantiate: false, singleton: true});
