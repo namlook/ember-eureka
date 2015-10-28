@@ -5,6 +5,21 @@ export default Ember.ObjectProxy.extend({
     name: null,
     modelMeta: null,
 
+    onInit: Ember.on('init', function() {
+        if (this.get('content.type') === 'array') {
+            this.set('content.type', this.get('items'));
+            this.set('content.multi', true);
+        }
+    }),
+
+    items: Ember.computed('content.items', function() {
+        let items = this.get('content.items');
+        if (typeof items === 'string') {
+            return items;
+        }
+        return this.get('content.items.type');
+    }),
+
     /** if the field type is a relation, then
      * returns the modelMeta of this relation
      */
@@ -28,7 +43,7 @@ export default Ember.ObjectProxy.extend({
     }),
 
     widgetConfig: Ember.computed('widget', function() {
-        var config = this.get('widget');
+        var config = this.get('meta.eureka.widget');
         if (config) {
             if (typeof(config) === 'string') {
                 config = {type: config};

@@ -76,8 +76,7 @@ export default Ember.Component.extend({
             }
 
             let displayProperty = this.get('displayProperty');
-
-            store.find({title: {$iregex: searchTerm}}).then((data) => {
+            store.find({filter: {title: {$iregex: searchTerm}}}).then((data) => {
                 let results = data.map((item) => {
                     return {id: item.content._id, label: item.content[displayProperty]};
                 });
@@ -96,7 +95,7 @@ export default Ember.Component.extend({
     _observeValue: Ember.observer('value', function() {
         var recordId = this.get('value');
         if (recordId) {
-            var record = this.get('store').first({_id: recordId});
+            var record = this.get('store').fetch(recordId);
             var field = this.get('field');
             var isMulti = this.get('fieldMeta.isMulti');
             if (isMulti) {

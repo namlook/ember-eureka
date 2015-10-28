@@ -9,9 +9,7 @@ export default Route.extend({
             console.log('XXX no id');
             // return this.get('store').createRecord();
         }
-        var query = {_id: modelId};
-        //     _populate: populate
-        return this.get('store').first(query);
+        return this.get('store').fetch(modelId);
     },
 
     actions: {

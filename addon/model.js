@@ -129,7 +129,7 @@ export default Ember.ObjectProxy.extend({
     /** store ui related values used in templates
      */
     _ui: Ember.computed(function() {
-        return Ember.create(null);
+        return Object.create(null);
     }),
 
     /** build the fields list from the meta informations
@@ -186,8 +186,12 @@ export default Ember.ObjectProxy.extend({
     save: function() {
         var that = this;
         return this._processScheduledFor('save').then(function() {
+            let method = 'post';
+            if (that.get('_initialContent._id')) {
+                method = 'patch';
+            }
             var pojo = that.toPojo();
-            return that.get('meta.store').sync(pojo);
+            return that.get('meta.store').sync(method, pojo);
         }).then(function(savedModel) {
             that._resetContentChanges();
             that._fillInitialContent();

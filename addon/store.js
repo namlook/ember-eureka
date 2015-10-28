@@ -18,7 +18,7 @@ var _relationCPFunction = function(fieldMeta) {
                 if (val && val.length) {
                     var relationIds = this.get('content.'+fieldName).mapBy('_id');
                     var relationType = this.get('meta.'+fieldName+'Field.type');
-                    return db[relationType].find({_id: {$in: relationIds}});
+                    return db[relationType].find({filter: {_id: {$in: relationIds}}});
                 }
             },
             set: function(key, value) {
@@ -36,7 +36,7 @@ var _relationCPFunction = function(fieldMeta) {
                 var relationId = this.get('content.'+fieldName+'._id');
                 if (relationId) {
                     var relationType = this.get('meta.'+fieldName+'Field.type');
-                    return db[relationType].first({_id: relationId});
+                    return db[relationType].fetch(relationId);
                 }
             },
             set: function(key, value) {
@@ -79,6 +79,45 @@ var _regularCPFunction = function(fieldMeta) {
     return fieldComputedFunction;
 };
 
+
+let jsonApi2record = function(jsonApiData, included) {
+
+    let record = {
+        _id: jsonApiData.id,
+        _type: jsonApiData.type
+    };
+
+    if (jsonApiData.attributes) {
+        Object.assign(record, jsonApiData.attributes);
+    }
+
+    if (jsonApiData.relationships) {
+        for (let rel of Object.keys(jsonApiData.relationships)) {
+
+            let {data} = jsonApiData.relationships[rel];
+
+            if (Ember.isArray(data)) {
+
+                record[rel] = data.map((i) => {
+                    let relation = included[`${i.type}:::${i.id}`];
+                    if (!relation) {
+                        relation = i;
+                    }
+                    return relation;
+                });
+
+            } else {
+
+                let relation = included[`${data.type}:::${data.id}`];
+                if (!relation) {
+                    relation = data;
+                }
+                record[rel] = relation;
+            }
+        }
+    }
+    return record;
+};
 
 /** A store is like a model instance factory.
  *  Its purpose is to deal with the stored data
@@ -127,14 +166,7 @@ export default Ember.Object.extend({
         modelClass.reopen(computedProperties);
     },
 
-    resourceEndpoint: Ember.computed('resource', function() {
-        var db = this.get('db');
-        var resource = this.get('resource');
-        var underscoredModelType = resource.underscore();
-        return db.get('endpoint')+'/'+underscoredModelType;
-    }),
-
-    modelMeta: Ember.computed('resource', function() {
+    modelMeta: Ember.computed('resource', 'resourceStructure', function() {
         var resource = this.get('resource');
         var resourceStructure = this.get('resourceStructure');
         return ModelMeta.create({
@@ -144,25 +176,72 @@ export default Ember.Object.extend({
         });
     }),
 
-    createRecord: function(record) {
-        if (record === undefined) {
-            record = {};
+    createRecord: function(jsonApiRecord, included) {
+        included = included || {};
+        let record = {};
+        if (jsonApiRecord) {
+            record = {
+                _id: jsonApiRecord.id,
+                _type: jsonApiRecord.type
+            };
+
+            if (jsonApiRecord.attributes) {
+                Object.assign(record, jsonApiRecord.attributes);
+            }
+
+            if (jsonApiRecord.relationships) {
+                for (let rel of Object.keys(jsonApiRecord.relationships)) {
+
+                    let {data} = jsonApiRecord.relationships[rel];
+
+                    if (Ember.isArray(data)) {
+
+                        record[rel] = data.map((item) => {
+                            let relation = included[`${item.type}:::${item.id}`];
+                            if (relation) {
+                                return this.db[relation.type].createRecord(relation);
+                            } else {
+                                return {_id: item.id, _type: item.type};
+                            }
+                        });
+
+                    } else {
+
+                        let relation = included[`${data.type}:::${data.id}`];
+                        if (relation) {
+                            record[rel] = this.db[relation.type].createRecord(relation);
+                        } else {
+                            record[rel] = {_id: data.id, _type: data.type};
+                        }
+                    }
+                }
+            }
         }
+
+        // return this.createInstance(record);
         record = Ember.Object.create(record);
-        var modelMeta = this.get('modelMeta');
+        let modelMeta = this.get('modelMeta');
         return this.get('modelClass').create({
             content: record,
             meta: modelMeta
         });
     },
 
-    first: function(query) {
-        query = query || {};
-        if (!query._id) {
-            console.log('!!!! no id', query);
+    createInstance(record) {
+        record = Ember.Object.create(record);
+        let modelMeta = this.get('modelMeta');
+        return this.get('modelClass').create({
+            content: record,
+            meta: modelMeta
+        });
+    },
+
+    fetch: function(id, options) {
+        options = options || {};
+        if (!id) {
+            console.log('!!!! no id');
             return this.createRecord({});
         }
-        query._limit = 1;
 
         var that = this;
         var resourceEndpoint = this.get('resourceEndpoint');
@@ -170,18 +249,13 @@ export default Ember.Object.extend({
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
                 dataType: "json",
-                url: resourceEndpoint,
+                url: `${resourceEndpoint}/${encodeURIComponent(id)}`,
                 async: true,
-                data: query,
+                data: options,
                 success: function(data){
                     var record;
-                    var content = {};
-                    // if there is a match, we wrap all relations with Model objects
-                    if (data.results.length > 0) {
-                        content = data.results[0];
-                    }
                     // build the model
-                    record = that.createRecord(content);
+                    record = that.createRecord(data.data);
                     return resolve(record);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
@@ -199,23 +273,76 @@ export default Ember.Object.extend({
         if (!query) {
             query = {};
         }
+
         var resourceEndpoint = this.get('resourceEndpoint');
         var that = this;
-
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
-                dataType: "json",
+                dataType: 'json',
                 url: resourceEndpoint,
                 async: true,
                 data: query,
                 success: function(data) {
                     var results = Ember.A(); // TODO switch to Collection.create(data);
-                    var record;
-                    data.results.forEach(function(item) {
-                        record = that.createRecord(item);
+                    let included = {};
+                    if (data.included && data.included.length) {
+                        for (let item of data.included) {
+                            included[`${item.type}:::${item.id}`] = item;
+                        }
+                    }
+                    data.data.forEach(function(item) {
+                        let record = that.createRecord(item, included);
                         results.pushObject(record);
                     });
                     return resolve(results);
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        return Ember.ArrayProxy.extend(Ember.PromiseProxyMixin).create({
+            promise: promise
+        });
+    },
+
+    stream: function(query) {
+        if (!query) {
+            query = {};
+        }
+        var resourceEndpoint = this.get('resourceEndpoint');
+        var promise = new Ember.RSVP.Promise(function(resolve, reject) {
+            Ember.$.ajax({
+                dataType: 'json',
+                url: `${resourceEndpoint}/i/stream/jsonapi`,
+                async: true,
+                data: query,
+                success: function(fetchedData) {
+                    let included = {};
+                    if (fetchedData.included && fetchedData.included.length) {
+                        for (let item of fetchedData.included) {
+                            included[`${item.type}:::${item.id}`] = jsonApi2record(item, {});
+                        }
+                    }
+
+                    let results = fetchedData.data.map((item) => jsonApi2record(item, included));
+
+                    return resolve(results);
+                    // var results = Ember.A(); // TODO switch to Collection.create(data);
+                    // let included = {};
+                    // if (data.included && data.included.length) {
+                    //     for (let item of data.included) {
+                    //         included[`${item.type}:::${item.id}`] = item;
+                    //     }
+                    // }
+                    // console.log(':::', included);
+                    // data.data.forEach(function(item) {
+                    //     let record = that.createRecord(item, included);
+                    //     results.pushObject(record);
+                    // });
+                    // return resolve(results);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
                     console.log('errror>', jqXHR, textStatus, errorThrown);
@@ -235,17 +362,15 @@ export default Ember.Object.extend({
      * while `find` is faster to retreive tens of records.
      * Note that `stream` returns raw data and not Model objects.
      */
-    stream: function(query) {
+    _stream: function(query) {
         if (!query) {
             query = {};
         }
         var resourceEndpoint = this.get('resourceEndpoint');
-        var that = this;
-
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
                 dataType: "json",
-                url: resourceEndpoint+'/export/json',
+                url: `${resourceEndpoint}/i/stream/json`,
                 async: true,
                 data: query,
                 success: function(data) {
@@ -271,9 +396,8 @@ export default Ember.Object.extend({
         if(!query) {
             query = {};
         }
-        var resourceEndpoint = this.get('resourceEndpoint')+'/facets/'+field;
+        var resourceEndpoint = this.get('resourceEndpoint')+'/i/group-by/'+field;
 
-        var that = this;
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
                 dataType: "json",
@@ -283,7 +407,7 @@ export default Ember.Object.extend({
                 success: function(data) {
                     var results = Ember.A(); // TODO switch to Collection.create(data);
                     // var record;
-                    data.results.forEach(function(item) {
+                    data.data.forEach(function(item) {
                         // record = that.first({_id: item.facet});
                         // record.then(function(arf) {
                         //     console.log(arf);
@@ -308,7 +432,7 @@ export default Ember.Object.extend({
         if (!query) {
             query = {};
         }
-        var resourceEndpoint = this.get('resourceEndpoint')+'/count';
+        var resourceEndpoint = this.get('resourceEndpoint')+'/i/count';
 
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
@@ -317,7 +441,7 @@ export default Ember.Object.extend({
                 async: true,
                 data: query,
                 success: function(data) {
-                    return resolve(data);
+                    return resolve(data.data);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
                     console.log('errror>', jqXHR, textStatus, errorThrown);
@@ -329,19 +453,72 @@ export default Ember.Object.extend({
         return promise;
     },
 
-    sync: function(pojo) {
-        var resourceEndpoint = this.get('resourceEndpoint');
-        var postData = {payload: JSON.stringify(pojo)};
-        var that = this;
-        var promise = new Ember.RSVP.Promise(function(resolve, reject) {
+    sync: function(method, pojo) {
+        method = method || 'post';
+        let url = this.get('resourceEndpoint');
+
+        let record = {
+            type: this.get('modelMeta.resource')
+        };
+
+        if (pojo._id) {
+            record.id = pojo._id;
+
+            if (method === 'patch') {
+                method = 'patch';
+                url = `${url}/${pojo._id}`;
+            }
+        }
+
+        let relationships = {};
+        let attributes = {};
+
+        for (let property of Object.keys(pojo)) {
+
+            if (['_id', '_type'].indexOf(property) > -1) {
+                continue;
+            }
+
+            let isRelation = this.get(`modelMeta.${property}Field.isRelation`);
+            if (isRelation) {
+                let relation = pojo[property];
+                if (Ember.isArray(relation)) {
+                    relation = relation.map((rel) => {
+                        return {id: rel._id, type: rel._type};
+                    });
+                } else {
+                    if (!relation) {
+                        relation = null;
+                    } else {
+                        relation = {id: relation._id, type: relation._type};
+                    }
+                }
+                relationships[property] = {data: relation};
+            } else {
+                attributes[property] = pojo[property];
+            }
+        }
+
+        if (Object.keys(attributes).length) {
+            record.attributes = attributes;
+        }
+
+        if (Object.keys(relationships).length) {
+            record.relationships = relationships;
+        }
+
+        let postData = {data: record};
+        let that = this;
+        let promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
-                dataType: "json",
-                url: resourceEndpoint,
-                type: 'post',
+                dataType: 'json',
+                url: url,
+                type: method,
                 async: true,
                 data: postData,
                 success: function(data) {
-                    var record = that.createRecord(data.object);
+                    let record = that.createRecord(data.data);
+                    record._id = record.get('_id');
                     resolve(record);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {

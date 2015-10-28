@@ -9,7 +9,7 @@ export default Ember.Route.extend({
         if (eurekaViewConfig) {
             this.set('fqvn', eurekaViewConfig.get('info.path'));
             this.set('resource', eurekaViewConfig.get('info.resource'));
-            this.set('routeType', eurekaViewConfig.get('info.name'))
+            this.set('routeType', eurekaViewConfig.get('info.name'));
             this.set('meta', eurekaViewConfig.get('config'));
         } else {
             console.log('no config for', eurekaViewPath);
@@ -28,6 +28,9 @@ export default Ember.Route.extend({
 
     store: Ember.computed('resource', function() {
         var resource = this.get('resource');
+        /** TODO REMOVE **/
+        resource = Ember.String.classify(resource);
+        /***/
         return this.db[resource];
     })
 
