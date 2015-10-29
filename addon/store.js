@@ -239,7 +239,7 @@ export default Ember.Object.extend({
     fetch: function(id, options) {
         options = options || {};
         if (!id) {
-            console.log('!!!! no id');
+            console.error('!!!! no id');
             return this.createRecord({});
         }
 
@@ -259,7 +259,7 @@ export default Ember.Object.extend({
                     return resolve(record);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
-                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
                     reject(jqXHR.responseJSON);
                 }
             });
@@ -297,7 +297,7 @@ export default Ember.Object.extend({
                     return resolve(results);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
-                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
                     reject(jqXHR.responseJSON);
                 }
             });
@@ -345,7 +345,7 @@ export default Ember.Object.extend({
                     // return resolve(results);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
-                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
                     reject(jqXHR.responseJSON);
                 }
             });
@@ -377,7 +377,7 @@ export default Ember.Object.extend({
                     return resolve(data);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
-                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
                     reject(jqXHR.responseJSON);
                 }
             });
@@ -417,7 +417,7 @@ export default Ember.Object.extend({
                     return resolve(results);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
-                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
                     reject(jqXHR.responseJSON);
                 }
             });
@@ -444,7 +444,7 @@ export default Ember.Object.extend({
                     return resolve(data.data);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
-                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
                     reject(jqXHR.responseJSON);
                 }
             });
@@ -479,13 +479,23 @@ export default Ember.Object.extend({
                 continue;
             }
 
-            let isRelation = this.get(`modelMeta.${property}Field.isRelation`);
+            let propertyField = this.get(`modelMeta.${property}Field`);
+            let isRelation = propertyField.get('isRelation');
+            let isArray = propertyField.get('isArray');
+
             if (isRelation) {
                 let relation = pojo[property];
-                if (Ember.isArray(relation)) {
-                    relation = relation.map((rel) => {
-                        return {id: rel._id, type: rel._type};
-                    });
+
+                if (isArray) {
+
+                    if (relation) {
+                        relation = relation.map((rel) => {
+                            return {id: rel._id, type: rel._type};
+                        });
+                    } else {
+                        relation = [];
+                    }
+
                 } else {
                     if (!relation) {
                         relation = null;
@@ -493,6 +503,7 @@ export default Ember.Object.extend({
                         relation = {id: relation._id, type: relation._type};
                     }
                 }
+
                 relationships[property] = {data: relation};
             } else {
                 attributes[property] = pojo[property];
@@ -522,7 +533,7 @@ export default Ember.Object.extend({
                     resolve(record);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
-                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
                     reject(jqXHR.responseJSON);
                 }
             });
@@ -543,7 +554,7 @@ export default Ember.Object.extend({
                     resolve(data);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
-                    console.log('errror>', jqXHR, textStatus, errorThrown);
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
                     reject(jqXHR.responseJSON);
                 }
             });
