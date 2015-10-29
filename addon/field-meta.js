@@ -149,6 +149,7 @@ export default Ember.ObjectProxy.extend({
     }),
 
     isMulti: Ember.computed.bool('content.multi'),
+    isArray: Ember.computed.alias('isMulti'),
 
     isDate: Ember.computed.equal('type', 'date'),
 
