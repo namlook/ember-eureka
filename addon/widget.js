@@ -19,6 +19,7 @@ export default Ember.Component.extend({
     currentRouteName: Ember.computed.alias('currentController.currentRouteName'),
     fqvn: Ember.computed.alias('currentController.fqvn'),
 
+    appConfig: Ember.computed.alias('currentController.appConfig'),
     eurekaConfig: Ember.computed.alias('currentController.appConfig.eureka'),
 
     modelMeta: Ember.computed.alias('routeModel.meta'),
