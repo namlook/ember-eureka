@@ -10,7 +10,7 @@ import Route from 'ember-eureka/route';
 export default Route.extend({
 
     model: function() {
-        var resourceRoute = this.get('fqvn').split('.new.')[0]+'.new';
+        var resourceRoute = this.get('fqvn').split('.new.')[0] + '.new';
         return this.modelFor(resourceRoute);
     },
 

@@ -11,7 +11,7 @@ var collectResourceViews = function(resource, resourceViews, collection, root) {
 
     /* load inner index route: ('blog.index' for the blog resource) */
     if (root) {
-        collection.push({resource: resource, name: 'index', path: root+'.index'});
+        collection.push({resource: resource, name: 'index', path: `${root}.index`});
     }
 
     var item;
@@ -19,7 +19,7 @@ var collectResourceViews = function(resource, resourceViews, collection, root) {
         item = {resource: resource, name: viewName};
 
         if (root) {
-            item.path = root+'.'+viewName;
+            item.path = root + '.' + viewName;
         } else {
             item.path = viewName;
         }
@@ -31,7 +31,7 @@ var collectResourceViews = function(resource, resourceViews, collection, root) {
                 collection.push(item);
             }
             collectResourceViews(resource, resourceViews[viewName], collection, item.path);
-            var innerIndexItem = {resource: resource, name: 'index', path: item.path+'.index'};
+            var innerIndexItem = {resource: resource, name: 'index', path: `${item.path}.index`};
             if (!collection.findBy('path', innerIndexItem.path)) {
                 collection.push(innerIndexItem);
             }
@@ -65,7 +65,7 @@ var getEurekaRoutesInfo = function(eurekaConfig) {
         }
     });
     return eurekaResourceRoutes;
-}
+};
 
 
 /** extract view config from the routeInfo **/
@@ -77,11 +77,11 @@ var getViewConfig = function(routeInfo, eurekaConfig) {
         fullViewPath = 'views';
     } else {
         viewPath = routeInfo.path.split('.').slice(1).join('.');
-        fullViewPath = routeInfo.resource+'.views';
+        fullViewPath = `${routeInfo.resource}.views`;
     }
 
     if (viewPath) {
-        fullViewPath = fullViewPath+'.'+viewPath;
+        fullViewPath = fullViewPath + '.' + viewPath;
     }
 
 
@@ -93,7 +93,7 @@ var getViewConfig = function(routeInfo, eurekaConfig) {
     }
 
     if (viewConfig.outlet) {
-        if (typeof(viewConfig.outlet) === 'object') {
+        if (typeof viewConfig.outlet === 'object') {
             viewConfig = viewConfig.outlet;
         } else {
             viewConfig = {};
@@ -137,7 +137,7 @@ export function initialize(container, application) {
 
         var fullViewPath = 'eureka';
         if (routeInfo.path) {
-            fullViewPath += '.'+routeInfo.path;
+            fullViewPath += `.${routeInfo.path}`;
         }
 
         routeInfo.path = fullViewPath;

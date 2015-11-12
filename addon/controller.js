@@ -37,7 +37,7 @@ export default Ember.Controller.extend({
         var defaultValue;
         var that = this;
         queryParams.forEach(function(param) {
-            defaultValue = Ember.getWithDefault(queryParams, param+'.defaultValue', null);
+            defaultValue = Ember.getWithDefault(queryParams, `${param}.defaultValue`, null);
             that.set(param, defaultValue);
         });
 
@@ -103,6 +103,6 @@ export default Ember.Controller.extend({
             }
             this.transitionToRoute(payload.routePath);
         }
-    },
+    }
 
 });

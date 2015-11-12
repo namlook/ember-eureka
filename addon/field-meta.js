@@ -34,7 +34,7 @@ export default Ember.ObjectProxy.extend({
     content: Ember.computed('name', 'modelMeta', function() {
         var name = this.get('name');
         var modelMeta = this.get('modelMeta');
-        return modelMeta.get('properties.'+name);
+        return modelMeta.get(`properties.${name}`);
     }),
 
 
@@ -45,7 +45,7 @@ export default Ember.ObjectProxy.extend({
     widgetConfig: Ember.computed('widget', function() {
         var config = this.get('meta.eureka.widget');
         if (config) {
-            if (typeof(config) === 'string') {
+            if (typeof config === 'string') {
                 config = {type: config};
             }
             return config;
@@ -60,18 +60,18 @@ export default Ember.ObjectProxy.extend({
 
         var container = this.get('modelMeta.store.container');
         var dasherizedModelType = this.get('modelMeta.resource').dasherize();
-        var componentName = dasherizedModelType + '-' + this.get('name') + '-widget-property-'+widgetType;
+        var componentName = dasherizedModelType + '-' + this.get('name') + '-widget-property-' + widgetType;
 
-        if (!container.resolve('component:'+componentName)) {
+        if (!container.resolve(`component:${componentName}`)) {
             var widget = this.get('widgetConfig');
             if (widget) {
                 var multi = '';
                 if (this.get('isMulti')) {
                     multi = '-multi';
                 }
-                componentName = 'widget-property'+ multi + '-' + widget.type + '-'+widgetType;
+                componentName = `widget-property${multi}-${widget.type}-${widgetType}`;
 
-                if (!container.resolve('component:'+componentName)) {
+                if (!container.resolve(`component:${componentName}`)) {
                     console.error('Error: cannot found the property widget', componentName, 'falling back to a generic one');
                     componentName = null;
                 }
@@ -84,27 +84,27 @@ export default Ember.ObjectProxy.extend({
             if (this.get('isRelation')) {
 
                 if (isMulti) {
-                    componentName = 'widget-property-multi-relation-'+widgetType;
+                    componentName = 'widget-property-multi-relation-' + widgetType;
                 } else {
-                    componentName = 'widget-property-relation-'+widgetType;
+                    componentName = 'widget-property-relation-' + widgetType;
                 }
 
             } else {
 
                 if (isMulti) {
-                    componentName = 'widget-property-multi-'+widgetType;
+                    componentName = 'widget-property-multi-' + widgetType;
                 } else if (this.get('isText')) {
-                    componentName = 'widget-property-text-'+widgetType;
+                    componentName = 'widget-property-text-' + widgetType;
                 } else if (this.get('isNumber')) {
-                    componentName = 'widget-property-number-'+widgetType;
+                    componentName = 'widget-property-number-' + widgetType;
                 } else if (this.get('isBoolean')) {
-                    componentName = 'widget-property-bool-'+widgetType;
+                    componentName = 'widget-property-bool-' + widgetType;
                 } else if (this.get('isDate')) {
-                    componentName = 'widget-property-date-'+widgetType;
+                    componentName = 'widget-property-date-' + widgetType;
                 } else if (this.get('isDateTime')) {
-                    componentName = 'widget-property-datetime-'+widgetType;
+                    componentName = 'widget-property-datetime-' + widgetType;
                 } else {
-                    componentName = 'widget-property-text-'+widgetType;
+                    componentName = 'widget-property-text-' + widgetType;
                 }
             }
         }

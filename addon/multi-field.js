@@ -6,18 +6,18 @@ export default Ember.Object.extend({
     values: null,
     model: null,
 
-    _initValues: function() {
+    _initValues: Ember.on('init', function() {
         if (!this.get('values')) {
             this.set('values', Ember.A());
         }
-    }.on('init'),
+    }),
 
     hasValue: Ember.computed.alias('values'),
 
     /** observes the values and update the model content
      * if needed
      */
-    _valuesObserver: function() {
+    _valuesObserver: Ember.observer('values.@each.value', function() {
         var values = this.get('values');
         var fieldName = this.get('meta.name');
         var meta = this.get('meta');
@@ -25,6 +25,6 @@ export default Ember.Object.extend({
             values = values.mapBy('value').compact();
 
         }
-        this.set('model.'+fieldName, values);
-    }.observes('values.@each.value')
+        this.set(`model.${fieldName}`, values);
+    })
 });

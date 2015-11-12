@@ -41,5 +41,5 @@ export default Ember.Component.extend({
 
     applicationController: Ember.computed.alias('currentController.applicationController'),
     currentRouteName: Ember.computed.alias('currentController.currentRouteName'),
-    fqvn: Ember.computed.alias('currentController.fqvn'),
+    fqvn: Ember.computed.alias('currentController.fqvn')
 });

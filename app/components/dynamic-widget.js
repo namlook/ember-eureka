@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import Widget from 'ember-eureka/widget';
 
 export default Widget.extend({
@@ -49,7 +50,7 @@ export default Widget.extend({
         // }
 
         // return componentName;
-        return 'widget-'+widgetName;
+        return `widget-${widgetName}`;
     }),
 
 

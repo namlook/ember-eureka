@@ -2,16 +2,16 @@ import Ember from 'ember';
 
 export default Ember.ArrayProxy.extend({
 
-    onInit: function() {
+    onInit: Ember.on('init', function() {
         this.set('content', Ember.A());
-    }.on('init'),
+    }),
 
 
     hasChanged: 0,
 
-    queryChangedObserver: function() {
+    queryChangedObserver: Ember.observer('content.@each.value', function() {
         this.incrementProperty('hasChanged');
-    }.observes('content.@each.value'),
+    }),
 
 
     raw: Ember.computed('hasChanged', {

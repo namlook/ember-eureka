@@ -11,9 +11,9 @@ export default Ember.Object.extend({
     /** observes the value and update the
      * model content if needed
      */
-    _valueObserver: function() {
+    _valueObserver: Ember.observer('value', function() {
         var fieldName = this.get('meta.name');
         var value = this.get('value');
-        this.set('model.'+fieldName, value);
-    }.observes('value'),
+        this.set(`model.${fieldName}`, value);
+    })
 });

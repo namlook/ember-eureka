@@ -6,9 +6,9 @@ import MultiField from 'ember-eureka/multi-field';
 
 export default Ember.ObjectProxy.extend({
 
-    _init: function() {
+    _init: Ember.on('init', function() {
         this.set('__scheduledFn', Ember.A());
-    }.on('init'),
+    }),
 
     /** schedule a function when a specific action will be run
      *
@@ -74,9 +74,9 @@ export default Ember.ObjectProxy.extend({
     /** returns true if the object is has a footprint on a database
      * (ie has an _id) and its content has changed
      */
-    _syncNeeded: function() {
+    _syncNeeded: Ember.computed('_hasChanged', 'content._id', function() {
         return this.get('_hasChanged');
-    }.property('_hasChanged', 'content._id'),
+    }),
 
 
     /** update the value of a field.
@@ -92,12 +92,12 @@ export default Ember.ObjectProxy.extend({
      *   blogPost.set('author', 'Namlook');
      */
     setField: function(fieldName, value) {
-        var oldValue = this.get('content.'+fieldName);
+        var oldValue = this.get(`content.${fieldName}`);
         if (Ember.isEmpty(value)) {
             value = undefined;
         }
         if (oldValue !== value) {
-            this.set('content.'+fieldName, value);
+            this.set(`content.${fieldName}`, value);
             this.set('_contentChanges.fieldName', fieldName);
             this.set('_contentChanges.value', value);
             this.incrementProperty('_contentChanges.count');
@@ -110,10 +110,10 @@ export default Ember.ObjectProxy.extend({
     /** Store the original content so we can rollback the
      * changes later
      */
-    _fillInitialContent: function() {
+    _fillInitialContent: Ember.on('init', function() {
         var initContent = JSON.parse(JSON.stringify(this.toPojo()));
         this.set('_initialContent', initContent);
-    }.on('init'),
+    }),
 
 
     /** this attribute is used to force `_fields` to reload
@@ -137,14 +137,14 @@ export default Ember.ObjectProxy.extend({
      * instead of the `_contentChange.count` so it prevent the
      * reloading to append too often
      */
-    _fields: function() {
+    _fields: Ember.computed('meta.resource', '_reloadFields', function() {
         var results = Ember.A();
         var that = this;
         this.get('meta.fieldNames').forEach(function(fieldTitle) {
-            results.pushObject(that.get(fieldTitle+'Field'));
+            results.pushObject(that.get(`${fieldTitle}Field`));
         });
         return results;
-    }.property('meta.resource', '_reloadFields'),
+    }),
 
 
     /** the title computed property is a little special,
@@ -215,10 +215,10 @@ export default Ember.ObjectProxy.extend({
         // from each relations
         var that = this;
         this.get('meta.fieldNames').forEach(function(fieldName) {
-            fieldMeta = that.get('meta.'+fieldName+'Field');
+            fieldMeta = that.get(`meta.${fieldName}Field`);
             isRelation = fieldMeta.get('isRelation');
             isMulti = fieldMeta.get('isMulti');
-            contentValue = that.get('content.'+fieldName);
+            contentValue = that.get(`content.${fieldName}`);
 
             if (isRelation && contentValue) {
 
@@ -278,7 +278,7 @@ export default Ember.ObjectProxy.extend({
         var oldValue;
         this.get('meta.fieldNames').forEach(function(fieldName) {
             oldValue = Ember.copy(initialContent[fieldName], true);
-            that.set('content.'+fieldName, oldValue);
+            that.set(`content.${fieldName}`, oldValue);
         });
         this._resetContentChanges();
         this._triggerReloadFields();
@@ -291,9 +291,9 @@ export default Ember.ObjectProxy.extend({
          * object is returned. This is useful if we're looking for the
          * field informations like schema or model relations.
          */
-        if (endsWith(key, "Field")){
-            var fieldName = key.slice(0, key.length - "Field".length);
-            var fieldMeta = this.get('meta.'+fieldName+'Field');
+        if (endsWith(key, 'Field')){
+            var fieldName = key.slice(0, key.length - 'Field'.length);
+            var fieldMeta = this.get(`meta.${fieldName}Field`);
 
             if (!fieldMeta) {
                 console.error('Eureka: unknown field', fieldName, 'in', this.get('meta.resource'));
@@ -322,7 +322,7 @@ export default Ember.ObjectProxy.extend({
             }
         }
         // XXX handle aliases
-        return this.get('content.'+key);
+        return this.get(`content.${key}`);
     }
 
 });

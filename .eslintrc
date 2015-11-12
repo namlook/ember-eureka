@@ -2,12 +2,13 @@
   "parser": "babel-eslint",
   "env": {
     // I write for browser
-    // "browser": true,
+    "browser": true,
     // in CommonJS
     "node": true
   },
   "rules": {
     "strict": 0,
+    "new-cap": 0,
     "quotes": [2, "single", "avoid-escape"],
     "eol-last": [0],
     "no-mixed-requires": [0],

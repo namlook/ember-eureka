@@ -6,7 +6,7 @@ export default Controller.extend({
     /** update the query param: `query` each time
      * the model.query is updated
      */
-    queryModelObserver: function() {
+    queryModelObserver: Ember.observer('model.query.hasChanged', function() {
         if (this.get('queryParams').indexOf('query') > -1) {
             var query = this.get('model.query');
             var queryQP;
@@ -17,6 +17,6 @@ export default Controller.extend({
             }
             this.set('query', queryQP);
         }
-    }.observes('model.query.hasChanged'),
+    })
 
 });

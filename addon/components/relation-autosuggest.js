@@ -110,6 +110,7 @@ export default Ember.Component.extend({
 
 
     placeholder: Ember.computed('fieldType', function() {
-        return "search a " + this.get('fieldType');
-    }),
+        let fieldType = this.get('fieldType');
+        return `search a ${fieldType}`;
+    })
 });

@@ -11,7 +11,7 @@ export function initialize(container, application) {
   var eurekaResources = appConfig.eureka.resources;
 
   Object.keys(eurekaResources).forEach(function(resource) {
-    var Model = container.resolve('model:'+resource);
+    var Model = container.resolve(`model:${resource}`);
     if (!Model) {
       Model = container.resolve('model:generic');
     }
@@ -19,7 +19,7 @@ export function initialize(container, application) {
     let pluralName = eurekaResources[resource].meta.names.plural;
     let classifiedResource = Ember.String.classify(resource);
     let store = Store.create({
-        db:db,
+        db: db,
         modelClass: Model,
         resource: classifiedResource,
         resourceEndpoint: `${db.get('endpoint')}/${pluralName}`,

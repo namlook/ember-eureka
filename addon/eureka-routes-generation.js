@@ -38,7 +38,7 @@ var convertResourceViewToRoute = function(router, resourceViews, prefix) {
                 }
             } else {
                 if (!urlRoot) {
-                    urlRoot = '/'+viewName;
+                    urlRoot = `/${viewName}`;
                 }
                 if (!urlPrefix) {
                     urlPrefix = '';
@@ -55,7 +55,7 @@ var convertResourceViewToRoute = function(router, resourceViews, prefix) {
                     return;
                 }
                 prefix = prefix || '';
-                router.route(viewName, {path: prefix+'/'+viewName});
+                router.route(viewName, {path: `${prefix}/${viewName}`});
             }
         }
     });
@@ -67,7 +67,7 @@ export default function(router, config) {
 
     Object.keys(applicationViews).forEach(function(view) {
         router.route('eureka', {path: '/i'}, function() {
-            router.route(view, {path: '/'+view});
+            router.route(view, {path: `/${view}`});
         });
     });
 
@@ -82,12 +82,11 @@ export default function(router, config) {
             dasherizedResource = resource.dasherize();
 
             if (resourceViews) {
-                innerRouter.route(dasherizedResource, {path: '/'+dasherizedResource}, function() {
+                innerRouter.route(dasherizedResource, {path: `/${dasherizedResource}`}, function() {
                     convertResourceViewToRoute(this, resourceViews);
                 });
             }
         });
 
     });
-};
-
+}

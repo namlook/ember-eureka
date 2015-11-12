@@ -7,7 +7,7 @@ export default Ember.Component.extend({
      *  detect the outlets and the containers so we can
      *  handle their particularity in template
      */
-    _detectOutletAndContainerWidgets: function() {
+    _detectOutletAndContainerWidgets: Ember.on('init', function() {
         var widgetConfigurations = this.get('widgetConfigurations');
         widgetConfigurations.forEach(function(conf) {
             if (Ember.get(conf, 'type') === 'outlet') {
@@ -17,7 +17,7 @@ export default Ember.Component.extend({
                 Ember.set(conf, 'isContainer', true);
             }
         });
-    }.on('init'),
+    }),
 
     /** required attributes */
     widgetConfigurations: null,

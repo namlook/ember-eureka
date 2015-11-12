@@ -8,11 +8,11 @@ import endsWith from './utils/ends-with';
  *     my.full.property -> ['my', 'full', 'property']
  */
 export var getFieldMeta = function(propertyNames, modelMeta) {
-    var fieldMeta = modelMeta.get(propertyNames[0]+'Field');
+    var fieldMeta = modelMeta.get(propertyNames[0] + 'Field');
     propertyNames.shift();
     if (propertyNames.length) {
         let newModelMeta = fieldMeta.get('relationModelMeta');
-        if (newModelMeta && newModelMeta.get(propertyNames[0]+'Field')) {
+        if (newModelMeta && newModelMeta.get(propertyNames[0] + 'Field')) {
             return getFieldMeta(propertyNames, newModelMeta);
         }
     }
@@ -33,7 +33,7 @@ export default Ember.ObjectProxy.extend({
         var results = Ember.A();
         var that = this;
         this.get('fieldNames').forEach(function(fieldName) {
-            if (that.get(fieldName+'Field.isRelation')) {
+            if (that.get(`${fieldName}Field.isRelation`)) {
                 results.pushObject(fieldName);
             }
         });
@@ -53,9 +53,9 @@ export default Ember.ObjectProxy.extend({
          * object is returned. This is useful if we're looking for the
          * field informations like schema or model relations.
          */
-        if (endsWith(key, "Field")){
-            var fieldName = key.slice(0, key.length - "Field".length);
-            if (this.get('properties.'+fieldName)) {
+        if (endsWith(key, 'Field')){
+            var fieldName = key.slice(0, key.length - 'Field'.length);
+            if (this.get(`properties.${fieldName}`)) {
                 return FieldMeta.create({
                     name: fieldName,
                     modelMeta: this
@@ -90,12 +90,13 @@ export default Ember.ObjectProxy.extend({
          *
          *  `blogPost.meta.modelIndexViewPath` will return `eureka.blog-post.path.to.model.index`
          */
-        if (endsWith(key, "ViewPath")){
-            var viewPath = key.slice(0, key.length - "ViewPath".length);
+        if (endsWith(key, 'ViewPath')){
+            var viewPath = key.slice(0, key.length - 'ViewPath'.length);
             var dasherizedModelType = this.get('resource').dasherize();
-            var eurekaViewPath = 'eureka.'+dasherizedModelType+'.'+viewPath.decamelize().split('_').join('.');
-            return this.getWithDefault('aliases.views.'+viewPath, eurekaViewPath);
+            let _viewPath = viewPath.decamelize().split('_').join('.');
+            var eurekaViewPath = `eureka.${dasherizedModelType}.${_viewPath}`;
+            return this.getWithDefault(`aliases.views.${viewPath}`, eurekaViewPath);
         }
-        return this.get('content.'+key);
+        return this.get(`content.${key}`);
     }
 });

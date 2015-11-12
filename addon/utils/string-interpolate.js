@@ -12,4 +12,4 @@ export default function stringInterpolate(string, obj) {
             return Ember.get(obj, b);
         }
     );
-};
+}

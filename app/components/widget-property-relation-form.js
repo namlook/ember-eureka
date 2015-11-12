@@ -1,5 +1,4 @@
 import WidgetProperty from 'ember-eureka/widget-property';
-import isEmpty from 'ember-eureka/utils/is-empty';
 
 export default WidgetProperty.extend({
 
@@ -34,7 +33,6 @@ export default WidgetProperty.extend({
                 relation = field.get('value');
             }
 
-            var relationContent = relation.get('content');
             if (relation.get('_syncNeeded')) {
                 var that = this;
                 relation.save().then(function(savedRelation) {

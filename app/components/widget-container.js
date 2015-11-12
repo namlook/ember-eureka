@@ -45,7 +45,7 @@ export default Widget.extend({
     dasherizedFqvn: Ember.computed('currentController.fqvn', function() {
         var fqvn = this.get('currentController.fqvn');
         if (fqvn) {
-            return fqvn.camelize().dasherize()+'-controller';
+            return fqvn.camelize().dasherize() + '-controller';
         }
     }),
 

@@ -85,7 +85,7 @@ export default Resolver.extend({
         // fetch generic template
         if (!template) {
             var path = parsedName.fullNameWithoutType.split('/').slice(2).join('/');
-            var fullName = ["template:eureka/generic", path].join('/');
+            var fullName = ['template:eureka/generic', path].join('/');
             parsedName = this.parseName(fullName);
 
             template = this._super(parsedName);
@@ -100,7 +100,7 @@ export default Resolver.extend({
                 // fullName.push('default');
                 // fullName = fullName.join('/');
                 path = parsedName.fullNameWithoutType.split('/').slice(2).join('/');
-                fullName = ["route:eureka/generic", path].join('/');
+                fullName = ['route:eureka/generic', path].join('/');
                 parsedName = this.parseName(fullName);
 
                 template = this._super(parsedName);
@@ -159,7 +159,7 @@ export default Resolver.extend({
         // fetch generic route :eureka.generic.*/*
         if (!route) {
             var path = parsedName.fullNameWithoutType.split('/').slice(2).join('/');
-            var fullName = ["route:eureka/generic", path].join('/');
+            var fullName = ['route:eureka/generic', path].join('/');
             // console.log('fullName 1)', fullName);
             parsedName = this.parseName(fullName);
             route = this._super(parsedName);
@@ -223,7 +223,7 @@ export default Resolver.extend({
         // fetch generic eureka.generic.{model, collection}.{index, edit, new}
         if (!controller) {
             var path = parsedName.fullNameWithoutType.split('/').slice(2).join('/');
-            var fullName = ["controller:eureka/generic", path].join('/');
+            var fullName = ['controller:eureka/generic', path].join('/');
             parsedName = this.parseName(fullName);
             controller = this._super(parsedName);
 

@@ -14,10 +14,10 @@ var _relationCPFunction = function(fieldMeta) {
         relationComputedFunction = Ember.computed(`content.${fieldName}`, {
             get: function() {
                 var db = this.get('meta.store.db');
-                var val = this.get('content.'+fieldName);
+                var val = this.get(`content.${fieldName}`);
                 if (val && val.length) {
-                    var relationIds = this.get('content.'+fieldName).mapBy('_id');
-                    var relationType = this.get('meta.'+fieldName+'Field.type');
+                    var relationIds = this.get(`content.${fieldName}`).mapBy('_id');
+                    var relationType = this.get(`meta.${fieldName}Field.type`);
                     return db[relationType].find({filter: {_id: {$in: relationIds}}});
                 }
             },
@@ -33,9 +33,9 @@ var _relationCPFunction = function(fieldMeta) {
         relationComputedFunction = Ember.computed(`content.${fieldName}`, {
             get: function() {
                 var db = this.get('meta.store.db');
-                var relationId = this.get('content.'+fieldName+'._id');
+                var relationId = this.get(`content.${fieldName}._id`);
                 if (relationId) {
-                    var relationType = this.get('meta.'+fieldName+'Field.type');
+                    var relationType = this.get(`meta.${fieldName}Field.type`);
                     return db[relationType].fetch(relationId);
                 }
             },
@@ -59,7 +59,7 @@ var _regularCPFunction = function(fieldMeta) {
     var isBoolean = fieldMeta.get('isBoolean');
     var fieldComputedFunction = Ember.computed(`content.${fieldName}`, {
         get: function() {
-            var val = this.get('content.'+fieldName);
+            var val = this.get(`content.${fieldName}`);
             if (isBoolean) {
                 val = !!val;
             }
@@ -152,7 +152,7 @@ export default Ember.Object.extend({
             // set the function
             if (!skip) {
 
-                var fieldMeta = that.get('modelMeta.'+fieldName+'Field');
+                var fieldMeta = that.get(`modelMeta.${fieldName}Field`);
                 if (fieldMeta.get('isRelation')) {
                     computedFunction = _relationCPFunction(fieldMeta);
                 } else {
@@ -248,7 +248,7 @@ export default Ember.Object.extend({
 
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
-                dataType: "json",
+                dataType: 'json',
                 url: `${resourceEndpoint}/${encodeURIComponent(id)}`,
                 async: true,
                 data: options,
@@ -369,7 +369,7 @@ export default Ember.Object.extend({
         var resourceEndpoint = this.get('resourceEndpoint');
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
-                dataType: "json",
+                dataType: 'json',
                 url: `${resourceEndpoint}/i/stream/json`,
                 async: true,
                 data: query,
@@ -396,12 +396,14 @@ export default Ember.Object.extend({
         if(!query) {
             query = {};
         }
-        var resourceEndpoint = this.get('resourceEndpoint')+'/i/group-by/'+field;
+
+        let resourceEndpoint = this.get('resourceEndpoint');
+        let url = `${resourceEndpoint}/i/group-by/${field}`;
 
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
-                dataType: "json",
-                url: resourceEndpoint,
+                dataType: 'json',
+                url: url,
                 async: true,
                 data: query,
                 success: function(data) {
@@ -432,12 +434,13 @@ export default Ember.Object.extend({
         if (!query) {
             query = {};
         }
-        var resourceEndpoint = this.get('resourceEndpoint')+'/i/count';
+        let resourceEndpoint = this.get('resourceEndpoint');
+        let url = `${resourceEndpoint}/i/count`;
 
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
-                dataType: "json",
-                url: resourceEndpoint,
+                dataType: 'json',
+                url: url,
                 async: true,
                 data: query,
                 success: function(data) {
@@ -528,9 +531,9 @@ export default Ember.Object.extend({
                 async: true,
                 data: postData,
                 success: function(data) {
-                    let record = that.createRecord(data.data);
-                    record._id = record.get('_id');
-                    resolve(record);
+                    let rec = that.createRecord(data.data);
+                    rec._id = rec.get('_id');
+                    resolve(rec);
                 },
                 error: function(jqXHR, textStatus, errorThrown ) {
                     console.error('errror>', jqXHR, textStatus, errorThrown);
@@ -547,7 +550,7 @@ export default Ember.Object.extend({
         var resourceEndpoint = this.get('resourceEndpoint');
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
-                url: resourceEndpoint+'/'+recordId,
+                url: `${resourceEndpoint}/${recordId}`,
                 type: 'delete',
                 async: true,
                 success: function(data) {

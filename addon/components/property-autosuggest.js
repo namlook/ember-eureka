@@ -21,7 +21,7 @@ var getPropertiesSuggestion = function(modelMeta, allowedProperties) {
         if (allowed) {
             return {
                 id: name,
-                label: modelMeta.get(name+'Field.label'),
+                label: modelMeta.get(`${name}Field.label`)
             };
         }
         return '';
@@ -45,26 +45,25 @@ export default Ember.Component.extend({
      * each property contain the name of the property and
      * and a suggestion list computed from the (relation) model meta
      */
-    properties: Ember.computed('modelMeta','fullPathProperty.[]', 'propertyNames.[]', function() {
+    properties: Ember.computed('modelMeta', 'fullPathProperty.[]', 'propertyNames.[]', function() {
         var properties = Ember.A();
         var fullPathProperty = this.get('fullPathProperty') || Ember.A();
         var modelMeta = this.get('modelMeta');
-        var propertiesSuggestions;
 
         var propertyNames = this.get('propertyNames');
 
-        var name = '';
+        let name = '';
         if (fullPathProperty.length) {
             var fieldMeta;
-            fullPathProperty.forEach(function(name, index) {
-                fieldMeta = getFieldMeta(fullPathProperty.slice(0, index+1), modelMeta);
-                propertiesSuggestions = getPropertiesSuggestion(fieldMeta.get('modelMeta'), propertyNames);
-                properties.pushObject({name: name, suggestions: propertiesSuggestions});
+            fullPathProperty.forEach(function(_name, index) {
+                fieldMeta = getFieldMeta(fullPathProperty.slice(0, index + 1), modelMeta);
+                let propertiesSuggestions = getPropertiesSuggestion(fieldMeta.get('modelMeta'), propertyNames);
+                properties.pushObject({name: _name, suggestions: propertiesSuggestions});
             });
             name = fullPathProperty.slice(-1)[0];
             modelMeta = fieldMeta.get('modelMeta');
         } else {
-            propertiesSuggestions = getPropertiesSuggestion(modelMeta, propertyNames);
+            let propertiesSuggestions = getPropertiesSuggestion(modelMeta, propertyNames);
             properties.pushObject({name: name, suggestions: propertiesSuggestions});
         }
 
@@ -93,13 +92,13 @@ export default Ember.Component.extend({
         var changedPropertyIndex;
         properties.forEach(function(item, index) {
             if (oldProperties.objectAt(index) !== item.name) {
-                changedPropertyIndex =  index;
+                changedPropertyIndex = index;
                 return;
             }
         });
 
         if (changedPropertyIndex != null) {
-            properties.removeObjects(properties.slice(changedPropertyIndex+1));
+            properties.removeObjects(properties.slice(changedPropertyIndex + 1));
             this.set('oldProperties', Ember.A(properties.mapBy('name')));
         }
     }),
