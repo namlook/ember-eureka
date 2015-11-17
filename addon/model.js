@@ -137,6 +137,7 @@ export default Ember.ObjectProxy.extend({
      * instead of the `_contentChange.count` so it prevent the
      * reloading to append too often
      */
+     // XXX frop this, we should use this.meta.properties instead of that
     _fields: Ember.computed('meta.resource', '_reloadFields', function() {
         var results = Ember.A();
         var that = this;
