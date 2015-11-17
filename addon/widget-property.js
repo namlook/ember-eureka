@@ -5,7 +5,11 @@ import Ember from 'ember';
  *
  *  attachment: {
  *       type: <fieldType>
- *       widget: {type: 'file-attachment'}
+ *       meta: {
+ *          eureka: {
+ *               widget: {type: 'file-attachment'}
+ *          }
+ *      }
  *   }
  *
  *  will try to resolve the component `widget-property-file-attachment` and
@@ -13,8 +17,12 @@ import Ember from 'ember';
 
  *  attachments: {
  *       type: <fieldType>
- *       multi: true
- *       widget: {type: 'file-attachment'}
+ *       multi: true,
+ *       meta: {
+ *          eureka: {
+ *               widget: {type: 'file-attachment'}
+ *          }
+ *      }
  *   }
  *
  *  will try to resolve `widget-property-multi-file-attachment` (multi-property)
@@ -30,6 +38,7 @@ export default Ember.Component.extend({
     field: null,
 
     config: Ember.computed.alias('field.meta.widgetConfig'),
+    appConfig: Ember.computed.alias('currentController.appConfig'),
 
     fieldMeta: Ember.computed.alias('field.meta'),
     model: Ember.computed.alias('field.model'),
