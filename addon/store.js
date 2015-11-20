@@ -388,17 +388,43 @@ export default Ember.Object.extend({
         });
     },
 
-    groupBy: function(field, query) {
-        if (!field) {
-            console.error('field is required');
+    groupBy: function(aggregator, query, options) {
+        if (!aggregator) {
+            console.error('aggregator is required');
+        }
+
+        if (typeof aggregator === 'string') {
+            aggregator = {
+                property: aggregator,
+                target: aggregator,
+                operator: 'count'
+            };
+        }
+
+        if (!aggregator.property) {
+            console.error('aggregator.property is required');
+        }
+
+        let operator = aggregator.operator || 'count';
+        let property = aggregator.property;
+        let target = aggregator.target || aggregator.property;
+
+
+        let resourceEndpoint = this.get('resourceEndpoint');
+        let url = `${resourceEndpoint}/i/group-by/${property}?operator=${operator}&target=${target}`;
+
+        let sort = options && options.sort || [];
+        if (typeof sort === 'string') {
+            sort = [sort];
+        }
+
+        if (sort.length) {
+            url += `&sort=${sort.join(',')}`;
         }
 
         if(!query) {
             query = {};
         }
-
-        let resourceEndpoint = this.get('resourceEndpoint');
-        let url = `${resourceEndpoint}/i/group-by/${field}`;
 
         var promise = new Ember.RSVP.Promise(function(resolve, reject) {
             Ember.$.ajax({
