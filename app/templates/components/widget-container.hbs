@@ -1,8 +1,23 @@
-{{#each rows as |widgetConfigurationsRow|}}
-    {{#widget-container-row widgetConfigurations=widgetConfigurationsRow
-        routeModel=routeModel
-        currentController=currentController
-        toControllerAction="toControllerAction"}}
-            {{yield}}
-    {{/widget-container-row}}
-{{/each}}
+
+{{#if label}}
+    <fieldset>
+        <legend> {{label}} </legend>
+        {{#each rows as |widgetConfigurationsRow|}}
+            {{#widget-container-row widgetConfigurations=widgetConfigurationsRow
+                routeModel=routeModel
+                currentController=currentController
+                toControllerAction="toControllerAction"}}
+                    {{yield}}
+            {{/widget-container-row}}
+        {{/each}}
+    </fieldset>
+{{else}}
+    {{#each rows as |widgetConfigurationsRow|}}
+        {{#widget-container-row widgetConfigurations=widgetConfigurationsRow
+            routeModel=routeModel
+            currentController=currentController
+            toControllerAction="toControllerAction"}}
+                {{yield}}
+        {{/widget-container-row}}
+    {{/each}}
+{{/if}}

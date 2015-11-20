@@ -11,9 +11,10 @@ export default Widget.extend({
     routeModel: null,
     currentController: null,
 
-
     /** set it to `true` if the container has an outlet to yield */
     yieldOutlet: false,
+
+    label: Ember.computed.alias('config.label'),
 
     rows: Ember.computed('config.widgets.[]', function() {
         var widgetConfigurations = Ember.A(this.get('config.widgets'));
