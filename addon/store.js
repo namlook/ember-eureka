@@ -456,6 +456,71 @@ export default Ember.Object.extend({
         });
     },
 
+    aggregate(aggregator, query, options) {
+        if (!aggregator) {
+            console.error('aggregator is required');
+        }
+
+        let resourceEndpoint = this.get('resourceEndpoint');
+        let url = `${resourceEndpoint}/i/aggregate?`;
+
+        let urlQuery = [];
+        for (let label of Object.keys(aggregator)) {
+            let property = aggregator[label];
+            if (typeof property !== 'string') {
+                for (let operator of Object.keys(property)) {
+                    property = property[operator];
+                    urlQuery.push(`label[${label}][${operator}]=${property}`);
+                }
+            } else {
+                urlQuery.push(`label[${label}]=${property}`);
+            }
+        }
+
+        if (options) {
+            let sort = options.sort || [];
+            if (typeof sort === 'string') {
+                sort = [sort];
+            }
+
+            if (sort.length) {
+                urlQuery.push(`sort=${sort.join(',')}`);
+            }
+
+            if (options.limit != null) {
+                urlQuery.push(`limit=${options.limit}`);
+            }
+        }
+
+
+        url += urlQuery.join('&');
+        url = encodeURI(url);
+
+        if(!query) {
+            query = {};
+        }
+
+        var promise = new Ember.RSVP.Promise(function(resolve, reject) {
+            Ember.$.ajax({
+                dataType: 'json',
+                url: url,
+                async: true,
+                data: query,
+                success: function(data) {
+                    return resolve(Ember.A(data.data));
+                },
+                error: function(jqXHR, textStatus, errorThrown ) {
+                    console.error('errror>', jqXHR, textStatus, errorThrown);
+                    reject(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        return Ember.ArrayProxy.extend(Ember.PromiseProxyMixin).create({
+            promise: promise
+        });
+    },
+
     count: function(query) {
         if (!query) {
             query = {};
