@@ -9,10 +9,9 @@ var requireDir = require('require-dir');
 var inflector = require('inflected');
 
 
-module.exports = (function() {
+module.exports = function() {
     var structure = {};
     glob.sync('./config/eureka/**/*').forEach(function(file) {
-
         var parsedPath = path.parse(file);
         var keyName = parsedPath.dir+'/'+parsedPath.name;
         keyName = _.trim(keyName, '.').replace(/\//g, '.');
@@ -22,6 +21,7 @@ module.exports = (function() {
             _.set(structure, keyName, null);
         } else {
 
+            delete require.cache[require.resolve(path.resolve(file))];
             var content = require(path.resolve(file));
 
             if (_.get(structure, keyName) === null) {
@@ -46,5 +46,5 @@ module.exports = (function() {
          var plural = _.get(resources[name], 'meta.names.plural') || inflector.pluralize(name);
         _.set(resources[name], 'meta.names.plural', plural);
     });
-    return structure;
-})().config.eureka;
+    return structure.config.eureka;
+};
