@@ -470,10 +470,10 @@ export default Ember.Object.extend({
             if (typeof property !== 'string') {
                 for (let operator of Object.keys(property)) {
                     property = property[operator];
-                    urlQuery.push(`label[${label}][${operator}]=${property}`);
+                    urlQuery.push(`field[${label}][${operator}]=${property}`);
                 }
             } else {
-                urlQuery.push(`label[${label}]=${property}`);
+                urlQuery.push(`field[${label}]=${property}`);
             }
         }
 
@@ -489,6 +489,10 @@ export default Ember.Object.extend({
 
             if (options.limit != null) {
                 urlQuery.push(`limit=${options.limit}`);
+            }
+
+            if (options.distinct) {
+                urlQuery.push('distinct=true');
             }
         }
 
@@ -524,7 +528,10 @@ export default Ember.Object.extend({
     count: function(query) {
         if (!query) {
             query = {};
+        } else {
+            query = {filter: query.filter || {}};
         }
+
         let resourceEndpoint = this.get('resourceEndpoint');
         let url = `${resourceEndpoint}/i/count`;
 
