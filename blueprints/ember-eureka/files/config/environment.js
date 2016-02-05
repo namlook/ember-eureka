@@ -1,10 +1,13 @@
 /* jshint node: true */
 
-var eurekaStructure = require('ember-eureka/structure');
-
-var serverConfig = require('./server');
+var buildEurekaStructure = require('ember-eureka/structure');
 
 module.exports = function(environment) {
+  var serverConfig = require('./server');
+  delete require.cache[require.resolve('./server')];
+
+
+  var eurekaStructure = buildEurekaStructure();
   var ENV = {
     modulePrefix: '<%= dasherizedPackageName %>',
     environment: environment,
@@ -20,7 +23,8 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-      eureka: eurekaStructure
+      eureka: eurekaStructure,
+      fileUploadEndpoint: '/_uploads'
     }
   };
 
@@ -30,20 +34,8 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
-
-    ENV.APP.backendUrl = 'http://'+serverConfig.host+':'+serverConfig.port;
-    ENV.APP.apiEndpoint = ENV.APP.backendUrl+serverConfig.app.apiRootPrefix;
-
-    ENV.contentSecurityPolicy = {
-      'default-src': "'none'",
-      'script-src': "'self'",
-      'font-src': "'self'",
-      'connect-src': "'self' "+ENV.APP.backendUrl,
-      'img-src': "'self' data: "+ENV.APP.backendUrl,
-      'style-src': "'self' 'unsafe-inline'",
-      'media-src': "'self'"
-    };
-
+    ENV.APP.backendUrl = 'http://' + serverConfig.host + ':' + serverConfig.port;
+    ENV.APP.apiEndpoint = ENV.APP.backendUrl + serverConfig.app.apiRootPrefix;
   }
 
   if (environment === 'test') {
@@ -59,19 +51,19 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
+    ENV.APP.backendUrl = null // TODO;
     ENV.APP.apiEndpoint = serverConfig.app.apiRootPrefix;
-
-     ENV.contentSecurityPolicy = {
-      'default-src': "'none'",
-      'script-src': "'self'",
-      'font-src': "'self'",
-      'connect-src': "'self'",
-      'img-src': "'self' data:",
-      'style-src': "'self' 'unsafe-inline'",
-      'media-src': "'self'"
-    };
-
   }
+
+  ENV.contentSecurityPolicy = {
+    'default-src': "'none'",
+    'script-src': "'self'",
+    'font-src': "'self'",
+    'connect-src': "'self'" + ENV.APP.backendUrl,
+    'img-src': "'self' data: http://*.mqcdn.com http://server.arcgisonline.com " + ENV.APP.backendUrl,
+    'style-src': "'self' 'unsafe-inline'",
+    'media-src': "'self'"
+  };
 
   return ENV;
 };

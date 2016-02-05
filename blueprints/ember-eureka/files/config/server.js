@@ -2,28 +2,48 @@
 
 var pkg = require('../package.json');
 
-// build the eureka structure from files in config/eureka
-var eurekaStructureBuilder = require('eurekajs/structure-builder');
-var eurekaConfigPath = require('path').resolve('.') + '/config/eureka';
-var resources = eurekaStructureBuilder(eurekaConfigPath).resources;
+var requireDir = require('require-dir');
+
+var internals = {
+    port: 8888,
+    uploadDirectory: './uploads',
+    endpoint: 'http://<path/to/sparqlendpoint>' // TODO
+};
+
+
+if (process.env.NODE_ENV === 'production') {
+        internals.endpoint = 'http://<path/to/sparqlendpoint>' // TODO
+        internals.port = 80
+        internals.uploadDirectory = '/app/uploads';
+}
+
+var secretInfos = require('./secret.json');
 
 module.exports = {
     name: pkg.name,
-    version: 1,
-    host: 'localhost',
-    port: process.env.EUREKA_SERVER_PORT || 80,
-    enableCORS: true,
-    schemas: resources,
+    host: '0.0.0.0',
+    port: internals.port,
+    app: {
+        secret: secretInfos.secret,
+        email: secretInfos.email,
+        clientRootUrl: 'http://', // TODO
+        apiRootPrefix: '/api/1'
+    },
+    resources: requireDir('../backend/resources'),
     publicDirectory: 'dist',
-    uploadDirectory: 'uploads',
-    logLevel: 'info',
+    fileUploads: {
+        uploadDirectory: internals.uploadDirectory,
+        maxBytes: 50 // 50 MB
+    },
+    log: ['warn'],
     database: {
-        adapter: 'rdf',
         config: {
-            store: 'virtuoso',
-            host: process.env.DB_PORT_8890_TCP_ADDR,  // docker uses this
-            port: process.env.DB_PORT_8890_TCP_PORT,
-            graphURI: 'http://<%= dasherizedPackageName %>.com'
-        }
+            graphUri: 'http://<%= dasherizedPackageName %>.com'
+            endpoint: internals.endpoint
+        },
+        schemas: requireDir('./schemas')
+    },
+    misc: {
+        // custom config
     }
 };

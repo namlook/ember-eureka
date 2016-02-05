@@ -1,6 +1,10 @@
 
-export default {
-    // <fieldName>: {
-    //     type: 'string'
-    // }
+module.exports = {
+    // meta: {
+    // },
+    properties: {
+        // <fieldName>: {
+        //     type: 'string'
+        // }
+    }
 };
