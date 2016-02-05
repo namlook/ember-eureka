@@ -38,7 +38,7 @@ module.exports = {
     log: ['warn'],
     database: {
         config: {
-            graphUri: 'http://<%= dasherizedPackageName %>.com'
+            graphUri: 'http://<%= dasherizedPackageName %>.com',
             endpoint: internals.endpoint
         },
         schemas: requireDir('./schemas')
