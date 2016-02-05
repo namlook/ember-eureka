@@ -46,5 +46,9 @@ module.exports = function() {
          var plural = _.get(resources[name], 'meta.names.plural') || inflector.pluralize(name);
         _.set(resources[name], 'meta.names.plural', plural);
     });
+
+    if (!structure.config.eureka.resources) {
+        structure.config.eureka.resources = {};
+    }
     return structure.config.eureka;
 };
