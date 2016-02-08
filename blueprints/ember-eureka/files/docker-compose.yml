@@ -1,0 +1,48 @@
+
+frontend:
+    image: <author>/<projectname>-frontend:<version>
+    # build: .
+    # dockerfile: Dockerfile_frontend
+    ports:
+        - "80:80"
+    links:
+        - backend:backend
+        - db:db
+    # volumes: # for dev
+        # - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+
+# web server
+backend:
+    image: <author>/<projectname>-backend:<version>
+    # build: .
+    # dockerfile: Dockerfile_backend
+    links:
+        - db
+    # environment:
+        # NODE_ENV: production
+    restart: always
+    privileged: true
+    volumes:
+        - ./uploads:/app/uploads
+
+
+# database
+db:
+    image: tenforce/virtuoso:virtuoso-v7.2.0-latest
+    ports:
+        - "8890:8890"
+        - "1111:1111"
+    environment:
+        DBA_PASSWORD: "dba"
+        SPARQL_UPDATE: "true"
+    restart: always
+    privileged: true
+    volumes:
+        - ~/Documents/Kitematic/virtuoso:/var/lib/virtuoso/db
+
+# redis:
+#     image: redis:3.0.6
+#     ports:
+#         - "32774:32774"
+#         - "6379:6379"

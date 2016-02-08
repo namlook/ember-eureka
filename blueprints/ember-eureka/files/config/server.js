@@ -3,6 +3,8 @@
 var pkg = require('../package.json');
 
 var requireDir = require('require-dir');
+var dockerLinks = require('docker-links');
+var links = dockerLinks.parseLinks(process.env);
 
 var internals = {
     port: 8888,
@@ -12,9 +14,14 @@ var internals = {
 
 
 if (process.env.NODE_ENV === 'production') {
-        internals.endpoint = 'http://<path/to/sparqlendpoint>' // TODO
-        internals.port = 80
-        internals.uploadDirectory = '/app/uploads';
+
+    var dbUri = 'http://'+links.db.host + ':' + links.db.port;
+    var virtuosoEndpoint = dbUri + '/sparql';
+    var blazegraphEndpoint = dbUri + '/bigdata/sparql';
+
+    internals.endpoint = virtuosoEndpoint
+    internals.port = 80
+    internals.uploadDirectory = '/app/uploads';
 }
 
 var secretInfos = require('./secret.json');
