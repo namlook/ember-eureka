@@ -11,7 +11,6 @@ export default {
         },
         {
             columns: 10,
-            style: "col-sm-offset-2",
             type: 'outlet'
         }
     ]

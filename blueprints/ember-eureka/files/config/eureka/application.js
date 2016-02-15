@@ -1,4 +1,4 @@
 
 export default {
-    name: "<%= applicationName %>"
+    name: '<%= applicationName %>'
 };

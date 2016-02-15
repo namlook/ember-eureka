@@ -41,6 +41,7 @@ db:
     volumes:
         - ~/Documents/Kitematic/virtuoso:/var/lib/virtuoso/db
 
+## queue server
 # redis:
 #     image: redis:3.0.6
 #     ports:
