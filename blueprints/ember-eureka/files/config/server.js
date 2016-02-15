@@ -7,19 +7,34 @@ var dockerLinks = require('docker-links');
 var links = dockerLinks.parseLinks(process.env);
 
 var internals = {
+    database: {
+        config: {
+            engine: 'virtuoso',
+            graphUri: 'http://<%= dasherizedPackageName %>.com',
+            port: 8890,
+            host: 'localhost', // TODO check this
+            auth: {
+                user: 'dba',
+                password: 'dba'
+            }
+        }
+    },
+    redis: {
+        port: 6379,
+        host: 'localhost' // TODO check this
+    },
     port: 8888,
-    uploadDirectory: './uploads',
-    endpoint: 'http://<path/to/sparqlendpoint>' // TODO
+    uploadDirectory: './uploads'
 };
 
 
 if (process.env.NODE_ENV === 'production') {
+    internals.database.config.host = links.db.host;
+    internals.database.config.port = links.db.port;
 
-    var dbUri = 'http://'+links.db.host + ':' + links.db.port;
-    var virtuosoEndpoint = dbUri + '/sparql';
-    var blazegraphEndpoint = dbUri + '/bigdata/sparql';
+    internals.redis.port = links.redis.port;
+    internals.redis.host = links.redis.host;
 
-    internals.endpoint = virtuosoEndpoint
     internals.port = 80
     internals.uploadDirectory = '/app/uploads';
 }
@@ -30,6 +45,7 @@ module.exports = {
     name: pkg.name,
     host: '0.0.0.0',
     port: internals.port,
+    log: ['warn'],
     app: {
         secret: secretInfos.secret,
         email: secretInfos.email,
@@ -37,18 +53,20 @@ module.exports = {
         apiRootPrefix: '/api/1'
     },
     resources: requireDir('../backend/resources'),
+    tasks: requireDir('../backend/tasks'),
     publicDirectory: 'dist',
     fileUploads: {
         uploadDirectory: internals.uploadDirectory,
         maxBytes: 50 // 50 MB
     },
-    log: ['warn'],
     database: {
-        config: {
-            graphUri: 'http://<%= dasherizedPackageName %>.com',
-            endpoint: internals.endpoint
-        },
+        adapter: 'rdf',
+        config: internals.database.config,
         schemas: requireDir('./schemas')
+    },
+    redis: {
+        port: internals.redis.port,
+        host: internals.redis.host
     },
     misc: {
         // custom config
